@@ -96,10 +96,13 @@ never offers a link to a notebook that is not there. `check_notebooks.py` fails 
 with no navigation.
 
 **Links off google.com get a Google interstitial in Colab.** A reader clicking the breadcrumb
-sees a "Redirect Notice" page first, and nothing in the notebook can suppress it. So the two
-site links are HTML anchors with `target="_blank"`: the interstitial still appears, but in a
-new tab, and the notebook they were working in is untouched behind it. Previous and next point
-at `colab.research.google.com`, are unaffected, and stay as markdown so they open in place.
+sees a "Redirect Notice" page first. Nothing in the notebook suppresses it: an HTML anchor with
+`target="_blank"` was tried and Colab strips the attribute, so the reader still loses their tab.
+The site links are plain markdown, and the interstitial is accepted as a Colab constraint.
+
+Previous, next and back-to-notebook all point at `colab.research.google.com`, stay on Google's
+domain, and are unaffected. They are the links a reader uses most, which is the part that
+matters.
 
 **Solutions notebooks get navigation too**, and are read on their own. Their footer goes
 **back to their own notebook** rather than on to the next one: somebody reading answers is

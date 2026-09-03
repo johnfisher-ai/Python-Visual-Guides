@@ -9,7 +9,7 @@
     {
       "slug": "python-from-the-start",
       "number": 1,
-      "band": "Spine",
+      "band": "Foundations",
       "title": "Python from the Start",
       "subtitle": "The language itself",
       "status": "building",
@@ -141,7 +141,7 @@
     {
       "slug": "files-paths-and-formats",
       "number": 2,
-      "band": "Spine",
+      "band": "Foundations",
       "title": "Files, Paths and Formats",
       "subtitle": "Getting data in and out",
       "status": "planned",
@@ -213,7 +213,7 @@
     {
       "slug": "object-oriented-python",
       "number": 3,
-      "band": "Spine",
+      "band": "Foundations",
       "title": "Object-Oriented Python",
       "subtitle": "Classes, and when not to use them",
       "status": "planned",
@@ -297,7 +297,7 @@
     {
       "slug": "apis-and-json",
       "number": 4,
-      "band": "Spine",
+      "band": "Foundations",
       "title": "APIs and JSON",
       "subtitle": "Talking to the rest of the internet",
       "status": "planned",
@@ -381,7 +381,7 @@
     {
       "slug": "testing-and-packaging",
       "number": 5,
-      "band": "Spine",
+      "band": "Foundations",
       "title": "Testing and Packaging",
       "subtitle": "Making it survive contact with other people",
       "status": "planned",

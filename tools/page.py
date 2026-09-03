@@ -20,7 +20,7 @@ def _sequence():
     """Reading order for the previous/next pager: the library, then every guide."""
     from tools.manifest import load
     _site, guides = load()
-    return [("./", "index.html", "The library")] + [
+    return [("./", "index.html", "The guides")] + [
         (g.page, g.page, g.title) for g in guides
     ]
 
@@ -30,7 +30,7 @@ PAGES = _sequence()
 
 # The nav stays short. Eleven guides across the top would wrap to three lines and
 # tell a reader nothing; the library page lists them properly.
-NAV = [("./", "index.html", "The library")]
+NAV = [("./", "index.html", "The guides")]
 
 EXTRA_NAV = [
     (REPO, "Repository"),

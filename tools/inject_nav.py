@@ -32,16 +32,15 @@ TOP, BOTTOM = "nav-top", "nav-bottom"
 def site_link(url: str, label: str) -> str:
     """A link that leaves Colab.
 
-    Colab shows a Google interstitial for any link off google.com, so a reader
-    clicking the breadcrumb gets a "Redirect Notice" page. That cannot be
-    suppressed from here. Opening in a new tab means the notebook they were
-    working in is still there behind it, which is the part that actually costs
-    them something.
+    Colab shows a Google interstitial for any link off google.com, and there is no
+    way around it from inside a notebook. An HTML anchor with target="_blank" was
+    tried and Colab strips the attribute, so the reader still loses their tab.
+    Plain markdown it is: same behaviour, less machinery.
 
-    Colab-to-Colab links, previous and next, are on google.com and are unaffected,
-    so they stay as ordinary markdown and open in place.
+    Colab-to-Colab links, previous and next and back-to-notebook, stay on
+    google.com and are unaffected.
     """
-    return f'<a href="{url}" target="_blank" rel="noopener">{label}</a>'
+    return f"[{label}]({url})"
 
 
 
