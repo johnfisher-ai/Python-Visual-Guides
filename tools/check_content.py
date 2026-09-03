@@ -30,7 +30,8 @@ REQUIRED: list[tuple[str, str]] = []
 BANNED = [
     (r"—", "prose em-dash"),
     (r"\b(licence|colour|behaviour|organis\w+)\b", "British spelling"),
-    (r"\b(the original|first version|an earlier version|was broken)\b",
+    (r"\b(in the original|the original (?:version|implementation|code)"
+     r"|the first version|an earlier version|used to be|was broken)\b",
      "describes an earlier version instead of the current one"),
     (r"\b(lorem ipsum|TODO|FIXME|XXX)\b", "placeholder left in"),
 ]

@@ -1,0 +1,994 @@
+{
+  "site": {
+    "title": "Python, Visually",
+    "repo": "Python-Visual-Guides",
+    "owner": "johnfisher-ai",
+    "tagline": "Learn Python by running it. Every guide is a set of Colab notebooks."
+  },
+  "guides": [
+    {
+      "slug": "python-from-the-start",
+      "number": 1,
+      "band": "Spine",
+      "title": "Python from the Start",
+      "subtitle": "The language itself",
+      "status": "building",
+      "intro": "The language, from nothing to writing your own modules. Everything else in the library assumes this one.",
+      "prerequisites": "None. If you have never written a line of code, start here.",
+      "notebooks": [
+        {
+          "n": 1,
+          "slug": "running-python",
+          "title": "Running Python",
+          "blurb": "Colab, cells, print, and the read-eval loop"
+        },
+        {
+          "n": 2,
+          "slug": "values-and-variables",
+          "title": "Values and Variables",
+          "blurb": "Assignment, names, and what a variable actually is"
+        },
+        {
+          "n": 3,
+          "slug": "numbers",
+          "title": "Numbers",
+          "blurb": "int, float, integer division, and why 0.1 + 0.2 is not 0.3"
+        },
+        {
+          "n": 4,
+          "slug": "strings",
+          "title": "Strings",
+          "blurb": "Slicing, f-strings, methods, and immutability"
+        },
+        {
+          "n": 5,
+          "slug": "booleans-and-comparison",
+          "title": "Booleans and Comparison",
+          "blurb": "Truthiness, and why `is` is not `==`"
+        },
+        {
+          "n": 6,
+          "slug": "lists",
+          "title": "Lists",
+          "blurb": "Mutation, aliasing, and the copy that was not a copy"
+        },
+        {
+          "n": 7,
+          "slug": "tuples-and-unpacking",
+          "title": "Tuples and Unpacking",
+          "blurb": "Immutability as a feature, and multiple return values"
+        },
+        {
+          "n": 8,
+          "slug": "dictionaries",
+          "title": "Dictionaries",
+          "blurb": "The workhorse. get, setdefault, and iteration order"
+        },
+        {
+          "n": 9,
+          "slug": "sets",
+          "title": "Sets",
+          "blurb": "Membership, deduplication, and set algebra"
+        },
+        {
+          "n": 10,
+          "slug": "conditionals",
+          "title": "Conditionals",
+          "blurb": "if, elif, else, and the guard clause"
+        },
+        {
+          "n": 11,
+          "slug": "loops",
+          "title": "Loops",
+          "blurb": "for, while, break, continue, enumerate, zip"
+        },
+        {
+          "n": 12,
+          "slug": "comprehensions",
+          "title": "Comprehensions",
+          "blurb": "The Python idiom, and when it stops being readable"
+        },
+        {
+          "n": 13,
+          "slug": "functions",
+          "title": "Functions",
+          "blurb": "Arguments, returns, and the mutable default argument trap"
+        },
+        {
+          "n": 14,
+          "slug": "scope",
+          "title": "Scope",
+          "blurb": "Local, global, closures, and why your variable did not change"
+        },
+        {
+          "n": 15,
+          "slug": "errors-and-exceptions",
+          "title": "Errors and Exceptions",
+          "blurb": "Reading a traceback, try/except, and raising your own"
+        },
+        {
+          "n": 16,
+          "slug": "files-and-paths",
+          "title": "Files and Paths",
+          "blurb": "Reading, writing, context managers, pathlib"
+        },
+        {
+          "n": 17,
+          "slug": "modules-and-imports",
+          "title": "Modules and Imports",
+          "blurb": "Your own modules, the import path, and `if __name__`"
+        },
+        {
+          "n": 18,
+          "slug": "environments-and-pip",
+          "title": "Environments and pip",
+          "blurb": "venv, requirements, and why the tutorial broke"
+        },
+        {
+          "n": 19,
+          "slug": "debugging",
+          "title": "Debugging",
+          "blurb": "print, breakpoint, and reading the error you already have"
+        },
+        {
+          "n": 20,
+          "slug": "where-next",
+          "title": "Where Next",
+          "blurb": "A map of the other guides, and what to read for what"
+        }
+      ]
+    },
+    {
+      "slug": "files-paths-and-formats",
+      "number": 2,
+      "band": "Spine",
+      "title": "Files, Paths and Formats",
+      "subtitle": "Getting data in and out",
+      "status": "planned",
+      "intro": "Reading and writing real files: text, CSV, JSON, Excel, and the encodings that break them.",
+      "prerequisites": "Python from the Start.",
+      "notebooks": [
+        {
+          "n": 1,
+          "slug": "paths",
+          "title": "Paths",
+          "blurb": "pathlib, absolute against relative, and why the file was not found"
+        },
+        {
+          "n": 2,
+          "slug": "reading-and-writing-text",
+          "title": "Reading and Writing Text",
+          "blurb": "open, modes, and the context manager that closes it for you"
+        },
+        {
+          "n": 3,
+          "slug": "encodings",
+          "title": "Encodings",
+          "blurb": "UTF-8, what mojibake actually is, and the errors argument"
+        },
+        {
+          "n": 4,
+          "slug": "csv",
+          "title": "CSV",
+          "blurb": "The csv module, DictReader, and the quoting nobody expects"
+        },
+        {
+          "n": 5,
+          "slug": "json-on-disk",
+          "title": "JSON on Disk",
+          "blurb": "dump and load, and what does not survive a round trip"
+        },
+        {
+          "n": 6,
+          "slug": "excel-files",
+          "title": "Excel Files",
+          "blurb": "openpyxl, sheets, and why your date arrived as a number"
+        },
+        {
+          "n": 7,
+          "slug": "directories",
+          "title": "Directories",
+          "blurb": "Walking a tree, globbing, and building a manifest of what you found"
+        },
+        {
+          "n": 8,
+          "slug": "compression-and-archives",
+          "title": "Compression and Archives",
+          "blurb": "zip and gzip, and reading without extracting first"
+        },
+        {
+          "n": 9,
+          "slug": "writing-safely",
+          "title": "Writing Safely",
+          "blurb": "tempfile, atomic replace, and not corrupting your own data"
+        },
+        {
+          "n": 10,
+          "slug": "a-small-pipeline",
+          "title": "A Small Pipeline",
+          "blurb": "Read many files, clean them, write one. The shape of most real work"
+        }
+      ]
+    },
+    {
+      "slug": "object-oriented-python",
+      "number": 3,
+      "band": "Spine",
+      "title": "Object-Oriented Python",
+      "subtitle": "Classes, and when not to use them",
+      "status": "planned",
+      "intro": "Classes, inheritance, dataclasses, and an honest look at when a function is the better answer.",
+      "prerequisites": "Python from the Start.",
+      "notebooks": [
+        {
+          "n": 1,
+          "slug": "why-classes",
+          "title": "Why Classes",
+          "blurb": "The problem they solve, and three cases where a function is better"
+        },
+        {
+          "n": 2,
+          "slug": "your-first-class",
+          "title": "Your First Class",
+          "blurb": "__init__, attributes, and self demystified"
+        },
+        {
+          "n": 3,
+          "slug": "methods",
+          "title": "Methods",
+          "blurb": "Behavior that belongs to the object, and what self is doing"
+        },
+        {
+          "n": 4,
+          "slug": "dunder-methods",
+          "title": "Dunder Methods",
+          "blurb": "__repr__, __str__, __eq__, and making your object printable"
+        },
+        {
+          "n": 5,
+          "slug": "properties",
+          "title": "Properties",
+          "blurb": "Computed attributes, and validation without a getter for everything"
+        },
+        {
+          "n": 6,
+          "slug": "class-and-static-methods",
+          "title": "Class and Static Methods",
+          "blurb": "Alternative constructors, and methods that need no instance"
+        },
+        {
+          "n": 7,
+          "slug": "inheritance",
+          "title": "Inheritance",
+          "blurb": "Subclassing, super(), and the method resolution order"
+        },
+        {
+          "n": 8,
+          "slug": "composition-over-inheritance",
+          "title": "Composition over Inheritance",
+          "blurb": "The case against the hierarchy you were about to build"
+        },
+        {
+          "n": 9,
+          "slug": "dataclasses",
+          "title": "Dataclasses",
+          "blurb": "Most of the above, for free, in one decorator"
+        },
+        {
+          "n": 10,
+          "slug": "interfaces",
+          "title": "Interfaces",
+          "blurb": "Abstract base classes, Protocols, and declaring what you require"
+        },
+        {
+          "n": 11,
+          "slug": "exceptions-as-classes",
+          "title": "Exceptions as Classes",
+          "blurb": "Your own exception hierarchy, and what to put in it"
+        },
+        {
+          "n": 12,
+          "slug": "a-worked-design",
+          "title": "A Worked Design",
+          "blurb": "One problem, solved with functions and then with classes, side by side"
+        }
+      ]
+    },
+    {
+      "slug": "apis-and-json",
+      "number": 4,
+      "band": "Spine",
+      "title": "APIs and JSON",
+      "subtitle": "Talking to the rest of the internet",
+      "status": "planned",
+      "intro": "HTTP, requests, authentication, pagination and rate limits, ending in a client you would reuse.",
+      "prerequisites": "Python from the Start, and Files, Paths and Formats.",
+      "notebooks": [
+        {
+          "n": 1,
+          "slug": "what-an-api-is",
+          "title": "What an API Is",
+          "blurb": "Request, response, and the shape of an HTTP conversation"
+        },
+        {
+          "n": 2,
+          "slug": "your-first-request",
+          "title": "Your First Request",
+          "blurb": "requests.get, and everything the response object carries"
+        },
+        {
+          "n": 3,
+          "slug": "status-codes",
+          "title": "Status Codes",
+          "blurb": "200, 404, 429, 500, and what your code should do about each"
+        },
+        {
+          "n": 4,
+          "slug": "query-parameters",
+          "title": "Query Parameters",
+          "blurb": "The params argument, encoding, and building a URL correctly"
+        },
+        {
+          "n": 5,
+          "slug": "json-in-a-response",
+          "title": "JSON in a Response",
+          "blurb": "Parsing, nested structures, and reaching the field you want"
+        },
+        {
+          "n": 6,
+          "slug": "headers-and-content-types",
+          "title": "Headers and Content Types",
+          "blurb": "What you sent, what came back, and why it matters"
+        },
+        {
+          "n": 7,
+          "slug": "authentication",
+          "title": "Authentication",
+          "blurb": "API keys, bearer tokens, and never committing either"
+        },
+        {
+          "n": 8,
+          "slug": "pagination",
+          "title": "Pagination",
+          "blurb": "Cursors, page numbers, and a loop that terminates"
+        },
+        {
+          "n": 9,
+          "slug": "rate-limits",
+          "title": "Rate Limits",
+          "blurb": "429, backoff, and being a good citizen of someone else's server"
+        },
+        {
+          "n": 10,
+          "slug": "errors-and-retries",
+          "title": "Errors and Retries",
+          "blurb": "Timeouts, connection failures, and what is worth retrying"
+        },
+        {
+          "n": 11,
+          "slug": "sending-data",
+          "title": "Sending Data",
+          "blurb": "POST, PUT, DELETE, and what idempotent means in practice"
+        },
+        {
+          "n": 12,
+          "slug": "a-real-client",
+          "title": "A Real Client",
+          "blurb": "One API wrapped in a small, testable module you would reuse"
+        }
+      ]
+    },
+    {
+      "slug": "testing-and-packaging",
+      "number": 5,
+      "band": "Spine",
+      "title": "Testing and Packaging",
+      "subtitle": "Making it survive contact with other people",
+      "status": "planned",
+      "intro": "pytest, virtual environments, project layout, and running the suite on every push.",
+      "prerequisites": "Python from the Start, and Object-Oriented Python.",
+      "notebooks": [
+        {
+          "n": 1,
+          "slug": "why-test",
+          "title": "Why Test",
+          "blurb": "The bug you are going to reintroduce next week"
+        },
+        {
+          "n": 2,
+          "slug": "your-first-test",
+          "title": "Your First Test",
+          "blurb": "pytest, plain assert, and running the suite"
+        },
+        {
+          "n": 3,
+          "slug": "test-structure",
+          "title": "Test Structure",
+          "blurb": "Arrange, act, assert, and one behavior per test"
+        },
+        {
+          "n": 4,
+          "slug": "fixtures",
+          "title": "Fixtures",
+          "blurb": "Setup without repetition, and scope"
+        },
+        {
+          "n": 5,
+          "slug": "parametrize",
+          "title": "Parametrize",
+          "blurb": "The same test over many inputs, reported separately"
+        },
+        {
+          "n": 6,
+          "slug": "testing-failure",
+          "title": "Testing Failure",
+          "blurb": "pytest.raises, and asserting that the right thing went wrong"
+        },
+        {
+          "n": 7,
+          "slug": "virtual-environments",
+          "title": "Virtual Environments",
+          "blurb": "venv, why it exists, and the tutorial that broke without one"
+        },
+        {
+          "n": 8,
+          "slug": "requirements-and-pinning",
+          "title": "Requirements and Pinning",
+          "blurb": "Recording an environment somebody else can reproduce"
+        },
+        {
+          "n": 9,
+          "slug": "project-layout",
+          "title": "Project Layout",
+          "blurb": "src, imports that work from anywhere, and the editable install"
+        },
+        {
+          "n": 10,
+          "slug": "continuous-integration",
+          "title": "Continuous Integration",
+          "blurb": "Running the suite on every push, and reading a failed run"
+        }
+      ]
+    },
+    {
+      "slug": "numpy-deep-dive",
+      "number": 6,
+      "band": "Libraries",
+      "title": "NumPy, Deep Dive",
+      "subtitle": "Arrays, shapes and vectorisation",
+      "status": "planned",
+      "intro": "The mental shift from looping to thinking in arrays, including the shape errors and how to read them.",
+      "prerequisites": "Python from the Start.",
+      "notebooks": [
+        {
+          "n": 1,
+          "slug": "why-numpy",
+          "title": "Why NumPy",
+          "blurb": "The loop you are about to stop writing"
+        },
+        {
+          "n": 2,
+          "slug": "creating-arrays",
+          "title": "Creating Arrays",
+          "blurb": "From lists, and with zeros, arange and linspace"
+        },
+        {
+          "n": 3,
+          "slug": "dtype",
+          "title": "dtype",
+          "blurb": "int64, float64, and the silent overflow that ate your number"
+        },
+        {
+          "n": 4,
+          "slug": "shape",
+          "title": "Shape",
+          "blurb": "Dimensions, reshape, and what -1 means"
+        },
+        {
+          "n": 5,
+          "slug": "indexing-and-slicing",
+          "title": "Indexing and Slicing",
+          "blurb": "And the view that shares memory with the array you sliced"
+        },
+        {
+          "n": 6,
+          "slug": "boolean-masks",
+          "title": "Boolean Masks",
+          "blurb": "Filtering an array without writing a loop"
+        },
+        {
+          "n": 7,
+          "slug": "fancy-indexing",
+          "title": "Fancy Indexing",
+          "blurb": "Index arrays, and knowing when you got a copy"
+        },
+        {
+          "n": 8,
+          "slug": "broadcasting",
+          "title": "Broadcasting",
+          "blurb": "The rules, and how to read the shape error you just got"
+        },
+        {
+          "n": 9,
+          "slug": "vectorized-math",
+          "title": "Vectorized Math",
+          "blurb": "Universal functions, and elementwise thinking"
+        },
+        {
+          "n": 10,
+          "slug": "aggregation",
+          "title": "Aggregation",
+          "blurb": "sum, mean, min, max, and what they collapse"
+        },
+        {
+          "n": 11,
+          "slug": "the-axis-argument",
+          "title": "The axis Argument",
+          "blurb": "The single most misunderstood parameter in the library"
+        },
+        {
+          "n": 12,
+          "slug": "random-numbers",
+          "title": "Random Numbers",
+          "blurb": "Generator, seeds, and results somebody else can reproduce"
+        },
+        {
+          "n": 13,
+          "slug": "linear-algebra",
+          "title": "Linear Algebra",
+          "blurb": "matmul, solve, the @ operator, and least squares"
+        },
+        {
+          "n": 14,
+          "slug": "performance",
+          "title": "Performance",
+          "blurb": "Why vectorized is faster, measured rather than asserted"
+        }
+      ]
+    },
+    {
+      "slug": "pandas-deep-dive",
+      "number": 7,
+      "band": "Libraries",
+      "title": "Pandas, Deep Dive",
+      "subtitle": "Tabular data, properly",
+      "status": "planned",
+      "intro": "Indexing, grouping, reshaping and merging, with the traps that cost people days.",
+      "prerequisites": "NumPy, Deep Dive.",
+      "notebooks": [
+        {
+          "n": 1,
+          "slug": "why-pandas",
+          "title": "Why Pandas",
+          "blurb": "Tables with labels, and what that buys you"
+        },
+        {
+          "n": 2,
+          "slug": "series",
+          "title": "Series",
+          "blurb": "The labelled array, and the index you did not ask for"
+        },
+        {
+          "n": 3,
+          "slug": "dataframe",
+          "title": "DataFrame",
+          "blurb": "Construction, and looking at the shape of your data"
+        },
+        {
+          "n": 4,
+          "slug": "reading-data",
+          "title": "Reading Data",
+          "blurb": "read_csv, and the arguments that actually matter"
+        },
+        {
+          "n": 5,
+          "slug": "inspecting",
+          "title": "Inspecting",
+          "blurb": "head, info, describe, dtypes, and reading them properly"
+        },
+        {
+          "n": 6,
+          "slug": "selecting-columns",
+          "title": "Selecting Columns",
+          "blurb": "The two syntaxes, and which one to prefer"
+        },
+        {
+          "n": 7,
+          "slug": "loc-and-iloc",
+          "title": "loc and iloc",
+          "blurb": "Label against position, and the error you keep hitting"
+        },
+        {
+          "n": 8,
+          "slug": "boolean-filtering",
+          "title": "Boolean Filtering",
+          "blurb": "Masks, and combining conditions without a subtle bug"
+        },
+        {
+          "n": 9,
+          "slug": "the-index",
+          "title": "The Index",
+          "blurb": "What it is for, setting it, resetting it, and multi-level"
+        },
+        {
+          "n": 10,
+          "slug": "missing-data",
+          "title": "Missing Data",
+          "blurb": "NaN against None, and what dropna actually drops"
+        },
+        {
+          "n": 11,
+          "slug": "adding-and-changing-columns",
+          "title": "Adding and Changing Columns",
+          "blurb": "assign, and SettingWithCopyWarning finally explained"
+        },
+        {
+          "n": 12,
+          "slug": "groupby",
+          "title": "groupby",
+          "blurb": "Split, apply, combine, and what the object before .agg is"
+        },
+        {
+          "n": 13,
+          "slug": "aggregating",
+          "title": "Aggregating",
+          "blurb": "Multiple functions, named output, and transform against agg"
+        },
+        {
+          "n": 14,
+          "slug": "reshaping",
+          "title": "Reshaping",
+          "blurb": "pivot, melt, and long against wide as a decision"
+        },
+        {
+          "n": 15,
+          "slug": "merging",
+          "title": "Merging",
+          "blurb": "The four joins, and the duplicate key that invents rows"
+        },
+        {
+          "n": 16,
+          "slug": "dates-and-times",
+          "title": "Dates and Times",
+          "blurb": "Parsing, time zones, and resampling a series"
+        },
+        {
+          "n": 17,
+          "slug": "strings",
+          "title": "Strings",
+          "blurb": "The .str accessor, and vectorized text work"
+        },
+        {
+          "n": 18,
+          "slug": "performance-and-memory",
+          "title": "Performance and Memory",
+          "blurb": "dtypes, categories, and reading a file too big for memory"
+        }
+      ]
+    },
+    {
+      "slug": "matplotlib-deep-dive",
+      "number": 8,
+      "band": "Libraries",
+      "title": "Matplotlib, Deep Dive",
+      "subtitle": "Plots you can defend",
+      "status": "planned",
+      "intro": "The figure and axes object model, and taking one chart all the way to publishable.",
+      "prerequisites": "NumPy, Deep Dive.",
+      "notebooks": [
+        {
+          "n": 1,
+          "slug": "figure-and-axes",
+          "title": "Figure and Axes",
+          "blurb": "The object model, instead of pyplot as magic"
+        },
+        {
+          "n": 2,
+          "slug": "your-first-plot",
+          "title": "Your First Plot",
+          "blurb": "plot, and understanding what each call returned"
+        },
+        {
+          "n": 3,
+          "slug": "lines-and-scatter",
+          "title": "Lines and Scatter",
+          "blurb": "The two workhorses, and when each one lies"
+        },
+        {
+          "n": 4,
+          "slug": "bars-and-histograms",
+          "title": "Bars and Histograms",
+          "blurb": "Categorical and distributional, and bin choice as a decision"
+        },
+        {
+          "n": 5,
+          "slug": "multiple-axes",
+          "title": "Multiple Axes",
+          "blurb": "subplots, shared scales, and a grid that reads"
+        },
+        {
+          "n": 6,
+          "slug": "labels",
+          "title": "Labels",
+          "blurb": "Titles, axis labels, and the units you left off"
+        },
+        {
+          "n": 7,
+          "slug": "ticks",
+          "title": "Ticks",
+          "blurb": "Locators, formatters, and putting dates on an axis"
+        },
+        {
+          "n": 8,
+          "slug": "color",
+          "title": "Color",
+          "blurb": "A validated palette, and why the default is not one"
+        },
+        {
+          "n": 9,
+          "slug": "annotation",
+          "title": "Annotation",
+          "blurb": "Text, arrows, and pointing at the thing that matters"
+        },
+        {
+          "n": 10,
+          "slug": "style",
+          "title": "Style",
+          "blurb": "rcParams and stylesheets, for consistency without repetition"
+        },
+        {
+          "n": 11,
+          "slug": "saving",
+          "title": "Saving",
+          "blurb": "dpi, vector against raster, and a size that survives a document"
+        },
+        {
+          "n": 12,
+          "slug": "a-chart-you-would-publish",
+          "title": "A Chart You Would Publish",
+          "blurb": "One figure taken all the way to finished"
+        }
+      ]
+    },
+    {
+      "slug": "scipy-deep-dive",
+      "number": 9,
+      "band": "Libraries",
+      "title": "SciPy, Deep Dive",
+      "subtitle": "Optimisation, signals and statistics",
+      "status": "planned",
+      "intro": "The parts of SciPy worth knowing, and how to navigate a library that is really twelve libraries.",
+      "prerequisites": "NumPy, Deep Dive.",
+      "notebooks": [
+        {
+          "n": 1,
+          "slug": "what-scipy-is",
+          "title": "What SciPy Is",
+          "blurb": "A toolbox rather than a topic, and how to navigate it"
+        },
+        {
+          "n": 2,
+          "slug": "interpolation",
+          "title": "Interpolation",
+          "blurb": "Filling gaps, and the honesty of the method you picked"
+        },
+        {
+          "n": 3,
+          "slug": "optimization",
+          "title": "Optimization",
+          "blurb": "minimize, and reading the result object it hands back"
+        },
+        {
+          "n": 4,
+          "slug": "curve-fitting",
+          "title": "Curve Fitting",
+          "blurb": "curve_fit, and the covariance you should be reporting"
+        },
+        {
+          "n": 5,
+          "slug": "root-finding",
+          "title": "Root Finding",
+          "blurb": "brentq, bracketing, and why it failed to converge"
+        },
+        {
+          "n": 6,
+          "slug": "numerical-integration",
+          "title": "Numerical Integration",
+          "blurb": "quad, and recognising when the answer is nonsense"
+        },
+        {
+          "n": 7,
+          "slug": "decompositions",
+          "title": "Decompositions",
+          "blurb": "Linear algebra past what NumPy gives you"
+        },
+        {
+          "n": 8,
+          "slug": "sparse-matrices",
+          "title": "Sparse Matrices",
+          "blurb": "When your matrix is mostly zeros, and the memory you save"
+        },
+        {
+          "n": 9,
+          "slug": "signal-processing",
+          "title": "Signal Processing",
+          "blurb": "Filtering and smoothing without inventing a trend"
+        },
+        {
+          "n": 10,
+          "slug": "statistics",
+          "title": "Statistics",
+          "blurb": "Distributions, tests, and what scipy.stats will and will not do"
+        },
+        {
+          "n": 11,
+          "slug": "spatial",
+          "title": "Spatial",
+          "blurb": "Distances, KD-trees, and nearest neighbours"
+        },
+        {
+          "n": 12,
+          "slug": "images-as-arrays",
+          "title": "Images as Arrays",
+          "blurb": "ndimage, and an image as data you can index"
+        }
+      ]
+    },
+    {
+      "slug": "scikit-learn-deep-dive",
+      "number": 10,
+      "band": "Libraries",
+      "title": "scikit-learn, Deep Dive",
+      "subtitle": "Estimators, pipelines, evaluation",
+      "status": "planned",
+      "intro": "The library rather than the statistics: the estimator API, pipelines, and evaluation done honestly.",
+      "prerequisites": "Pandas, Deep Dive. For the statistics, see the Visual Handbook.",
+      "notebooks": [
+        {
+          "n": 1,
+          "slug": "the-estimator-api",
+          "title": "The Estimator API",
+          "blurb": "fit and predict, and why every model looks the same"
+        },
+        {
+          "n": 2,
+          "slug": "your-first-model",
+          "title": "Your First Model",
+          "blurb": "Train, predict, score, in six lines"
+        },
+        {
+          "n": 3,
+          "slug": "train-and-test",
+          "title": "Train and Test",
+          "blurb": "The split, the seed, and what the test set is for"
+        },
+        {
+          "n": 4,
+          "slug": "preprocessing",
+          "title": "Preprocessing",
+          "blurb": "Scaling and encoding, and fitting on train only"
+        },
+        {
+          "n": 5,
+          "slug": "pipelines",
+          "title": "Pipelines",
+          "blurb": "What the pipeline exists to prevent, demonstrated"
+        },
+        {
+          "n": 6,
+          "slug": "cross-validation",
+          "title": "Cross-Validation",
+          "blurb": "cross_val_score, the fold, and variance across folds"
+        },
+        {
+          "n": 7,
+          "slug": "regression-metrics",
+          "title": "Regression Metrics",
+          "blurb": "And what each single number hides"
+        },
+        {
+          "n": 8,
+          "slug": "classification-metrics",
+          "title": "Classification Metrics",
+          "blurb": "Precision, recall, and the threshold as a business decision"
+        },
+        {
+          "n": 9,
+          "slug": "imbalanced-classes",
+          "title": "Imbalanced Classes",
+          "blurb": "Accuracy that lies, and what to report instead"
+        },
+        {
+          "n": 10,
+          "slug": "hyperparameter-search",
+          "title": "Hyperparameter Search",
+          "blurb": "Grid, random, and why nested CV exists"
+        },
+        {
+          "n": 11,
+          "slug": "feature-importance",
+          "title": "Feature Importance",
+          "blurb": "Permutation importance, and why the built-in one misleads"
+        },
+        {
+          "n": 12,
+          "slug": "mixed-column-types",
+          "title": "Mixed Column Types",
+          "blurb": "ColumnTransformer, and one pipeline for a real table"
+        },
+        {
+          "n": 13,
+          "slug": "saving-a-model",
+          "title": "Saving a Model",
+          "blurb": "Persisting, loading, and the version pin you will need"
+        },
+        {
+          "n": 14,
+          "slug": "a-complete-workflow",
+          "title": "A Complete Workflow",
+          "blurb": "Raw table to a model you could defend in a meeting"
+        }
+      ]
+    },
+    {
+      "slug": "projects-end-to-end",
+      "number": 11,
+      "band": "Projects",
+      "title": "Projects, End to End",
+      "subtitle": "Everything at once",
+      "status": "planned",
+      "intro": "Eight projects that use the whole library, each one scoped to finish.",
+      "prerequisites": "Most of the guides above.",
+      "notebooks": [
+        {
+          "n": 1,
+          "slug": "a-cleaning-project",
+          "title": "A Cleaning Project",
+          "blurb": "One messy export, made usable, with every decision recorded"
+        },
+        {
+          "n": 2,
+          "slug": "an-api-project",
+          "title": "An API Project",
+          "blurb": "Pull a live feed, store it, and summarise what arrived"
+        },
+        {
+          "n": 3,
+          "slug": "an-analysis-project",
+          "title": "An Analysis Project",
+          "blurb": "A question, answered with evidence and an honest interval"
+        },
+        {
+          "n": 4,
+          "slug": "a-visualization-project",
+          "title": "A Visualization Project",
+          "blurb": "One dataset, five figures, one argument"
+        },
+        {
+          "n": 5,
+          "slug": "a-modelling-project",
+          "title": "A Modelling Project",
+          "blurb": "Predict something, and report what the model cannot do"
+        },
+        {
+          "n": 6,
+          "slug": "a-small-package",
+          "title": "A Small Package",
+          "blurb": "Code somebody else can install and run"
+        },
+        {
+          "n": 7,
+          "slug": "an-automation-project",
+          "title": "An Automation Project",
+          "blurb": "A scheduled job that does something genuinely useful"
+        },
+        {
+          "n": 8,
+          "slug": "scoping-your-own",
+          "title": "Scoping Your Own",
+          "blurb": "How to size, start and actually finish a project alone"
+        }
+      ]
+    }
+  ]
+}

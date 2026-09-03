@@ -12,17 +12,26 @@ REPO = "https://github.com/johnfisher-ai/Python-Visual-Guides"
 PUBLIC = Path(__file__).resolve().parent.parent / "public"
 
 # Nav order. A page appears only once it exists, so the nav never offers a 404.
-# Reading order. A page appears in the nav and in the pager only once its file
-# exists, so a half-built site never offers a 404. Edit this list; everything
-# else follows from it.
-PAGES = [
-    ("./", "index.html", "Overview"),
-    # ("analysis.html", "analysis.html", "The analysis"),
-    # ("code.html",     "code.html",     "The code"),
-]
+COLAB = "https://colab.research.google.com/github/johnfisher-ai/Python-Visual-Guides/blob/main/"
+RAW = f"{REPO}/blob/main/"
 
-# Extra nav entries that are not pages in the sequence. The repository is almost
-# always wanted; add a notebook, a Colab link, a DOI as needed.
+
+def _sequence():
+    """Reading order for the previous/next pager: the library, then every guide."""
+    from tools.manifest import load
+    _site, guides = load()
+    return [("./", "index.html", "The library")] + [
+        (g.page, g.page, g.title) for g in guides
+    ]
+
+
+# The pager walks every guide in order.
+PAGES = _sequence()
+
+# The nav stays short. Eleven guides across the top would wrap to three lines and
+# tell a reader nothing; the library page lists them properly.
+NAV = [("./", "index.html", "The library")]
+
 EXTRA_NAV = [
     (REPO, "Repository"),
 ]
@@ -30,7 +39,7 @@ EXTRA_NAV = [
 
 def _nav(current: str) -> str:
     out = ['<nav class="site"><div class="wrap">']
-    for href, filename, label in PAGES:
+    for href, filename, label in NAV:
         if filename != current and not (PUBLIC / filename).exists():
             continue
         aria = ' aria-current="page"' if filename == current else ""

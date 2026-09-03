@@ -1,0 +1,5 @@
+# What CI installs to execute the notebooks. Add a library the first time a
+# notebook imports it, and pin it, so a run six months from now still works.
+jupyter==1.1.1
+nbconvert==7.16.6
+ipykernel==6.30.1

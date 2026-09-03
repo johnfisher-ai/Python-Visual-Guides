@@ -1,0 +1,79 @@
+name: Notebooks run
+
+# Executes the notebooks, because the notebook is the product and "it runs" is the
+# acceptance test. A human will not re-run twenty notebooks before every push.
+#
+# Two triggers on purpose:
+#   push          only the notebooks that changed, so it stays fast
+#   schedule      all of them, weekly, which is what catches the failures nobody
+#                 caused: a library that changed its API, a download URL that died,
+#                 a cell that only worked because a variable was still in memory.
+#
+# It runs a COPY. Nothing is written back, so a committed output is never silently
+# replaced by one from a runner with different versions.
+
+on:
+  push:
+    branches: [main]
+    paths: ["notebooks/**", "requirements.txt", ".github/workflows/notebooks.yml"]
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: notebooks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 2
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install
+        run: pip install --quiet -r requirements.txt
+
+      - name: Decide what to run
+        id: pick
+        run: |
+          set -uo pipefail
+          if [ "${{ github.event_name }}" = "push" ] && [ -n "${{ github.event.before }}" ]; then
+            git diff --name-only --diff-filter=d "${{ github.event.before }}" "${{ github.sha }}" \
+              -- 'notebooks/**/*.ipynb' | grep -v -- '-solutions.ipynb$' > /tmp/run || : > /tmp/run
+          fi
+          if [ ! -s /tmp/run ]; then
+            find notebooks -name '*.ipynb' -not -name '*-solutions.ipynb' | sort > /tmp/run
+            echo "running every notebook"
+          fi
+          echo "count=$(wc -l < /tmp/run | tr -d ' ')" >> "$GITHUB_OUTPUT"
+          sed 's/^/  /' /tmp/run
+
+      - name: Execute
+        if: steps.pick.outputs.count != '0'
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/out
+          fail=0
+          while IFS= read -r nb; do
+            echo "::group::$nb"
+            if jupyter nbconvert --to notebook --execute \
+                 --ExecutePreprocessor.timeout=600 \
+                 --output-dir /tmp/out --output "$(basename "$nb")" "$nb"; then
+              echo "ok"
+            else
+              echo "::error file=$nb::this notebook did not run top to bottom"
+              fail=1
+            fi
+            echo "::endgroup::"
+          done < /tmp/run
+          exit $fail

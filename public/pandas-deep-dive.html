@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pandas, Deep Dive · Python, Visually</title>
+<meta name="description" content="Indexing, grouping, reshaping and merging, with the traps that cost people days.">
+<link rel="canonical" href="https://johnfisher-ai.github.io/Python-Visual-Guides/pandas-deep-dive.html">
+<meta name="author" content="John Fisher">
+<meta name="theme-color" content="#2f5d94">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="A Config-Driven Agent Network">
+<meta property="og:title" content="Pandas, Deep Dive">
+<meta property="og:description" content="Indexing, grouping, reshaping and merging, with the traps that cost people days.">
+<meta property="og:url" content="https://johnfisher-ai.github.io/Python-Visual-Guides/pandas-deep-dive.html">
+<meta property="og:image" content="https://johnfisher-ai.github.io/Python-Visual-Guides/assets/img/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
+<meta property="og:image:alt" content="A broker agent fanning out to five specialist agents, with a human approval gate on the risky path.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Pandas, Deep Dive">
+<meta name="twitter:description" content="Indexing, grouping, reshaping and merging, with the traps that cost people days.">
+<meta name="twitter:image" content="https://johnfisher-ai.github.io/Python-Visual-Guides/assets/img/social-card.png">
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <p class="kicker">Guide 7 · Libraries</p>
+    <h1>Pandas, Deep Dive</h1>
+    <p class="byline">Tabular data, properly</p>
+  </div>
+</header>
+
+<nav class="site"><div class="wrap"><a href="./">The library</a><a href="https://github.com/johnfisher-ai/Python-Visual-Guides">Repository</a></div></nav>
+
+<main>
+<div class="wrap">
+
+  <section>
+    <p class="lede">Indexing, grouping, reshaping and merging, with the traps that cost people days.</p>
+    <p class="meta"><span class="badge st-planned">Planned</span>
+       <span>18 notebooks</span>
+       <span>0 written</span></p>
+    <p class="pre"><b>Before this guide:</b> NumPy, Deep Dive.</p>
+  </section>
+
+  <section>
+    <h2>The notebooks</h2>
+    <p>Everything is in the notebook: the explanation, the code, the output and the figures.
+    Open one in Colab to run it, or read it on GitHub first.</p>
+    <div class="scroll">
+      <table class="nbs"><tbody><tr class="soon"><td class="n">1</td><td class="t"><b>Why Pandas</b><span>Tables with labels, and what that buys you</span></td><td class="go">not yet written</td></tr><tr class="soon"><td class="n">2</td><td class="t"><b>Series</b><span>The labelled array, and the index you did not ask for</span></td><td class="go">not yet written</td></tr><tr class="soon"><td class="n">3</td><td class="t"><b>DataFrame</b><span>Construction, and looking at the shape of your data</span></td><td class="go">not yet written</td></tr><tr class="soon"><td class="n">4</td><td class="t"><b>Reading Data</b><span>read_csv, and the arguments that actually matter</span></td><td class="go">not yet written</td></tr><tr class="soon"><td class="n">5</td><td class="t"><b>Inspecting</b><span>head, info, describe, dtypes, and reading them properly</span></td><td class="go">not yet written</td></tr><tr class="soon"><td class="n">6</td><td class="t"><b>Selecting Columns</b><span>The two syntaxes, and which one to prefer</span></td><td class="go">not yet written</td></tr><tr class="soon"><td class="n">7</td><td class="t"><b>loc and iloc</b><span>Label against position, and the error you keep hitting</span></td><td class="go">not yet written</td></tr><tr class="soon"><td class="n">8</td><td class="t"><b>Boolean Filtering</b><span>Masks, and combining conditions without a subtle bug</span></td><td class="go">not yet written</td></tr><tr class="soon"><td class="n">9</td><td class="t"><b>The Index</b><span>What it is for, setting it, resetting it, and multi-level</span></td><td class="go">not yet written</td></tr><tr class="soon"><td class="n">10</td><td class="t"><b>Missing Data</b><span>NaN against None, and what dropna actually drops</span></td><td class="go">not yet written</td></tr><tr class="soon"><td class="n">11</td><td class="t"><b>Adding and Changing Columns</b><span>assign, and SettingWithCopyWarning finally explained</span></td><td class="go">not yet written</td></tr><tr class="soon"><td class="n">12</td><td class="t"><b>groupby</b><span>Split, apply, combine, and what the object before .agg is</span></td><td class="go">not yet written</td></tr><tr class="soon"><td class="n">13</td><td class="t"><b>Aggregating</b><span>Multiple functions, named output, and transform against agg</span></td><td class="go">not yet written</td></tr><tr class="soon"><td class="n">14</td><td class="t"><b>Reshaping</b><span>pivot, melt, and long against wide as a decision</span></td><td class="go">not yet written</td></tr><tr class="soon"><td class="n">15</td><td class="t"><b>Merging</b><span>The four joins, and the duplicate key that invents rows</span></td><td class="go">not yet written</td></tr><tr class="soon"><td class="n">16</td><td class="t"><b>Dates and Times</b><span>Parsing, time zones, and resampling a series</span></td><td class="go">not yet written</td></tr><tr class="soon"><td class="n">17</td><td class="t"><b>Strings</b><span>The .str accessor, and vectorized text work</span></td><td class="go">not yet written</td></tr><tr class="soon"><td class="n">18</td><td class="t"><b>Performance and Memory</b><span>dtypes, categories, and reading a file too big for memory</span></td><td class="go">not yet written</td></tr></tbody></table>
+    </div>
+  </section>
+
+</div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <nav class="pager"><a class="prev" href="numpy-deep-dive.html"><span>Previous</span><b>NumPy, Deep Dive</b></a><a class="next" href="matplotlib-deep-dive.html"><span>Next</span><b>Matplotlib, Deep Dive</b></a></nav>
+    <p class="sig">Built by John Fisher. Code under the MIT license.</p>
+  </div>
+</footer>
+
+</body>
+</html>

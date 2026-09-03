@@ -23,18 +23,16 @@ ALL=${1:-}
 run () { echo; echo "==> $1"; shift; "$@"; }
 
 pages () {
-  : # $PY tools/build_analysis.py
-  : # $PY tools/build_index.py      # build the entry page LAST, its nav links to the rest
+  $PY tools/build_guide.py
+  $PY tools/build_index.py    # last: it links to every guide page that now exists
 }
-
-if [ "$ALL" = "--all" ]; then
-  : # run "[raw] compute" $PY tools/compute_analysis.py
-fi
 
 echo; echo "==> pages, pass 1 of 2"; pages
 echo; echo "==> pages, pass 2 of 2 (resolves cross-links)"; pages
+run "validate the manifest"      $PY tools/manifest.py
 run "check every link resolves"  $PY tools/check_links.py
 run "check the house rules"      $PY tools/check_content.py
+run "check the notebook shape"   $PY tools/check_notebooks.py
 
 echo
 echo "==> done."
