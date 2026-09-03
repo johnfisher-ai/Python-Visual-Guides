@@ -52,6 +52,13 @@ def check(path: Path, problems: list) -> None:
         return
 
     cs = cells(nb)
+
+    # A notebook opened in Colab has no site around it. Without these a reader has
+    # no way back to the guide and no way on to the next notebook.
+    tags = [t for c in cs for t in c.get("metadata", {}).get("tags", [])]
+    if "nav-top" not in tags or "nav-bottom" not in tags:
+        problems.append((where, "no navigation cells. Run tools/inject_nav.py"))
+
     md = [(i, src(c)) for i, c in enumerate(cs) if c.get("cell_type") == "markdown"]
     found = [(i, h) for i, text in md for h in HEAD.findall(text)]
     order = [h for _, h in found if h in PARTS]

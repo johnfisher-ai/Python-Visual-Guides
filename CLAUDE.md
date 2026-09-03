@@ -80,6 +80,24 @@ thin it.**
 
 ---
 
+## Navigation
+
+A reader who opens a notebook in Colab has no site around it: no contents, no next, no way
+back. `tools/inject_nav.py` puts two generated cells into every notebook and the build runs
+it, so this is never hand-written and never drifts.
+
+| Cell | Tag | Carries |
+|---|---|---|
+| First | `nav-top` | Breadcrumb to the library and the guide, the title, the position |
+| Last | `nav-bottom` | Previous notebook, the guide contents, next notebook |
+
+Previous and next appear only when that neighbour actually exists, so a half-written guide
+never offers a link to a notebook that is not there. `check_notebooks.py` fails on a notebook
+with no navigation.
+
+**Do not hand-write a title cell.** `nav-top` owns the `# Heading`. A second one is a
+duplicate that the injector will not remove for you.
+
 ## Layout
 
 | Path | What it is |
