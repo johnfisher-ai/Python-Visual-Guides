@@ -74,14 +74,16 @@ def check(path: Path, problems: list) -> None:
     if len(code_after_setup) != 1:
         problems.append((where, f"Setup has {len(code_after_setup)} code cells, expected 1"))
 
-    # parts 3, 4 and 6 must carry committed output
+    # parts 3, 4 and 6 must show a reader something, though not every cell need
+    # print: an assignment legitimately produces nothing.
     for a, b in (("The idea", "Worked examples"),
                  ("Worked examples", "Your turn"),
                  ("Common errors", "Recap")):
-        for c in cs[idx[a] + 1: idx[b]]:
-            if c.get("cell_type") == "code" and src(c).strip() and not c.get("outputs"):
-                problems.append((where, f"a code cell under '{a}' has no committed output"))
-                break
+        run = [c for c in cs[idx[a] + 1: idx[b]]
+               if c.get("cell_type") == "code" and src(c).strip()]
+        if run and not any(c.get("outputs") for c in run):
+            problems.append((where, f"no code cell under '{a}' has committed output, "
+                                    f"so a reader on GitHub sees no results there"))
 
     # part 5 must contain no solved code
     for c in cs[idx["Your turn"] + 1: idx["Common errors"]]:
