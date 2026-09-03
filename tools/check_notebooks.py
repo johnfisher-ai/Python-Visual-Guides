@@ -123,8 +123,19 @@ def main() -> int:
     checked = 0
     for g in guides:
         for nb in g.notebooks:
-            if nb.exists:
-                check(nb.path, problems)
+            if not nb.exists:
+                continue
+            check(nb.path, problems)
+            checked += 1
+            # A solutions notebook is read on its own, so it needs navigation too.
+            # It is exempt from the eight-part shape, which is for teaching notebooks.
+            if nb.solutions.exists():
+                doc = json.loads(nb.solutions.read_text())
+                tags = [t for c in doc.get("cells", [])
+                        for t in c.get("metadata", {}).get("tags", [])]
+                if "nav-top" not in tags or "nav-bottom" not in tags:
+                    problems.append((nb.solutions.relative_to(ROOT),
+                                     "no navigation cells. Run tools/inject_nav.py"))
                 checked += 1
 
     if not checked:

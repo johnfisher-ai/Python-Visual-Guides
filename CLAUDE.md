@@ -101,8 +101,15 @@ site links are HTML anchors with `target="_blank"`: the interstitial still appea
 new tab, and the notebook they were working in is untouched behind it. Previous and next point
 at `colab.research.google.com`, are unaffected, and stay as markdown so they open in place.
 
-**Do not hand-write a title cell.** `nav-top` owns the `# Heading`. A second one is a
-duplicate that the injector will not remove for you.
+**Solutions notebooks get navigation too**, and are read on their own. Their footer goes
+**back to their own notebook** rather than on to the next one: somebody reading answers is
+mid-exercise, not moving through the guide. They are exempt from the eight-part shape, which
+is for teaching notebooks.
+
+**Do not hand-write a title cell**, in either file. `nav-top` owns the `# Heading`, and a
+second one is a duplicate the injector will not remove for you. It also carries no guide
+number and no "notebook N of M": the breadcrumb names the guide, the heading names the
+notebook, and a count goes stale the moment the order changes.
 
 ## Layout
 

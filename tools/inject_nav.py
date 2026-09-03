@@ -60,14 +60,26 @@ def cell(tag: str, text: str) -> dict:
             "source": text.strip("\n") + "\n"}
 
 
-def top_cell(site, g, nb) -> dict:
+def top_cell(site, g, nb, solutions: bool = False) -> dict:
     lib = site_link(f"{page.SITE}/", site["title"])
     guide = site_link(guide_url(g), g.title)
+    heading = f"{nb.title} &middot; Solutions" if solutions else nb.title
     return cell(TOP, f"""
 {lib} &nbsp;&rsaquo;&nbsp; {guide}
 
-# {nb.title}
+# {heading}
 """)
+
+
+def solutions_bottom_cell(site, g, nb) -> dict:
+    """Solutions go back to their own notebook, not on to the next one.
+
+    Somebody reading answers is mid-exercise, not moving through the guide, so
+    previous and next would take them somewhere they did not ask to go.
+    """
+    back = f"&#8592; **Back to:** [{nb.title}]({colab(g.slug, nb.filename)})"
+    contents = site_link(guide_url(g), f"{g.title} Notebooks")
+    return cell(BOTTOM, "---\n\n" + f"{back}  &nbsp;&middot;&nbsp;  {contents}" + "\n")
 
 
 def bottom_cell(site, g, nb) -> dict:
@@ -84,16 +96,17 @@ def bottom_cell(site, g, nb) -> dict:
     return cell(BOTTOM, "---\n\n" + "  &nbsp;·&nbsp;  ".join(parts) + "\n")
 
 
-def inject(site, g, nb) -> bool:
-    doc = json.loads(nb.path.read_text())
+def inject(site, g, nb, path, solutions: bool) -> bool:
+    doc = json.loads(path.read_text())
     cells = [c for c in doc["cells"]
              if TOP not in c.get("metadata", {}).get("tags", [])
              and BOTTOM not in c.get("metadata", {}).get("tags", [])]
-    doc["cells"] = [top_cell(site, g, nb)] + cells + [bottom_cell(site, g, nb)]
+    foot = solutions_bottom_cell(site, g, nb) if solutions else bottom_cell(site, g, nb)
+    doc["cells"] = [top_cell(site, g, nb, solutions)] + cells + [foot]
     new = json.dumps(doc, indent=1) + "\n"
-    if new == nb.path.read_text():
+    if new == path.read_text():
         return False
-    nb.path.write_text(new)
+    path.write_text(new)
     return True
 
 
@@ -102,9 +115,12 @@ def main() -> int:
     changed = 0
     for g in guides:
         for nb in g.notebooks:
-            if nb.exists and inject(site, g, nb):
-                print(f"  navigation set: {nb.path.relative_to(ROOT)}")
-                changed += 1
+            if not nb.exists:
+                continue
+            for path, sol in ((nb.path, False), (nb.solutions, True)):
+                if path.exists() and inject(site, g, nb, path, sol):
+                    print(f"  navigation set: {path.relative_to(ROOT)}")
+                    changed += 1
     print(f"  {changed} notebook(s) updated" if changed else "  navigation already current")
     return 0
 
