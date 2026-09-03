@@ -31,6 +31,7 @@ def band_rows(guides):
 
 def build():
     site, guides = load()
+    first = guides[0]
     total = sum(len(g.notebooks) for g in guides)
     written = sum(g.written for g in guides)
 
@@ -46,28 +47,33 @@ def build():
     )
     body += f"""
   <section>
-    <p class="lede">{e(site['tagline'])} The explanation, the code, the output and the figures
-    all live in the notebook. These pages exist only to get you to the right one.</p>
+    <p class="lede">Learn Python by running it. Every guide is a set of notebooks that open in
+    Google Colab: read a little, run a cell, change it, run it again. Nothing to install and
+    nothing to set up.</p>
+    <p>New to Python? Start with <a href="{first.page}"><strong>{e(first.title)}</strong></a>.
+    The guides below are in reading order.</p>
 
     <div class="figures">
       <div><span class="n">{len(guides)}</span><span class="l">guides</span></div>
       <div><span class="n">{total}</span><span class="l">notebooks planned</span></div>
       <div><span class="n">{written}</span><span class="l">written so far</span></div>
-      <div><span class="n">0</span><span class="l">setup required. It runs in a browser</span></div>
+      <div><span class="n">0</span><span class="l">things to install</span></div>
     </div>
 
     <div class="note">
-      <p><strong>How to use this.</strong> Every notebook opens in Google Colab and runs with
-      no installation. Read it on GitHub first if you prefer, then open it and change
-      something. The exercises are the point: there is a separate solutions notebook for each,
-      so nothing is spoiled by sitting next to the question.</p>
+      <p><strong>How a notebook works.</strong> Open one and it runs in your browser. Each has
+      the explanation, worked examples you can edit, exercises to try, and a section on the
+      errors that part of Python actually produces, with the real message shown.</p>
+      <p>The exercises are the point. Every notebook has a separate solutions file, so the
+      answer is never sitting one scroll below the question.</p>
     </div>
   </section>
 
   <section>
     <h2>The guides</h2>
-    <p>Three bands. The spine teaches the language, the library guides teach the tools, and the
-    projects put both to work. Inside the spine, each guide assumes the one before it.</p>
+    <p>The first five teach the language itself, and are best worked through in order: each one
+    assumes the one before it. The next five cover the libraries you will reach for once you can
+    write Python. The last puts everything to work on real problems.</p>
     <div class="scroll">
       <table class="guides"><tbody>{band_rows(guides)}</tbody></table>
     </div>

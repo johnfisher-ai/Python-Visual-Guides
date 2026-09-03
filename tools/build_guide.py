@@ -68,8 +68,8 @@ def build_one(site, g):
 
   <section>
     <h2>The notebooks</h2>
-    <p>Everything is in the notebook: the explanation, the code, the output and the figures.
-    Open one in Colab to run it, or read it on GitHub first.</p>
+    <p>Open one in Colab to run it, or read it on GitHub first. Each notebook is
+    self-contained, and each has a separate solutions file for its exercises.</p>
     <div class="scroll">
       <table class="nbs"><tbody>{rows(g)}</tbody></table>
     </div>
