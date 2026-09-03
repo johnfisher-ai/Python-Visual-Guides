@@ -69,6 +69,10 @@ headings. `tools/check_notebooks.py` enforces it, so a drift fails the build.
 **Solutions live in a separate notebook**, `NN-slug-solutions.ipynb`. Never in the same file:
 an answer one scroll below the question is not an exercise.
 
+**Link to it from `Your turn`**, with a Colab URL, after the encouragement to try first and
+before the tasks. A promise of solutions with no link leaves the reader hunting for a file
+they have no way to find. `check_notebooks.py` fails when the link is missing.
+
 **No size ceiling.** Comprehensive, visual and interactive beats small. The only limit is
 GitHub's: past a few megabytes it stops rendering a notebook in the browser and a reader sees
 "too big to display" instead of your work. If a notebook crosses that, **split it rather than
@@ -128,5 +132,8 @@ its committed code teaches the reader something false, and nothing but you will 
   that rather than silently ignoring it.
 - **It is very easy to solve your own exercise** while testing that it works, save, and ship
   the answer inside the question. `check_notebooks.py` fails on any code in a `Your turn` cell.
+- **A slice from a heading cell starts AT it, not after it.** The `## Heading` shares a cell
+  with the text under it, so `cells[idx + 1:]` silently skips the first paragraph. This made a
+  checker rule fail on a notebook that was correct.
 - **The nav is not the guide list.** Eleven guides across the top would wrap to three lines.
   Nav is the library plus the repository; the pager walks the guides.

@@ -100,6 +100,14 @@ def check(path: Path, problems: list) -> None:
         sol = path.with_name(path.name.replace(".ipynb", "-solutions.ipynb"))
         if not sol.exists():
             problems.append((where, f"no solutions notebook at {sol.name}"))
+        else:
+            # Promising a solutions notebook without linking it leaves the reader
+            # hunting for a file they have no way to find.
+            turn = "".join(src(c) for c in cs[idx["Your turn"]: idx["Common errors"]]
+                           if c.get("cell_type") == "markdown")
+            if sol.name not in turn:
+                problems.append((where, "the 'Your turn' section does not link "
+                                        f"{sol.name}, so a reader cannot reach it"))
 
 
 def main() -> int:

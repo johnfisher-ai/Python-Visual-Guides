@@ -36,6 +36,11 @@ def rows(g):
             read = f"{page.REPO}/blob/main/notebooks/{g.slug}/{nb.filename}"
             go = (f'<a class="run" href="{colab}">Open in Colab</a>'
                   f'<a class="read" href="{read}">Read</a>')
+            # Solutions are linked, but quietly: the reader should meet the
+            # exercise before the answer.
+            if nb.solutions.exists():
+                sol = page.COLAB + f"notebooks/{g.slug}/{nb.solutions.name}"
+                go += f'<a class="sol" href="{sol}">Solutions</a>'
             cls = ""
         else:
             go, cls = "not yet written", ' class="soon"'

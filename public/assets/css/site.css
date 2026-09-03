@@ -231,3 +231,6 @@ tr.soon td { opacity:.62; }
 tr.band td { font-family:var(--mono); font-size:.68rem; text-transform:uppercase;
              letter-spacing:.13em; color:var(--soft); background:var(--panel);
              border-top:1px solid var(--line); padding:.4rem .8rem; }
+td.go a.sol { color:var(--soft); border:1px solid var(--line); margin-left:.35rem;
+              font-weight:400; }
+td.go a.sol:hover { color:var(--accent); border-color:var(--accent); }
