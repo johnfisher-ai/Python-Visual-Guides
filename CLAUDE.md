@@ -88,8 +88,8 @@ it, so this is never hand-written and never drifts.
 
 | Cell | Tag | Carries |
 |---|---|---|
-| First | `nav-top` | Breadcrumb to the library and the guide, the title, the position |
-| Last | `nav-bottom` | Previous notebook, the guide contents, next notebook |
+| First | `nav-top` | Breadcrumb to the library and the guide, then the title |
+| Last | `nav-bottom` | Previous notebook, the guide's notebook list, next notebook |
 
 Previous and next appear only when that neighbour actually exists, so a half-written guide
 never offers a link to a notebook that is not there. `check_notebooks.py` fails on a notebook

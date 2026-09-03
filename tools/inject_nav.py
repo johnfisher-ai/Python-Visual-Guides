@@ -8,7 +8,7 @@ which only works if they arrived from the site in the first place.
 Two cells per notebook, both generated from the manifest and both replaced on every
 run, so a change to the order or a title propagates rather than drifting:
 
-  nav-top     breadcrumb to the library and the guide, the title, the position
+  nav-top     breadcrumb to the library and the guide, then the title
   nav-bottom  previous, the guide contents, next
 
 Written in that order and marked with cell tags, so this is safe to run repeatedly.
@@ -47,8 +47,6 @@ def top_cell(site, g, nb) -> dict:
 [{site['title']}]({page.SITE}/) &nbsp;&rsaquo;&nbsp; [{g.title}]({guide_url(g)})
 
 # {nb.title}
-
-**Notebook {nb.n} of {len(g.notebooks)}** &nbsp;·&nbsp; {g.title}
 """)
 
 
@@ -60,7 +58,7 @@ def bottom_cell(site, g, nb) -> dict:
             if prev_nb and prev_nb.exists else "")
     right = (f"**Next:** [{next_nb.title}]({colab(g.slug, next_nb.filename)}) &#8594;"
              if next_nb and next_nb.exists else "")
-    middle = f"[All {len(g.notebooks)} notebooks in this guide]({guide_url(g)})"
+    middle = f"[{g.title} Notebooks]({guide_url(g)})"
 
     parts = [p for p in (left, middle, right) if p]
     return cell(BOTTOM, "---\n\n" + "  &nbsp;·&nbsp;  ".join(parts) + "\n")
