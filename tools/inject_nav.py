@@ -29,6 +29,24 @@ from tools.manifest import load                                 # noqa: E402
 TOP, BOTTOM = "nav-top", "nav-bottom"
 
 
+def site_link(url: str, label: str) -> str:
+    """A link that leaves Colab.
+
+    Colab shows a Google interstitial for any link off google.com, so a reader
+    clicking the breadcrumb gets a "Redirect Notice" page. That cannot be
+    suppressed from here. Opening in a new tab means the notebook they were
+    working in is still there behind it, which is the part that actually costs
+    them something.
+
+    Colab-to-Colab links, previous and next, are on google.com and are unaffected,
+    so they stay as ordinary markdown and open in place.
+    """
+    return f'<a href="{url}" target="_blank" rel="noopener">{label}</a>'
+
+
+
+
+
 def colab(guide_slug: str, filename: str) -> str:
     return page.COLAB + f"notebooks/{guide_slug}/{filename}"
 
@@ -43,8 +61,10 @@ def cell(tag: str, text: str) -> dict:
 
 
 def top_cell(site, g, nb) -> dict:
+    lib = site_link(f"{page.SITE}/", site["title"])
+    guide = site_link(guide_url(g), g.title)
     return cell(TOP, f"""
-[{site['title']}]({page.SITE}/) &nbsp;&rsaquo;&nbsp; [{g.title}]({guide_url(g)})
+{lib} &nbsp;&rsaquo;&nbsp; {guide}
 
 # {nb.title}
 """)
@@ -58,7 +78,7 @@ def bottom_cell(site, g, nb) -> dict:
             if prev_nb and prev_nb.exists else "")
     right = (f"**Next:** [{next_nb.title}]({colab(g.slug, next_nb.filename)}) &#8594;"
              if next_nb and next_nb.exists else "")
-    middle = f"[{g.title} Notebooks]({guide_url(g)})"
+    middle = site_link(guide_url(g), f"{g.title} Notebooks")
 
     parts = [p for p in (left, middle, right) if p]
     return cell(BOTTOM, "---\n\n" + "  &nbsp;·&nbsp;  ".join(parts) + "\n")

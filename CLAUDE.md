@@ -95,6 +95,12 @@ Previous and next appear only when that neighbour actually exists, so a half-wri
 never offers a link to a notebook that is not there. `check_notebooks.py` fails on a notebook
 with no navigation.
 
+**Links off google.com get a Google interstitial in Colab.** A reader clicking the breadcrumb
+sees a "Redirect Notice" page first, and nothing in the notebook can suppress it. So the two
+site links are HTML anchors with `target="_blank"`: the interstitial still appears, but in a
+new tab, and the notebook they were working in is untouched behind it. Previous and next point
+at `colab.research.google.com`, are unaffected, and stay as markdown so they open in place.
+
 **Do not hand-write a title cell.** `nav-top` owns the `# Heading`. A second one is a
 duplicate that the injector will not remove for you.
 
