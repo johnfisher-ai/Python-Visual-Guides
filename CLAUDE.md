@@ -159,10 +159,10 @@ its committed code teaches the reader something false, and nothing but you will 
 
 ## Reference material
 
-`A Whirlwind Tour of Python` by Jake VanderPlas is CC0, No Rights Reserved. The complete book,
-all 19 chapters, is saved at `~/Desktop/Tour of Python/` and is also online at
-<https://jakevdp.github.io/WhirlwindTourOfPython/>. Nothing more needs to be attached to a
-session; open the file for the chapter you need.
+`A Whirlwind Tour of Python` by Jake VanderPlas is CC0, No Rights Reserved. Read it at
+<https://jakevdp.github.io/WhirlwindTourOfPython/>, where chapter N is
+`NN-<slug>.html`. A local copy of all 19 chapters once sat in `~/Desktop/Tour of Python/` and
+is no longer there, so do not rely on a local path; fetch the chapter or ask for it.
 
 It is a tour for people who already program. It moves faster than this guide should, it assumes
 a terminal, and it skips beginner failure modes entirely, which is exactly the part these
