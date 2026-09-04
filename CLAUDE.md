@@ -200,6 +200,9 @@ All notebook numbers are guide 1, `Python from the Start`, unless noted.
   `find` and `replace`, `split` and `partition`, then format strings, is close to a ready-made
   outline for nb 4 and matches its blurb exactly. The second half is regular expressions, which
   nb 4 should not absorb, which is why nb 5 exists.
+- **Line continuation**, nb 3. A statement ends at the end of the line, and a long expression
+  continues inside parentheses rather than with a backslash. Numbers is where expressions first
+  get long enough for this to matter.
 - **Mutable versus immutable**, nb 7. Notebook 2 previews aliasing with a list. Notebook 7 has
   to land it properly, because that preview creates the obligation.
 - **Functions**, nb 14. Default argument values, then `*args` and `**kwargs`, then `lambda`.
