@@ -462,7 +462,7 @@
       "number": 6,
       "band": "Libraries",
       "title": "NumPy, Deep Dive",
-      "subtitle": "Arrays, shapes and vectorisation",
+      "subtitle": "Arrays, shapes and vectorization",
       "status": "planned",
       "intro": "The mental shift from looping to thinking in arrays, including the shape errors and how to read them.",
       "prerequisites": "Python from the Start.",
@@ -573,7 +573,7 @@
           "n": 2,
           "slug": "series",
           "title": "Series",
-          "blurb": "The labelled array, and the index you did not ask for"
+          "blurb": "The labeled array, and the index you did not ask for"
         },
         {
           "n": 3,
@@ -762,7 +762,7 @@
       "number": 9,
       "band": "Libraries",
       "title": "SciPy, Deep Dive",
-      "subtitle": "Optimisation, signals and statistics",
+      "subtitle": "Optimization, signals and statistics",
       "status": "planned",
       "intro": "The parts of SciPy worth knowing, and how to navigate a library that is really twelve libraries.",
       "prerequisites": "NumPy, Deep Dive.",
@@ -801,7 +801,7 @@
           "n": 6,
           "slug": "numerical-integration",
           "title": "Numerical Integration",
-          "blurb": "quad, and recognising when the answer is nonsense"
+          "blurb": "quad, and recognizing when the answer is nonsense"
         },
         {
           "n": 7,
@@ -831,7 +831,7 @@
           "n": 11,
           "slug": "spatial",
           "title": "Spatial",
-          "blurb": "Distances, KD-trees, and nearest neighbours"
+          "blurb": "Distances, KD-trees, and nearest neighbors"
         },
         {
           "n": 12,
@@ -957,7 +957,7 @@
           "n": 2,
           "slug": "an-api-project",
           "title": "An API Project",
-          "blurb": "Pull a live feed, store it, and summarise what arrived"
+          "blurb": "Pull a live feed, store it, and summarize what arrived"
         },
         {
           "n": 3,
@@ -974,7 +974,7 @@
         {
           "n": 5,
           "slug": "a-modelling-project",
-          "title": "A Modelling Project",
+          "title": "A Modeling Project",
           "blurb": "Predict something, and report what the model cannot do"
         },
         {
