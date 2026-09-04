@@ -142,6 +142,20 @@ svg.fig .bar{ fill:var(--s1); }
 table.stats { font-size:.79rem; min-width:0; }
 table.stats th, table.stats td { padding:.55rem .5rem; }
 table.stats td.item { min-width:11rem; }
+
+/* ---- previous / next through the pages -------------------------------- */
+.pager { display:flex; justify-content:space-between; align-items:stretch; gap:1rem;
+         margin:0 0 1.2rem; }
+.pager a { display:block; text-decoration:none;
+           border:1px solid var(--line); border-radius:8px; padding:.6rem .95rem;
+           background:var(--bg); font-weight:600; color:var(--ink); max-width:48%; }
+.pager a:hover { border-color:var(--accent); }
+.pager a span { display:block; font-size:.72rem; font-weight:400; color:var(--soft);
+                text-transform:uppercase; letter-spacing:.06em; margin-bottom:.15rem; }
+.pager .next { text-align:right; }
+.pager b { font-weight:600; }
+.pager .prev b::before { content:"\2190\00a0"; color:var(--soft); }
+
 .sig { color:var(--soft); font-variant-numeric:tabular-nums; }
 .tag-row td { background:var(--panel); font-weight:600; }
 
