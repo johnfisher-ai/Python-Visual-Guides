@@ -144,6 +144,36 @@ def cross_refs(path: Path, guide, problems: list) -> None:
                                  f"'{titles[n]}'"))
 
 
+def executable(path: Path, problems: list) -> None:
+    """Catch what would fail the notebooks workflow, which runs without --allow-errors.
+
+    A cell whose committed output is an error must carry the raises-exception tag,
+    or nbconvert stops there and the notebook "did not run top to bottom". Running
+    a notebook locally with --allow-errors hides this, so it has to be checked here.
+
+    nbformat 4.5 also requires an id on every cell, which is a hard error in later
+    versions of nbformat.
+    """
+    doc = json.loads(path.read_text())
+    for i, cell in enumerate(doc.get("cells", [])):
+        if "id" not in cell:
+            problems.append((path.relative_to(ROOT),
+                             f"cell {i} has no id, which nbformat 4.5 requires"))
+        if cell.get("cell_type") != "code":
+            continue
+        errored = any(o.get("output_type") == "error" for o in cell.get("outputs", []))
+        tagged = "raises-exception" in cell.get("metadata", {}).get("tags", [])
+        if errored and not tagged:
+            name = next((o.get("ename") for o in cell["outputs"]
+                         if o.get("output_type") == "error"), "an error")
+            problems.append((path.relative_to(ROOT),
+                             f"cell {i} shows {name} but is not tagged raises-exception, "
+                             f"so the workflow will stop there"))
+        elif tagged and not errored:
+            problems.append((path.relative_to(ROOT),
+                             f"cell {i} is tagged raises-exception but raises nothing"))
+
+
 def main() -> int:
     _site, guides = load()
     problems: list = []
@@ -154,6 +184,7 @@ def main() -> int:
                 continue
             check(nb.path, problems)
             cross_refs(nb.path, g, problems)
+            executable(nb.path, problems)
             checked += 1
             # A solutions notebook is read on its own, so it needs navigation too.
             # It is exempt from the eight-part shape, which is for teaching notebooks.
@@ -161,6 +192,7 @@ def main() -> int:
                 doc = json.loads(nb.solutions.read_text())
                 tags = [t for c in doc.get("cells", [])
                         for t in c.get("metadata", {}).get("tags", [])]
+                executable(nb.solutions, problems)
                 if "nav-top" not in tags or "nav-bottom" not in tags:
                     problems.append((nb.solutions.relative_to(ROOT),
                                      "no navigation cells. Run tools/inject_nav.py"))

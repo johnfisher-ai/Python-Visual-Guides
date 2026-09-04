@@ -55,7 +55,9 @@ def guide_url(g) -> str:
 
 
 def cell(tag: str, text: str) -> dict:
-    return {"cell_type": "markdown", "metadata": {"tags": [tag]},
+    # nbformat 4.5 requires an id on every cell. A stable id derived from the tag
+    # keeps the file from churning on every rebuild.
+    return {"cell_type": "markdown", "id": f"site-{tag}", "metadata": {"tags": [tag]},
             "source": text.strip("\n") + "\n"}
 
 
