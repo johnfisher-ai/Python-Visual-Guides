@@ -157,6 +157,89 @@ its committed code teaches the reader something false, and nothing but you will 
 
 ---
 
+## Reference material
+
+`A Whirlwind Tour of Python` by Jake VanderPlas is CC0, No Rights Reserved. The complete book,
+all 19 chapters, is saved at `~/Desktop/Tour of Python/` and is also online at
+<https://jakevdp.github.io/WhirlwindTourOfPython/>. Nothing more needs to be attached to a
+session; open the file for the chapter you need.
+
+It is a tour for people who already program. It moves faster than this guide should, it assumes
+a terminal, and it skips beginner failure modes entirely, which is exactly the part these
+notebooks exist to cover. Take the **shape of an explanation** from it. Never take the prose.
+
+### Which chapter feeds which notebook
+
+All notebook numbers are guide 1, `Python from the Start`, unless noted.
+
+| Whirlwind chapter | Lands in |
+|---|---|
+| 01 How to run Python code | nb 1 Running Python **(done)** |
+| 02 A quick tour of syntax | nb 1, nb 2 |
+| 03 Variables and objects | nb 2 Values and Variables **(done)** |
+| 04 Operators | nb 3 Numbers, nb 6 Booleans and Comparison |
+| 05 Built-in types, simple values | nb 3 Numbers, nb 4 Strings |
+| 06 Built-in data structures | nb 7 Lists, nb 8 Tuples and Unpacking, nb 9 Dictionaries, nb 10 Sets |
+| 07 Control flow | nb 11 Conditionals, nb 12 Loops |
+| 08 Defining and using functions | nb 14 Functions, nb 15 Scope |
+| 09 Errors and exceptions | nb 16 Errors and Exceptions |
+| 10 Iterators | nb 12 Loops, nb 13 Comprehensions |
+| 11 List comprehensions | nb 13 Comprehensions |
+| 12 Generators | nb 13 Comprehensions, and see the gap below |
+| 13 Modules and packages | nb 18 Modules and Imports, nb 19 Environments and pip |
+| 14 Strings and regular expressions | nb 4 Strings, nb 5 Regular Expressions |
+| 15 Preview of data science tools | guides 6 to 10 |
+
+### Worth reaching for, by topic
+
+- **Operators**, nb 3 and nb 6. The full table, including `//`, `%` and `**`. The `is` versus
+  `==` distinction belongs here and follows directly from the pointer model nb 2 sets up: `is`
+  asks whether two names label the same value, `==` asks whether two values are equal. Also
+  `in` and `not in`, which read better than a manual search loop.
+- **Strings**, nb 4. Chapter 14 splits in half. The first half, case methods, `strip`,
+  `find` and `replace`, `split` and `partition`, then format strings, is close to a ready-made
+  outline for nb 4 and matches its blurb exactly. The second half is regular expressions, which
+  nb 4 should not absorb, which is why nb 5 exists.
+- **Mutable versus immutable**, nb 7. Notebook 2 previews aliasing with a list. Notebook 7 has
+  to land it properly, because that preview creates the obligation.
+- **Functions**, nb 14. Default argument values, then `*args` and `**kwargs`, then `lambda`.
+  The mutable-default-argument trap is not in the source and should be in Common errors.
+- **Errors**, nb 16. `try` / `except` / `else` / `finally`, `raise`, reading the message off the
+  exception object, and defining your own. This is the one chapter whose structure maps almost
+  one to one onto a notebook.
+- **Iterators**, nb 12. `range` is not a list, `enumerate` beats a manual counter, `zip` walks
+  two things at once. `itertools` is specialized and has no home in guide 1; leave it out.
+- **Comprehensions**, nb 13. Basic, then multiple iteration, then a condition on the iterator,
+  then a condition on the value. That is a good running order and worth keeping.
+- **Modules**, nb 18. The four import forms and why `from x import *` is the one to avoid.
+  Third-party installs belong in nb 19, not nb 18.
+
+### Gaps this exposed
+
+**Regular expressions are now guide 1 notebook 6**, inserted after Strings and settled. `re`
+is standard library, so it belongs with the language rather than in a library guide. This is
+why guide 1 has 21 notebooks and everything from Booleans onward carries a number one higher
+than the original plan.
+
+Notebook 5 also carries a downstream obligation: guide 7 notebook 17 teaches the pandas `.str`
+accessor, where `.str.contains` and `.str.extract` take patterns. Notebook 6 is the only place
+a reader learns to read one, so it has to be enough on its own.
+
+**Guide 1 has no generators notebook,** and generator expressions are a genuinely useful idea:
+same syntax as a list comprehension with parentheses instead of brackets, a recipe rather than
+a collection, single use rather than repeatable. The natural home is nb 13 Comprehensions, as
+a final section, since the syntax is one character away from what that notebook already
+teaches. `yield` and generator functions are a step beyond guide 1 and can wait.
+
+Unlike the regex gap above, this one needs no decision in advance. It fits inside
+the existing plan, so revisit it when nb 13 is written.
+
+### Attribution
+
+When a guide draws on the tour, set that guide's `credits` field in `manifest.json`. The guide
+page renders it as a `Sources` section. CC0 requires no attribution, but the author asks for it
+and it costs nothing.
+
 ## Traps
 
 - **`build.sh` shipped with commented placeholders.** The `pages()` function did nothing, so

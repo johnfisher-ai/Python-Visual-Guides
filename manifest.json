@@ -42,101 +42,108 @@
         },
         {
           "n": 5,
+          "slug": "regular-expressions",
+          "title": "Regular Expressions",
+          "blurb": "Patterns, groups, and the re module"
+        },
+        {
+          "n": 6,
           "slug": "booleans-and-comparison",
           "title": "Booleans and Comparison",
           "blurb": "Truthiness, and why `is` is not `==`"
         },
         {
-          "n": 6,
+          "n": 7,
           "slug": "lists",
           "title": "Lists",
           "blurb": "Mutation, aliasing, and the copy that was not a copy"
         },
         {
-          "n": 7,
+          "n": 8,
           "slug": "tuples-and-unpacking",
           "title": "Tuples and Unpacking",
           "blurb": "Immutability as a feature, and multiple return values"
         },
         {
-          "n": 8,
+          "n": 9,
           "slug": "dictionaries",
           "title": "Dictionaries",
           "blurb": "The workhorse. get, setdefault, and iteration order"
         },
         {
-          "n": 9,
+          "n": 10,
           "slug": "sets",
           "title": "Sets",
           "blurb": "Membership, deduplication, and set algebra"
         },
         {
-          "n": 10,
+          "n": 11,
           "slug": "conditionals",
           "title": "Conditionals",
           "blurb": "if, elif, else, and the guard clause"
         },
         {
-          "n": 11,
+          "n": 12,
           "slug": "loops",
           "title": "Loops",
           "blurb": "for, while, break, continue, enumerate, zip"
         },
         {
-          "n": 12,
+          "n": 13,
           "slug": "comprehensions",
           "title": "Comprehensions",
           "blurb": "The Python idiom, and when it stops being readable"
         },
         {
-          "n": 13,
+          "n": 14,
           "slug": "functions",
           "title": "Functions",
           "blurb": "Arguments, returns, and the mutable default argument trap"
         },
         {
-          "n": 14,
+          "n": 15,
           "slug": "scope",
           "title": "Scope",
           "blurb": "Local, global, closures, and why your variable did not change"
         },
         {
-          "n": 15,
+          "n": 16,
           "slug": "errors-and-exceptions",
           "title": "Errors and Exceptions",
           "blurb": "Reading a traceback, try/except, and raising your own"
         },
         {
-          "n": 16,
+          "n": 17,
           "slug": "files-and-paths",
           "title": "Files and Paths",
           "blurb": "Reading, writing, context managers, pathlib"
         },
         {
-          "n": 17,
+          "n": 18,
           "slug": "modules-and-imports",
           "title": "Modules and Imports",
           "blurb": "Your own modules, the import path, and `if __name__`"
         },
         {
-          "n": 18,
+          "n": 19,
           "slug": "environments-and-pip",
           "title": "Environments and pip",
           "blurb": "venv, requirements, and why the tutorial broke"
         },
         {
-          "n": 19,
+          "n": 20,
           "slug": "debugging",
           "title": "Debugging",
           "blurb": "print, breakpoint, and reading the error you already have"
         },
         {
-          "n": 20,
+          "n": 21,
           "slug": "where-next",
           "title": "Where Next",
           "blurb": "A map of the other guides, and what to read for what"
         }
-      ]
+      ],
+      "credits": "Some of the ground this guide covers, including the way a variable is a name rather than a box and the several ways Python can be run, is shaped by <a href=\"https://jakevdp.github.io/WhirlwindTourOfPython/\">A Whirlwind Tour of Python</a> by Jake VanderPlas, released under a CC0 &ldquo;No Rights Reserved&rdquo; license. The explanations, examples and exercises here are written for this guide."
     },
     {
       "slug": "files-paths-and-formats",

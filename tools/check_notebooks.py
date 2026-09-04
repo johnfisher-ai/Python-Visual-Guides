@@ -117,6 +117,33 @@ def check(path: Path, problems: list) -> None:
                                         f"{sol.name}, so a reader cannot reach it"))
 
 
+def cross_refs(path: Path, guide, problems: list) -> None:
+    """Catch cross-references left stale by a renumbering.
+
+    Prose says things like "notebook 7 returns to it" or "**Notebook 3, Numbers**".
+    Inserting a notebook shifts every number after it, and the prose does not move
+    with the manifest. A number past the end of the guide is always wrong. A number
+    followed by a title that belongs to a different notebook is always wrong too,
+    and that is the case a renumbering actually produces.
+    """
+    titles = {nb.n: nb.title for nb in guide.notebooks}
+    doc = json.loads(path.read_text())
+    for cell in doc.get("cells", []):
+        if cell.get("cell_type") != "markdown":
+            continue
+        text = src(cell)
+        for m in re.finditer(r"[Nn]otebooks?\s+(\d+)(,\s*([A-Z][A-Za-z ]+?))?(?=\*\*|,|\.|;|:|\)|$)",
+                             text):
+            n, named = int(m.group(1)), (m.group(3) or "").strip()
+            if n not in titles:
+                problems.append((path.relative_to(ROOT),
+                                 f"points at notebook {n}, which this guide does not have"))
+            elif named and named != titles[n]:
+                problems.append((path.relative_to(ROOT),
+                                 f"calls notebook {n} '{named}', the manifest says "
+                                 f"'{titles[n]}'"))
+
+
 def main() -> int:
     _site, guides = load()
     problems: list = []
@@ -126,6 +153,7 @@ def main() -> int:
             if not nb.exists:
                 continue
             check(nb.path, problems)
+            cross_refs(nb.path, g, problems)
             checked += 1
             # A solutions notebook is read on its own, so it needs navigation too.
             # It is exempt from the eight-part shape, which is for teaching notebooks.
@@ -145,7 +173,8 @@ def main() -> int:
     print(f"  {checked} notebook(s) checked")
     for where, why in problems:
         print(f"  BAD   {where}: {why}")
-    print("  every notebook has the eight-part shape" if not problems
+    print("  every notebook has the shape, and its cross-references resolve"
+          if not problems
           else f"  *** {len(problems)} problem(s) ***")
     return 1 if problems else 0
 

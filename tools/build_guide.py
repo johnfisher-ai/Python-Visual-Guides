@@ -80,6 +80,14 @@ def build_one(site, g):
     </div>
   </section>
 """
+    if g.credits:
+        body += f"""
+  <section class="credits">
+    <h2>Sources</h2>
+    <p>{g.credits}</p>
+  </section>
+"""
+
     body += page.foot(g.page)
     page.write(g.page, body)
 

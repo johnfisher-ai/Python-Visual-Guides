@@ -55,6 +55,7 @@ class Guide:
     intro: str
     prerequisites: str
     notebooks: list[Notebook]
+    credits: str = ""
 
     @property
     def page(self) -> str:
@@ -75,7 +76,8 @@ def load() -> tuple[dict, list[Guide]]:
         guides.append(Guide(
             slug=g["slug"], number=g["number"], band=g["band"], title=g["title"],
             subtitle=g["subtitle"], status=g["status"], intro=g["intro"],
-            prerequisites=g["prerequisites"], notebooks=nbs))
+            prerequisites=g["prerequisites"], notebooks=nbs,
+            credits=g.get("credits", "")))
     return raw["site"], sorted(guides, key=lambda g: g.number)
 
 
