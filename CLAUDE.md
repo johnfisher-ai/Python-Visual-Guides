@@ -186,6 +186,22 @@ its committed code teaches the reader something false, and nothing but you will 
   calls it internally. "The error you will get" beats "the exception raised by the
   interpreter".
 - **Say what actually happens.** No claim in a notebook that has not been run.
+- **No flourish.** This is a technical guide, and ornament reads as padding. Say what happens.
+
+  | Do not write | Write |
+  |---|---|
+  | with no ceremony at all | without declaring anything |
+  | this is where the model earns its keep | this is where the model matters |
+  | costs people an afternoon | is easy to miss |
+  | there is no prize for the one-liner | brevity is not the goal |
+  | a wrong answer with total confidence | a wrong answer and no warning |
+  | nobody will be able to read it a month later | it becomes unreadable |
+  | feels wrong for about a week | takes practice |
+
+  The test: if a phrase makes a claim about the reader's future, their feelings, or how famous
+  something is, it is doing decoration rather than teaching. "Merely" and "simply" are fine
+  when they mean exactly that.
+
 
 ---
 
