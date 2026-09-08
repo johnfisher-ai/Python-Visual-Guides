@@ -46,8 +46,8 @@ headings. `tools/check_notebooks.py` enforces it, so a drift fails the build.
 
 ```
 ## What you will be able to do
-## Setup
 ## The idea
+## Setup
 ## Worked examples
 ## Your turn
 ## Common errors
@@ -58,8 +58,8 @@ headings. `tools/check_notebooks.py` enforces it, so a drift fails the build.
 | Part | Cells | What goes in it |
 |---|---|---|
 | What you will be able to do | markdown | One or two sentences in the reader's terms. First, because it is read before anything runs. |
-| Setup | **exactly one** code cell | Imports and any data. Runs clean on a fresh runtime. Keep it even when there is nothing to import, so the shape holds. |
 | The idea | markdown, then a short cell | Orientation first, then the smallest example that runs. See below. |
+| Setup | **exactly one** code cell | Imports and any data. Runs clean on a fresh runtime. Keep it even when there is nothing to import, so the shape holds. |
 | Worked examples | many cells | Where the guide earns its length. One idea per cell, every output committed. Diagrams and plots live here. |
 | Your turn | task cells | Three to six tasks, increasing. Each states the goal and leaves `# your code here`. **Never pre-filled.** |
 | Common errors | broken cells, run | Break it on purpose, run it, leave the traceback in as committed output. Then what it means and the fix. |
@@ -81,6 +81,11 @@ thin it.**
 ---
 
 ### The idea: orient before you demonstrate
+
+**The idea comes before Setup.** Setup is a code cell, and a reader who meets code before
+any explanation has been handed syntax with no context. Explanation first, then the
+housekeeping, then the worked examples. A code cell inside The idea has to stand on its own,
+so if it needs an import, it does that import itself.
 
 `Three lines beats thirty` applies to the **example**, never to the explanation. A reader
 arriving at a notebook does not yet know what the thing is or why it exists, and a definition

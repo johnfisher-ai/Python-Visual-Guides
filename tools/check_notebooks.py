@@ -25,8 +25,10 @@ MIN_IDEA_WORDS = 350
 
 PARTS = [
     "What you will be able to do",
-    "Setup",
+    # The idea comes before Setup on purpose: a reader should not meet a code
+    # cell before anything has explained what the notebook is about.
     "The idea",
+    "Setup",
     "Worked examples",
     "Your turn",
     "Common errors",
@@ -77,21 +79,28 @@ def check(path: Path, problems: list) -> None:
 
     idx = {h: i for i, h in found if h in PARTS}
 
-    # part 2 is exactly one code cell
-    after_setup = [c for c in cs[idx["Setup"] + 1: idx["The idea"]]]
-    code_after_setup = [c for c in after_setup if c.get("cell_type") == "code"]
+    def section(part):
+        """The cells under one heading, up to whatever part comes next.
+
+        Derived from PARTS rather than written out, so reordering the shape
+        does not silently leave a slice pointing the wrong way.
+        """
+        after = PARTS[PARTS.index(part) + 1:]
+        end = min((idx[p] for p in after if p in idx), default=len(cs))
+        return cs[idx[part] + 1: end]
+
+    # Setup is exactly one code cell
+    code_after_setup = [c for c in section("Setup") if c.get("cell_type") == "code"]
     if len(code_after_setup) != 1:
         problems.append((where, f"Setup has {len(code_after_setup)} code cells, expected 1"))
 
-    # parts 3, 4 and 6 must show a reader something, though not every cell need
-    # print: an assignment legitimately produces nothing.
-    for a, b in (("The idea", "Worked examples"),
-                 ("Worked examples", "Your turn"),
-                 ("Common errors", "Recap")):
-        run = [c for c in cs[idx[a] + 1: idx[b]]
+    # The idea, Worked examples and Common errors must show a reader something,
+    # though not every cell need print: an assignment legitimately produces nothing.
+    for part in ("The idea", "Worked examples", "Common errors"):
+        run = [c for c in section(part)
                if c.get("cell_type") == "code" and src(c).strip()]
         if run and not any(c.get("outputs") for c in run):
-            problems.append((where, f"no code cell under '{a}' has committed output, "
+            problems.append((where, f"no code cell under '{part}' has committed output, "
                                     f"so a reader on GitHub sees no results there"))
 
     # part 5 must contain no solved code
