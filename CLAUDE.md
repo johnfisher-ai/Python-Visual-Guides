@@ -216,6 +216,20 @@ its committed code teaches the reader something false, and nothing but you will 
   calls it internally. "The error you will get" beats "the exception raised by the
   interpreter".
 - **Say what actually happens.** No claim in a notebook that has not been run.
+- **No sentence that has to be decoded.** A negation or a pronoun is fine when what it refers
+  to is the thing immediately before it. It stops being fine when the reader has to hold two
+  earlier clauses in mind and negate both.
+
+  | Do not write | Write |
+  |---|---|
+  | covered code you wrote and code that ships with Python. Almost everything else you will use is neither | covered two kinds of code: the code you write, and the code that ships with Python. Most of what you will use falls into a third kind |
+  | `else` runs whenever the `if` did not | `else` runs whenever the `if` condition was false |
+  | Put an even number in the list and it will not | Put an even number in the list and the `break` fires, so the `else` is skipped |
+  | `except FileNotFoundError` when it is not | `except FileNotFoundError` when a missing file means something has gone wrong |
+
+  These are fine and should stay, because the thing being negated is the previous sentence:
+  "Ints grow as needed. Floats do not." "A tuple qualifies. A list does not." Do not flatten
+  those into longer sentences; the fault is distance, not brevity.
 - **No flourish.** This is a technical guide, and ornament reads as padding. Say what happens.
 
   | Do not write | Write |
