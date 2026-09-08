@@ -58,7 +58,7 @@ headings. `tools/check_notebooks.py` enforces it, so a drift fails the build.
 | Part | Cells | What goes in it |
 |---|---|---|
 | What you will be able to do | markdown | One or two sentences in the reader's terms. First, because it is read before anything runs. |
-| The idea | markdown, then a short cell | Orientation first, then the smallest example that runs. See below. |
+| The idea | **markdown only** | Orientation, then a read-only first look as a fenced block. No runnable cell. See below. |
 | Setup | **exactly one** code cell | Imports and any data. Runs clean on a fresh runtime. Keep it even when there is nothing to import, so the shape holds. |
 | Worked examples | many cells | Where the guide earns its length. One idea per cell, every output committed. Diagrams and plots live here. |
 | Your turn | task cells | Three to six tasks, increasing. Each states the goal and leaves `# your code here`. **Never pre-filled.** |
@@ -80,22 +80,35 @@ thin it.**
 
 ---
 
-### The idea demonstrates; Setup provisions
+### The idea is prose; Setup is the first thing anyone runs
 
-The code cell at the end of The idea is an **illustration**. It must stand on its own and it
-must not create anything the rest of the notebook needs.
+**The idea contains no code cells.** It ends with a read-only first look, written as a fenced
+```python block with the output in a second fence underneath:
 
-- If it needs an import, it does that import itself.
-- If it assigns a name, Worked examples defines that name again rather than inheriting it.
-- Anything shared across sections belongs in **Setup**, which is the one place a reader has to
-  run before anything else.
+    ### A first look
 
-Files and Paths broke this in the worst way: its idea cell created the directory every later
-cell wrote into, so Setup looked like the setup step while the real one sat above it under a
-different heading. A reader who skipped it got a failure that pointed at the wrong place.
+    Before any of the detail, here is the whole idea in a few lines. There is nothing to run
+    yet: read it, and read the output underneath it. ...
 
-`check_notebooks.py` fails the build when a Worked examples cell reads a name only The idea
-created.
+    ```python
+    ...
+    ```
+
+    ```
+    ...
+    ```
+
+Two things went wrong before this rule existed. Files and Paths had an idea cell that created
+the directory every later cell wrote into, so Setup looked like the setup step while the real
+one sat above it under a different heading. And more generally a runnable cell above Setup
+makes the running order ambiguous: a reader cannot tell which cells are required and which are
+illustration.
+
+Setup is now the **first executable cell in the notebook**, without exception, and it owns
+everything the later sections depend on.
+
+`check_notebooks.py` fails the build if The idea holds a code cell, if any code cell appears
+above Setup, or if a Worked examples cell reads a name only Setup or The idea created.
 
 ### The idea: orient before you demonstrate
 

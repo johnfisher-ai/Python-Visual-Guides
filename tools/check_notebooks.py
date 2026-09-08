@@ -90,6 +90,11 @@ def check(path: Path, problems: list) -> None:
         end = min((idx[p] for p in after if p in idx), default=len(cs))
         return cs[idx[part] + 1: end]
 
+    first_code = next((k for k, c in enumerate(cs) if c.get("cell_type") == "code"), None)
+    if first_code is not None and first_code < idx["Setup"]:
+        problems.append((where, "a code cell appears before Setup. Setup is the first thing "
+                                "a reader runs, so nothing executable may come above it"))
+
     # Setup is exactly one code cell
     code_after_setup = [c for c in section("Setup") if c.get("cell_type") == "code"]
     if len(code_after_setup) != 1:
@@ -97,7 +102,13 @@ def check(path: Path, problems: list) -> None:
 
     # The idea, Worked examples and Common errors must show a reader something,
     # though not every cell need print: an assignment legitimately produces nothing.
-    for part in ("The idea", "Worked examples", "Common errors"):
+    idea_code = [c for c in section("The idea") if c.get("cell_type") == "code"]
+    if idea_code:
+        problems.append((where, f"'The idea' has {len(idea_code)} code cell(s). It is prose "
+                                f"only: show the first look as a ```python block so Setup is "
+                                f"the first cell a reader runs"))
+
+    for part in ("Worked examples", "Common errors"):
         run = [c for c in section(part)
                if c.get("cell_type") == "code" and src(c).strip()]
         if run and not any(c.get("outputs") for c in run):
