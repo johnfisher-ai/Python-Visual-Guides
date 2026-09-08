@@ -23,3 +23,8 @@ venv/
 
 # Claude workspace settings live above the repo, but ignore them if they ever land here
 .claude/settings.local.json
+
+# Notebooks that demonstrate file handling create files as they run. They clean up
+# after themselves, but a cell that fails partway would leave them behind, and CI
+# executes notebooks with the notebook's own directory as the working directory.
+notebooks/**/scratch/
