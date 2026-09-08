@@ -230,6 +230,17 @@ its committed code teaches the reader something false, and nothing but you will 
   These are fine and should stay, because the thing being negated is the previous sentence:
   "Ints grow as needed. Floats do not." "A tuple qualifies. A list does not." Do not flatten
   those into longer sentences; the fault is distance, not brevity.
+  Two specific faults worth naming, because both appeared in Environments and pip:
+
+  - **Literary inversion.** "The commands are few" reads as writing rather than explaining.
+    "Here are the commands that cover ordinary use" says the same thing plainly.
+  - **A verb that cannot carry the meaning.** "`python` and `pip` mean the copies inside
+    `.venv`" leaves the reader guessing at the mechanism. Say what happens: typing `pip` runs
+    the copy inside `.venv` instead of the one on your system.
+
+  Note that "means" is correct when explaining what a message signifies, as in "`Result too
+  large` means the number no longer fits". That use should stay.
+
 - **No flourish.** This is a technical guide, and ornament reads as padding. Say what happens.
 
   | Do not write | Write |
