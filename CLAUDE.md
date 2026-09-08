@@ -80,6 +80,23 @@ thin it.**
 
 ---
 
+### The idea demonstrates; Setup provisions
+
+The code cell at the end of The idea is an **illustration**. It must stand on its own and it
+must not create anything the rest of the notebook needs.
+
+- If it needs an import, it does that import itself.
+- If it assigns a name, Worked examples defines that name again rather than inheriting it.
+- Anything shared across sections belongs in **Setup**, which is the one place a reader has to
+  run before anything else.
+
+Files and Paths broke this in the worst way: its idea cell created the directory every later
+cell wrote into, so Setup looked like the setup step while the real one sat above it under a
+different heading. A reader who skipped it got a failure that pointed at the wrong place.
+
+`check_notebooks.py` fails the build when a Worked examples cell reads a name only The idea
+created.
+
 ### The idea: orient before you demonstrate
 
 **The idea comes before Setup.** Setup is a code cell, and a reader who meets code before

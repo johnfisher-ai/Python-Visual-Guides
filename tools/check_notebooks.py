@@ -12,6 +12,7 @@ remembering. Each rule below is a failure that has a cost for the reader:
   solutions     every notebook needs its companion
 """
 
+import ast
 import json
 import re
 import sys
@@ -196,6 +197,14 @@ def executable(path: Path, problems: list) -> None:
         if "id" not in cell:
             problems.append((path.relative_to(ROOT),
                              f"cell {i} has no id, which nbformat 4.5 requires"))
+        for out in cell.get("outputs", []):
+            text = "".join(out.get("text", []))
+            if "/Users/" in text or "/home/" in text or "\\Users\\" in text:
+                problems.append((path.relative_to(ROOT),
+                                 f"cell {i} committed output containing an absolute home "
+                                 f"path. Print something relative instead"))
+                break
+
         if cell.get("cell_type") != "code":
             continue
         errored = any(o.get("output_type") == "error" for o in cell.get("outputs", []))
@@ -239,6 +248,74 @@ def orientation(path: Path, problems: list) -> None:
                          f"solves and where the reader will meet it, then show code"))
 
 
+def self_contained(path: Path, problems: list) -> None:
+    """Worked examples must not depend on a name only The idea created.
+
+    The example in The idea is a demonstration. A reader who reads it and skips
+    to Worked examples should not hit a NameError, and Setup should be the only
+    place that provisions shared state. Notebook 17 got this wrong in a way that
+    was worse than a NameError: its idea cell created a directory on disk that
+    every later cell wrote into, so Setup looked like the setup step and was not.
+    """
+    doc = json.loads(path.read_text())
+    cells = doc.get("cells", [])
+    heads = {}
+    for i, c in enumerate(cells):
+        h = src(c).lstrip()
+        for part in PARTS:
+            if h.startswith("## " + part):
+                heads.setdefault(part, i)
+    if not {"The idea", "Setup", "Worked examples"} <= heads.keys():
+        return
+
+    def span(part):
+        start = heads[part]
+        later = [heads[p] for p in PARTS[PARTS.index(part) + 1:] if p in heads]
+        return cells[start + 1: min(later) if later else len(cells)]
+
+    def stores(text):
+        try:
+            tree = ast.parse(text)
+        except SyntaxError:
+            return set()
+        out = {n.id for n in ast.walk(tree)
+               if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Store)}
+        for n in ast.walk(tree):
+            if isinstance(n, (ast.Import, ast.ImportFrom)):
+                for a in n.names:
+                    out.add((a.asname or a.name).split(".")[0])
+        return out
+
+    def loads(text):
+        try:
+            tree = ast.parse(text)
+        except SyntaxError:
+            return set()
+        return {n.id for n in ast.walk(tree)
+                if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load)}
+
+    def gather(part):
+        out = set()
+        for c in span(part):
+            if c.get("cell_type") == "code":
+                out |= stores(src(c))
+        return out
+
+    only_idea = gather("The idea") - gather("Setup")
+    defined = set()
+    for c in span("Worked examples"):
+        if c.get("cell_type") != "code":
+            continue
+        text = src(c)
+        leaked = (loads(text) & only_idea) - defined - stores(text)
+        if leaked:
+            problems.append((path.relative_to(ROOT),
+                             f"Worked examples uses {sorted(leaked)} which only 'The idea' "
+                             f"creates. Define it in Worked examples, or move it to Setup"))
+            return
+        defined |= stores(text)
+
+
 def main() -> int:
     _site, guides = load()
     problems: list = []
@@ -251,6 +328,7 @@ def main() -> int:
             cross_refs(nb.path, g, problems)
             executable(nb.path, problems)
             orientation(nb.path, problems)
+            self_contained(nb.path, problems)
             checked += 1
             # A solutions notebook is read on its own, so it needs navigation too.
             # It is exempt from the eight-part shape, which is for teaching notebooks.
