@@ -21,7 +21,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 from tools.manifest import load                                  # noqa: E402
 
-MIN_IDEA_WORDS = 120
+MIN_IDEA_WORDS = 350
 
 PARTS = [
     "What you will be able to do",

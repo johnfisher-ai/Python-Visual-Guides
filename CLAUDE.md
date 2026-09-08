@@ -86,18 +86,24 @@ thin it.**
 arriving at a notebook does not yet know what the thing is or why it exists, and a definition
 followed straight away by code teaches only syntax.
 
-Before the first code cell, answer three questions in this order:
+Before the first code cell, work through these under `###` subheadings:
 
-1. **What problem does this solve?** What would the reader be stuck doing without it. Make it
-   concrete: five thousand survey responses, not "a large collection".
-2. **What is it?** The definition. This is what was already being written, and it stays.
-3. **Where will they meet it?** Two or three recognizable places. Real work, not toy examples.
+1. **The problem.** What the reader would be stuck doing without this. Concrete: five thousand
+   survey responses, not "a large collection". Two or three paragraphs.
+2. **A formal definition**, set in a blockquote so it stands apart from the prose around it.
+   Name the term in bold. State it precisely enough to be worth rereading later.
+3. **Why it works that way.** The mental model, the consequence, the thing that surprises
+   people. This is usually the longest part and it is where the teaching happens.
+4. **Where you will meet this.** Real places, including other guides in this library.
+5. **What this notebook covers.** A short list. The reader should know what is ahead before
+   they run anything.
 
 Then the smallest example that runs.
 
-Roughly 150 to 250 words before that first code cell. Under 100 means the reader was handed a
-definition and told to start typing. `check_notebooks.py` enforces a floor, and a floor is not
-a target: passing it says only that something is there, not that it orients anyone.
+Aim for 450 to 600 words before that first code cell. This is a chapter opening, not a preamble:
+a reader who stops after it should still have learned something. `check_notebooks.py` enforces
+a floor of 350, and a floor is not a target: clearing it says only that prose is present, not
+that it explains anything.
 
 ---
 
