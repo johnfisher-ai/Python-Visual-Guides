@@ -129,30 +129,42 @@ def check(path: Path, problems: list) -> None:
 
 
 def cross_refs(path: Path, guide, problems: list) -> None:
-    """Catch cross-references left stale by a renumbering.
+    """Catch cross-references that name a notebook which does not exist.
 
-    Prose says things like "notebook 7 returns to it" or "**Notebook 3, Numbers**".
-    Inserting a notebook shifts every number after it, and the prose does not move
-    with the manifest. A number past the end of the guide is always wrong. A number
-    followed by a title that belongs to a different notebook is always wrong too,
-    and that is the case a renumbering actually produces.
+    References are written by title, not number, because numbers change: inserting
+    Regular Expressions at position 5 shifted every notebook after it, and prose
+    does not move with the manifest. A title is stable, and it is also what a
+    reader remembers.
+
+    A bolded phrase that looks like a title but matches nothing in the guide is
+    almost always a renamed notebook or a typo, so it is reported. Bold is used
+    for emphasis too, so only phrases that resemble a title are considered: the
+    check looks for ones that differ from a real title by case or spacing.
     """
-    titles = {nb.n: nb.title for nb in guide.notebooks}
+    titles = {nb.title for nb in guide.notebooks}
+    folded = {t.lower(): t for t in titles}
     doc = json.loads(path.read_text())
+
     for cell in doc.get("cells", []):
         if cell.get("cell_type") != "markdown":
             continue
         text = src(cell)
-        for m in re.finditer(r"[Nn]otebooks?\s+(\d+)(,\s*([A-Z][A-Za-z ]+?))?(?=\*\*|,|\.|;|:|\)|$)",
-                             text):
-            n, named = int(m.group(1)), (m.group(3) or "").strip()
-            if n not in titles:
+
+        # a stale numeric reference, which this project no longer writes
+        for m in re.finditer(r"\b[Nn]otebooks?\s+(\d+)\b", text):
+            problems.append((path.relative_to(ROOT),
+                             f"refers to {m.group(0)!r} by number. Use the notebook's "
+                             f"title instead, because numbers shift when one is inserted"))
+
+        # a bolded phrase that is nearly a title but does not match one
+        for m in re.finditer(r"\*\*([A-Z][A-Za-z][A-Za-z ,'-]{2,40})\*\*", text):
+            phrase = m.group(1).strip()
+            if phrase in titles:
+                continue
+            near = folded.get(phrase.lower())
+            if near:
                 problems.append((path.relative_to(ROOT),
-                                 f"points at notebook {n}, which this guide does not have"))
-            elif named and named != titles[n]:
-                problems.append((path.relative_to(ROOT),
-                                 f"calls notebook {n} '{named}', the manifest says "
-                                 f"'{titles[n]}'"))
+                                 f"names {phrase!r}, but the notebook is titled {near!r}"))
 
 
 def executable(path: Path, problems: list) -> None:

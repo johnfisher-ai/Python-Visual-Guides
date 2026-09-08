@@ -275,6 +275,24 @@ When a guide draws on the tour, set that guide's `credits` field in `manifest.js
 page renders it as a `Sources` section. CC0 requires no attribution, but the author asks for it
 and it costs nothing.
 
+## Cross-references
+
+**Refer to a notebook by its title, never by its number.** Write **Lists**, not "notebook 7".
+
+Two reasons, and the second is the one that decides it:
+
+- A reader remembers "the Lists notebook". Nobody remembers which number it was.
+- Numbers move. Inserting Regular Expressions at position 5 shifted every notebook after it,
+  and prose does not shift with the manifest. Every numeric reference written before that
+  insertion was silently wrong until it was found and fixed by hand.
+
+The same goes for guides: the **Pandas** guide, not "guide 7".
+
+`check_notebooks.py` rejects any `notebook N` reference outright. It also flags a bolded phrase
+that matches a real title apart from case or spacing. It cannot catch a reference to a notebook
+that never existed, because bold is used for emphasis too and everything bolded would be a
+suspect, so a plausible wrong title still needs a human to notice.
+
 ## Traps
 
 - **`build.sh` shipped with commented placeholders.** The `pages()` function did nothing, so
