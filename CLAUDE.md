@@ -241,6 +241,14 @@ its committed code teaches the reader something false, and nothing but you will 
   Note that "means" is correct when explaining what a message signifies, as in "`Result too
   large` means the number no longer fits". That use should stay.
 
+  A third fault in the same family, found across several notebooks: **informal or British
+  prepositions**. "Only the name straight after `venv`", "tells you straight away", "the right
+  way round". Write "immediately after", "immediately", "in the correct order". The house rule
+  is American English, and it covers idiom as well as spelling.
+
+  Note that "kind of" meaning *a type of* is correct and common here: "a kind of
+  `ArithmeticError`", "what kind of value". Only the hedging sense is a problem.
+
 - **No flourish.** This is a technical guide, and ornament reads as padding. Say what happens.
 
   | Do not write | Write |
