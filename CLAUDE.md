@@ -59,7 +59,7 @@ headings. `tools/check_notebooks.py` enforces it, so a drift fails the build.
 |---|---|---|
 | What you will be able to do | markdown | One or two sentences in the reader's terms. First, because it is read before anything runs. |
 | Setup | **exactly one** code cell | Imports and any data. Runs clean on a fresh runtime. Keep it even when there is nothing to import, so the shape holds. |
-| The idea | markdown, then a short cell | The explanation, then the smallest example that runs. Three lines beats thirty. |
+| The idea | markdown, then a short cell | Orientation first, then the smallest example that runs. See below. |
 | Worked examples | many cells | Where the guide earns its length. One idea per cell, every output committed. Diagrams and plots live here. |
 | Your turn | task cells | Three to six tasks, increasing. Each states the goal and leaves `# your code here`. **Never pre-filled.** |
 | Common errors | broken cells, run | Break it on purpose, run it, leave the traceback in as committed output. Then what it means and the fix. |
@@ -77,6 +77,27 @@ they have no way to find. `check_notebooks.py` fails when the link is missing.
 GitHub's: past a few megabytes it stops rendering a notebook in the browser and a reader sees
 "too big to display" instead of your work. If a notebook crosses that, **split it rather than
 thin it.**
+
+---
+
+### The idea: orient before you demonstrate
+
+`Three lines beats thirty` applies to the **example**, never to the explanation. A reader
+arriving at a notebook does not yet know what the thing is or why it exists, and a definition
+followed straight away by code teaches only syntax.
+
+Before the first code cell, answer three questions in this order:
+
+1. **What problem does this solve?** What would the reader be stuck doing without it. Make it
+   concrete: five thousand survey responses, not "a large collection".
+2. **What is it?** The definition. This is what was already being written, and it stays.
+3. **Where will they meet it?** Two or three recognizable places. Real work, not toy examples.
+
+Then the smallest example that runs.
+
+Roughly 150 to 250 words before that first code cell. Under 100 means the reader was handed a
+definition and told to start typing. `check_notebooks.py` enforces a floor, and a floor is not
+a target: passing it says only that something is there, not that it orients anyone.
 
 ---
 

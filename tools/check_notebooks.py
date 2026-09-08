@@ -21,6 +21,8 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 from tools.manifest import load                                  # noqa: E402
 
+MIN_IDEA_WORDS = 120
+
 PARTS = [
     "What you will be able to do",
     "Setup",
@@ -174,6 +176,34 @@ def executable(path: Path, problems: list) -> None:
                              f"cell {i} is tagged raises-exception but raises nothing"))
 
 
+def orientation(path: Path, problems: list) -> None:
+    """The idea must orient the reader before it shows any code.
+
+    A definition followed straight away by a code cell teaches syntax and
+    nothing else. The reader needs to know what problem the thing solves and
+    where they will meet it before they are asked to run anything.
+
+    This counts words, which is a floor and not a measure of quality. Clearing
+    it proves only that prose is present.
+    """
+    doc = json.loads(path.read_text())
+    cells = doc.get("cells", [])
+    start = next((i for i, c in enumerate(cells)
+                  if src(c).lstrip().startswith("## The idea")), None)
+    if start is None:
+        return                       # the missing-heading case is already reported
+    first_code = next((i for i in range(start, len(cells))
+                       if cells[i].get("cell_type") == "code"), None)
+    if first_code is None:
+        return
+    words = sum(len(src(cells[i]).split()) for i in range(start, first_code))
+    if words < MIN_IDEA_WORDS:
+        problems.append((path.relative_to(ROOT),
+                         f"'The idea' gives {words} words before its first code cell, "
+                         f"under the {MIN_IDEA_WORDS} minimum. Say what problem this "
+                         f"solves and where the reader will meet it, then show code"))
+
+
 def main() -> int:
     _site, guides = load()
     problems: list = []
@@ -185,6 +215,7 @@ def main() -> int:
             check(nb.path, problems)
             cross_refs(nb.path, g, problems)
             executable(nb.path, problems)
+            orientation(nb.path, problems)
             checked += 1
             # A solutions notebook is read on its own, so it needs navigation too.
             # It is exempt from the eight-part shape, which is for teaching notebooks.
