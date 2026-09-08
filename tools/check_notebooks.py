@@ -156,6 +156,20 @@ def cross_refs(path: Path, guide, problems: list) -> None:
                              f"refers to {m.group(0)!r} by number. Use the notebook's "
                              f"title instead, because numbers shift when one is inserted"))
 
+        # position by any other spelling is the same problem: "ten notebooks in",
+        # "the last notebook", "six notebooks ago" all break when order changes.
+        for pattern in (
+            r"\b(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)"
+            r"\s+notebooks?\b",
+            r"\bthe (?:last|previous|preceding|next|following|first) (?:notebook|guide)\b",
+            r"\bnotebooks?\s+(?:ago|back|earlier|later)\b",
+            r"\b(?:first|second|third|fourth|fifth) notebook\b",
+        ):
+            for m in re.finditer(pattern, text, re.I):
+                problems.append((path.relative_to(ROOT),
+                                 f"{m.group(0)!r} describes a notebook by position, which "
+                                 f"breaks when one is inserted or moved. Name it instead"))
+
         # a bolded phrase that is nearly a title but does not match one
         for m in re.finditer(r"\*\*([A-Z][A-Za-z][A-Za-z ,'-]{2,40})\*\*", text):
             phrase = m.group(1).strip()

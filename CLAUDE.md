@@ -292,6 +292,12 @@ the word is missing, because it is.
 
 The same goes for guides: the **Pandas** guide, not "guide 7".
 
+**Position counts as a number even when it is spelled out.** "Ten notebooks in", "the last
+notebook", "six notebooks ago" and "the first notebook" all break the moment one is inserted or
+moved, exactly as a digit would. Name the notebook, or drop the positional framing entirely:
+"every program you have written so far" says what "ten notebooks in" was reaching for and
+survives any reordering.
+
 `check_notebooks.py` rejects any `notebook N` reference outright. It also flags a bolded phrase
 that matches a real title apart from case or spacing. It cannot catch a reference to a notebook
 that never existed, because bold is used for emphasis too and everything bolded would be a
