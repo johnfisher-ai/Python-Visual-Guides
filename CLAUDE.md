@@ -286,6 +286,10 @@ Two reasons, and the second is the one that decides it:
   and prose does not shift with the manifest. Every numeric reference written before that
   insertion was silently wrong until it was found and fixed by hand.
 
+Write it as a **noun phrase**, not a bare title: "the **Lists** notebook showed", never
+"**Lists** showed". A bolded title standing alone as the subject of a sentence reads as though
+the word is missing, because it is.
+
 The same goes for guides: the **Pandas** guide, not "guide 7".
 
 `check_notebooks.py` rejects any `notebook N` reference outright. It also flags a bolded phrase
