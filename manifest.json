@@ -12,7 +12,7 @@
       "band": "Foundations",
       "title": "Python from the Start",
       "subtitle": "The language itself",
-      "status": "building",
+      "status": "published",
       "intro": "The language, from nothing to writing your own modules. Everything else in the library assumes this one.",
       "prerequisites": "None. If you have never written a line of code, start here.",
       "notebooks": [
