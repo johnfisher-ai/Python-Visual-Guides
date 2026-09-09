@@ -359,6 +359,26 @@ When a guide draws on the tour, set that guide's `credits` field in `manifest.js
 page renders it as a `Sources` section. CC0 requires no attribution, but the author asks for it
 and it costs nothing.
 
+### Every import gets a reason
+
+A Setup cell that reads `import locale` tells a reader nothing. Name each import and say what
+the notebook uses it for, as a short list above the cell:
+
+    ## Setup
+
+    Three imports and a folder to work in.
+
+    - `Path` builds paths and reads and writes files with an explicit encoding
+    - `locale` reports which encoding Python would use if you did not name one
+    - `shutil` removes the scratch folder at the end
+
+One line each. Say the job, not the package description: "removes the scratch folder at the end"
+beats "high-level file operations". If an import is used once, say where, so a reader knows it
+is not needed for the parts before that.
+
+An import that appears later, in the section that needs it, is fine and often better. Say so in
+Setup when it happens, as Modules and Imports does for `importlib`.
+
 ### Illustrative absolute paths
 
 A notebook that needs to show an absolute path must not print a real one, because the committed
