@@ -376,6 +376,10 @@ the word is missing, because it is.
 
 The same goes for guides: the **Pandas** guide, not "guide 7".
 
+**Never hardcode how many guides or notebooks there are.** "Ten guides follow", "the ten
+remaining guides", "three bands" all go stale the moment one is added, and the front page is
+the only list that stays current. Write "the guides that follow" and point at the library page.
+
 **Position counts as a number even when it is spelled out.** "Ten notebooks in", "the last
 notebook", "six notebooks ago" and "the first notebook" all break the moment one is inserted or
 moved, exactly as a digit would. Name the notebook, or drop the positional framing entirely:

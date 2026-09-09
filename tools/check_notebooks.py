@@ -170,17 +170,25 @@ def cross_refs(path: Path, guide, problems: list) -> None:
 
         # position by any other spelling is the same problem: "ten notebooks in",
         # "the last notebook", "six notebooks ago" all break when order changes.
-        for pattern in (
-            r"\b(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)"
-            r"\s+notebooks?\b",
+        positional = (
             r"\bthe (?:last|previous|preceding|next|following|first) (?:notebook|guide)\b",
             r"\bnotebooks?\s+(?:ago|back|earlier|later)\b",
             r"\b(?:first|second|third|fourth|fifth) notebook\b",
-        ):
+        )
+        for pattern in positional:
             for m in re.finditer(pattern, text, re.I):
                 problems.append((path.relative_to(ROOT),
                                  f"{m.group(0)!r} describes a notebook by position, which "
                                  f"breaks when one is inserted or moved. Name it instead"))
+
+        # A hardcoded quantity is a different fault with the same cause: it goes
+        # stale as soon as a guide or notebook is added, and nothing updates it.
+        counts = (r"\b(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|\d+)"
+                  r"\s+(?:guides|notebooks|bands)\b")
+        for m in re.finditer(counts, text, re.I):
+            problems.append((path.relative_to(ROOT),
+                             f"{m.group(0)!r} hardcodes how many there are, which goes stale "
+                             f"when one is added. Refer to them without counting"))
 
         # a bolded phrase that is nearly a title but does not match one
         for m in re.finditer(r"\*\*([A-Z][A-Za-z][A-Za-z ,'-]{2,40})\*\*", text):
