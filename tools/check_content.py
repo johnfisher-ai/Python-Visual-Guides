@@ -33,10 +33,12 @@ BANNED = [
     (r"—", "prose em-dash"),
     # An explicit list, not a pattern: "-ise" as a rule would flag rise, precise,
     # promise, advise, exercise. "Analysis" is correct in American English too.
+    # The -ise stems take an explicit ending. A bare \w+ also matches correct American
+    # words built on the same stem: organism, capitalist, optimistic, realistic.
     (r"\b(licence|colour|colours|behaviour|behaviours|favourite|neighbour|neighbours"
      r"|centre|defence|grey|whilst|amongst|practise"
-     r"|organis\w+|recognis\w+|memoris\w+|capitalis\w+|normalis\w+|visualis\w+"
-     r"|optimis\w+|vectoris\w+|summaris\w+|realis\w+|initialis\w+|analyse\w*"
+     r"|(?:organis|recognis|memoris|capitalis|normalis|visualis|optimis|vectoris"
+     r"|summaris|realis|initialis|analys)(?:e|es|ed|ing|ation|ations|er|ers)"
      r"|labelled|labelling|modelled|modelling|travelled|cancelled)\b", "British spelling"),
     (r"\b(lorem ipsum|TODO|FIXME|XXX)\b", "placeholder left in"),
 ]
