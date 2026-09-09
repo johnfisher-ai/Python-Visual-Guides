@@ -359,6 +359,16 @@ When a guide draws on the tour, set that guide's `credits` field in `manifest.js
 page renders it as a `Sources` section. CC0 requires no attribution, but the author asks for it
 and it costs nothing.
 
+### Illustrative absolute paths
+
+A notebook that needs to show an absolute path must not print a real one, because the committed
+output would carry the author's home directory and would differ from what every reader sees.
+
+Build it with `PurePosixPath`, which never touches the disk, and choose a location **outside**
+`/home` and `/Users`. `check_notebooks.py` rejects committed output containing either prefix,
+and it cannot tell an invented `/home/ada/...` from a genuine leak. `/srv/analysis/data.csv`
+reads as illustrative and keeps the check strict.
+
 ## Cross-references
 
 **Refer to a notebook by its title, never by its number.** Write **Lists**, not "notebook 7".
