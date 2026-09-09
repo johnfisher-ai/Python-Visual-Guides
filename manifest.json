@@ -223,7 +223,7 @@
       "band": "Foundations",
       "title": "Object-Oriented Python",
       "subtitle": "Classes, and when not to use them",
-      "status": "planned",
+      "status": "building",
       "intro": "Classes, inheritance, dataclasses, and an honest look at when a function is the better answer.",
       "prerequisites": "Python from the Start.",
       "notebooks": [
