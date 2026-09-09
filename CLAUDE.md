@@ -249,6 +249,15 @@ its committed code teaches the reader something false, and nothing but you will 
   Note that "kind of" meaning *a type of* is correct and common here: "a kind of
   `ArithmeticError`", "what kind of value". Only the hedging sense is a problem.
 
+  **A heading must say what the section teaches**, not how well it does it. "Print well",
+  "Aliasing, properly this time" and "Guard clauses, properly this time" all describe a quality
+  rather than a subject, and leave the reader no wiser about what is inside. Write "Make print
+  say what it printed", "Aliasing: two names on one list", "Guard clauses with an early return".
+
+  The same goes for a claim in the prose: "most people do it badly" is a judgment about the
+  reader. "The usual way is `print(x)`, and with three of those in a loop the output is three
+  unlabeled values" is the fact that motivates the section.
+
 - **No flourish.** This is a technical guide, and ornament reads as padding. Say what happens.
 
   | Do not write | Write |
