@@ -151,7 +151,7 @@
       "band": "Foundations",
       "title": "Files, Paths and Formats",
       "subtitle": "Getting data in and out",
-      "status": "planned",
+      "status": "published",
       "intro": "Reading and writing real files: text, CSV, JSON, Excel, and the encodings that break them.",
       "prerequisites": "Python from the Start.",
       "notebooks": [

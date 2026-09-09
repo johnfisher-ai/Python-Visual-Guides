@@ -71,9 +71,9 @@ def build():
 
   <section>
     <h2>The guides</h2>
-    <p>The first five teach the language itself, and are best worked through in order: each one
-    assumes the one before it. The next five cover the libraries you will reach for once you can
-    write Python. The last puts everything to work on real problems.</p>
+    <p><b>Foundations</b> teaches the language itself, and is best worked through in order:
+    each guide depends on the one before it. <b>Libraries</b> covers the packages you will reach
+    for once you can write Python. <b>Projects</b> puts everything to work on real problems.</p>
     <div class="scroll">
       <table class="guides"><tbody>{band_rows(guides)}</tbody></table>
     </div>
