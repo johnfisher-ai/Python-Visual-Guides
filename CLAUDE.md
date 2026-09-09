@@ -366,6 +366,27 @@ is the only place a reader learns to read one, so it has to be enough on its own
 notebook: the parenthesis form, single use, and the memory difference measured against a
 list. `yield` and generator functions are a step beyond this guide and remain out.
 
+**Two more gaps, found while planning Object-Oriented Python, and both the same shape as
+regex: the reader is taught to use a thing and never to write one.**
+
+`with` is taught twice, in **Files and Paths** and again in **Reading and Writing Text**, and
+`for` over an iterable is taught in **Loops**. Nothing anywhere taught `__enter__`, `__exit__`,
+`__iter__` or `__next__`. **Context Managers and Iterators** was inserted after **Dunder
+Methods** to carry them. It is deliberately not called Protocols, because **Interfaces** covers
+`typing.Protocol` and two notebooks called the same thing would be worse than the gap.
+
+Decorators were worse: no notebook mentioned one, and none contained an `@` line, yet
+**Properties**, **Class and Static Methods**, **Dataclasses** and **Interfaces** all require
+one, as do **Fixtures** and **Parametrize** in the **Testing and Packaging** guide. The
+**Dataclasses** blurb used the word "decorator" as though it had been defined. **Decorators**
+was inserted immediately before **Properties**, its first consumer.
+
+Guide 1 was the arguable home, since **Functions** teaches that a function is a value and
+teaches `*args`, and **Scope** teaches closures, which is the whole of a decorator. It was
+placed in Object-Oriented Python anyway: the reader needs it there, not three guides earlier,
+and every decorator they meet first is one of this guide's. That leaves an off-theme notebook in
+an OOP guide, which is the price of teaching it where it is needed.
+
 ### Attribution
 
 When a guide draws on the tour, set that guide's `credits` field in `manifest.json`. The guide

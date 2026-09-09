@@ -224,7 +224,7 @@
       "title": "Object-Oriented Python",
       "subtitle": "Classes, and when not to use them",
       "status": "building",
-      "intro": "Classes, inheritance, dataclasses, and an honest look at when a function is the better answer.",
+      "intro": "Classes, inheritance, dataclasses, decorators, and an honest look at when a function is the better answer.",
       "prerequisites": "Python from the Start.",
       "notebooks": [
         {
@@ -253,48 +253,60 @@
         },
         {
           "n": 5,
+          "slug": "context-managers-and-iterators",
+          "title": "Context Managers and Iterators",
+          "blurb": "Writing the objects behind with and for"
+        },
+        {
+          "n": 6,
+          "slug": "decorators",
+          "title": "Decorators",
+          "blurb": "What the @ line does, and writing one of your own"
+        },
+        {
+          "n": 7,
           "slug": "properties",
           "title": "Properties",
           "blurb": "Computed attributes, and validation without a getter for everything"
         },
         {
-          "n": 6,
+          "n": 8,
           "slug": "class-and-static-methods",
           "title": "Class and Static Methods",
           "blurb": "Alternative constructors, and methods that need no instance"
         },
         {
-          "n": 7,
+          "n": 9,
           "slug": "inheritance",
           "title": "Inheritance",
           "blurb": "Subclassing, super(), and the method resolution order"
         },
         {
-          "n": 8,
+          "n": 10,
           "slug": "composition-over-inheritance",
           "title": "Composition over Inheritance",
           "blurb": "The case against the hierarchy you were about to build"
         },
         {
-          "n": 9,
+          "n": 11,
           "slug": "dataclasses",
           "title": "Dataclasses",
           "blurb": "Most of the above, for free, in one decorator"
         },
         {
-          "n": 10,
+          "n": 12,
           "slug": "interfaces",
           "title": "Interfaces",
           "blurb": "Abstract base classes, Protocols, and declaring what you require"
         },
         {
-          "n": 11,
+          "n": 13,
           "slug": "exceptions-as-classes",
           "title": "Exceptions as Classes",
           "blurb": "Your own exception hierarchy, and what to put in it"
         },
         {
-          "n": 12,
+          "n": 14,
           "slug": "a-worked-design",
           "title": "A Worked Design",
           "blurb": "One problem, solved with functions and then with classes, side by side"
