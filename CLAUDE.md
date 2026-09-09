@@ -258,6 +258,14 @@ its committed code teaches the reader something false, and nothing but you will 
   reader. "The usual way is `print(x)`, and with three of those in a loop the output is three
   unlabeled values" is the fact that motivates the section.
 
+  **Say what the code does, not how it feels about it.** "The module declines" leaves a reader
+  guessing whether it skipped the value, returned `None`, or stopped. Name the behavior:
+  "`json.dumps` raises `TypeError`". The same applies to "complains", "objects" and "balks".
+
+  "Refuses to guess" and "gave up" are fine when the actual exception is shown in the cell
+  beside them, because then the vague word is commentary on a fact the reader can already see,
+  not a substitute for it.
+
 - **No flourish.** This is a technical guide, and ornament reads as padding. Say what happens.
 
   | Do not write | Write |
