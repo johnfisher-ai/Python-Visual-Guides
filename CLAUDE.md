@@ -266,6 +266,11 @@ its committed code teaches the reader something false, and nothing but you will 
   beside them, because then the vague word is commentary on a fact the reader can already see,
   not a substitute for it.
 
+  The same test applies to a capability statement. "Get at more than one sheet" does not say
+  what the reader will do; "reach any sheet in a workbook by name rather than only the first"
+  does. Phrasal verbs are fine when precise, and "carries on with wrong data", "the two pictures
+  come apart" and "reach into a string" all name something specific.
+
 - **No flourish.** This is a technical guide, and ornament reads as padding. Say what happens.
 
   | Do not write | Write |
