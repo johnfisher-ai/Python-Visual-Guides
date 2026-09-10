@@ -387,6 +387,14 @@ placed in Object-Oriented Python anyway: the reader needs it there, not three gu
 and every decorator they meet first is one of this guide's. That leaves an off-theme notebook in
 an OOP guide, which is the price of teaching it where it is needed.
 
+**`yield` found its home in Context Managers and Iterators.** The Comprehensions note above
+kept `yield` out of Python from the Start, and nothing else in the plan picked it up: no
+notebook contained the word, and the only "generator" in the manifest is NumPy's random one.
+Writing `__iter__` is where it belongs, because a method containing `yield` is the idiomatic
+way to write one. That notebook teaches the explicit `__next__` and `StopIteration` protocol
+first, so the reader knows what `for` actually does, and then `yield` as the short form.
+Generator functions used outside a class remain out of scope.
+
 ### Attribution
 
 When a guide draws on the tour, set that guide's `credits` field in `manifest.json`. The guide
