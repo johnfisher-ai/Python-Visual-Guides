@@ -160,7 +160,12 @@ def cross_refs(path: Path, guide, problems: list) -> None:
     for cell in doc.get("cells", []):
         if cell.get("cell_type") != "markdown":
             continue
-        text = src(cell)
+        # Prose is wrapped by hand, so a title or a phrase can straddle a line
+        # break. Every pattern below matches literal spaces, and without this a
+        # wrapped "**Tuples and\nUnpacking**" or "the next\nnotebook" slipped
+        # through unseen, which meant a misspelled title wrapped the same way would
+        # have too. Markdown treats a single line break as a space, so this is safe.
+        text = re.sub(r"\s+", " ", src(cell))
 
         # a stale numeric reference, which this project no longer writes
         for m in re.finditer(r"\b[Nn]otebooks?\s+(\d+)\b", text):
