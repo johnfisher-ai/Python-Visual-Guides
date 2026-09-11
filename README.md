@@ -10,9 +10,10 @@ live in the notebook. These pages exist only to get you to the right one.
 
 ## How to use it
 
-Every notebook opens in Google Colab and runs with no installation. Read it on GitHub first
-if you prefer, then open it and change something. The exercises are the point, and each
-notebook has a separate solutions file so nothing is spoiled by sitting next to the question.
+Every notebook opens in Google Colab and runs with no installation. If you prefer, read a
+notebook on GitHub first, then open it in Colab and change something. The exercises are the
+point, and each notebook has a separate solutions file so nothing is spoiled by sitting next to
+the question.
 
 ## The guides
 

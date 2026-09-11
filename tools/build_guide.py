@@ -21,6 +21,10 @@ STATUS = {
     "published": ("Complete", "st-done"),
 }
 
+# The labels on each notebook's links. The sentence over the table names them,
+# so both read from here and cannot disagree.
+RUN, READ, SOLUTIONS = "Open in Colab", "Read", "Solutions"
+
 
 def rows(g):
     if not any(nb.exists for nb in g.notebooks):
@@ -34,13 +38,13 @@ def rows(g):
         if nb.exists:
             colab = page.COLAB + f"notebooks/{g.slug}/{nb.filename}"
             read = f"{page.REPO}/blob/main/notebooks/{g.slug}/{nb.filename}"
-            go = (f'<a class="run" href="{colab}">Open in Colab</a>'
-                  f'<a class="read" href="{read}">Read</a>')
+            go = (f'<a class="run" href="{colab}">{RUN}</a>'
+                  f'<a class="read" href="{read}">{READ}</a>')
             # Solutions are linked, but quietly: the reader should meet the
             # exercise before the answer.
             if nb.solutions.exists():
                 sol = page.COLAB + f"notebooks/{g.slug}/{nb.solutions.name}"
-                go += f'<a class="sol" href="{sol}">Solutions</a>'
+                go += f'<a class="sol" href="{sol}">{SOLUTIONS}</a>'
             cls = ""
         else:
             go, cls = "not yet written", ' class="soon"'
@@ -48,6 +52,15 @@ def rows(g):
                    f'<td class="t"><b>{e(nb.title)}</b><span>{e(nb.blurb)}</span></td>'
                    f'<td class="go">{go}</td></tr>')
     return "".join(out)
+
+
+def how_to_open(g):
+    """What the links in the table do, by the names the reader sees on them."""
+    if not any(nb.exists for nb in g.notebooks):
+        return "None of these notebooks is written yet. This is the plan, in reading order."
+    return (f"<b>{RUN}</b> runs a notebook in your browser, and <b>{READ}</b> shows it on "
+            f"GitHub without running it. Every notebook runs on its own, and the answers to its "
+            f"exercises are in a separate notebook, linked as <b>{SOLUTIONS}</b>.")
 
 
 def build_one(site, g):
@@ -73,8 +86,7 @@ def build_one(site, g):
 
   <section>
     <h2>The notebooks</h2>
-    <p>Open one in Colab to run it, or read it on GitHub first. Each notebook is
-    self-contained, and each has a separate solutions file for its exercises.</p>
+    <p>{how_to_open(g)}</p>
     <div class="scroll">
       <table class="nbs"><tbody>{rows(g)}</tbody></table>
     </div>

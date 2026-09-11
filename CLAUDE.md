@@ -277,6 +277,18 @@ its committed code teaches the reader something false, and nothing but you will 
   `check_content.py` rejects "character for character". "Character by character" is still correct
   where the subject really is text, as when two strings are compared one character at a time.
 
+  **Name the thing, and name it once.** "Open one in Colab to run it", under the heading "The
+  notebooks", made the reader look back to find out what "one" was; "**Open in Colab** runs a
+  notebook" does not. A repeated bare *each* has the same fault: "Each notebook is
+  self-contained, and each has a separate solutions file" says *each* twice about one subject.
+  Give the subject once and join the predicates: "Each stage is one function, small enough to
+  read on a single screen". `check_content.py` rejects the *each ..., and each has* shape. A
+  vague *one* has no pattern a check can find, so reread for it. It is fine when its noun is in
+  the same sentence, as in "Three absences, and each one causes a distinct problem".
+
+  The Your turn opening follows the same rule in every notebook: "Five tasks. Write your answer
+  in the cell under each task and run it." and then "Try a task before you look at its answer."
+
 - **No flourish.** This is a technical guide, and ornament reads as padding. Say what happens.
 
   | Do not write | Write |

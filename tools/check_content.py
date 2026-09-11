@@ -43,6 +43,11 @@ BANNED = [
     (r"\b(lorem ipsum|TODO|FIXME|XXX)\b", "placeholder left in"),
     # Describes source code as typed text. Say the code is the same, and name what differs.
     (r"\bcharacter[- ]for[- ]character\b", "describes code as typed text; say the code is the same"),
+    # Says "each" twice about one subject, as in "Each notebook is self-contained, and each has
+    # a solutions file". Give the subject once and join the predicates.
+    (r"\beach\b[^.!?]{0,120}?,? and each (?:is|are|has|have|had|should|can|could|will|would"
+     r"|was|were|does|did|must|may|might|hands|takes|returns|gets|runs|needs|holds)\b",
+     "says each twice about one subject; name it once and join the predicates"),
 ]
 
 # Rules for the pages only. This one exists because documentation kept narrating
