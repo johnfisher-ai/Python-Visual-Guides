@@ -477,3 +477,12 @@ suspect, so a plausible wrong title still needs a human to notice.
   checker rule fail on a notebook that was correct.
 - **The nav is not the guide list.** Eleven guides across the top would wrap to three lines.
   Nav is the library plus the repository; the pager walks the guides.
+- **Never let a cell recurse without bound, even inside `try`.** The Jupyter kernel handles runaway
+  recursion inconsistently. In **Dunder Methods**, a `__repr__` that formats itself raised a
+  catchable `RecursionError`, but its message reports how many kilobytes of stack were used, which
+  differs between machines, so that notebook catches it and prints a fixed line. In
+  **Properties**, a setter that assigns to its own property did not raise at all under nbconvert:
+  the C stack overflowed first and the kernel died (`DeadKernelError`), which no `except` can
+  survive, and which would fail CI and wipe a reader's Colab session. Plain Python raised a clean
+  `RecursionError` for the same code, so testing it outside a notebook proves nothing. To teach
+  runaway recursion, make the cell count its own calls and stop itself, as Properties does.
