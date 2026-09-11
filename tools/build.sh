@@ -30,6 +30,7 @@ pages () {
 echo; echo "==> pages, pass 1 of 2"; pages
 echo; echo "==> pages, pass 2 of 2 (resolves cross-links)"; pages
 run "notebook navigation"        $PY tools/inject_nav.py
+run "clean shell output"         $PY tools/clean_outputs.py
 run "README guide table"         $PY tools/build_readme.py
 run "validate the manifest"      $PY tools/manifest.py
 run "check every link resolves"  $PY tools/check_links.py

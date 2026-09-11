@@ -15,10 +15,16 @@ Endpoints:
     GET /                  a short HTML page, the kind a person would read
     GET /stations          every station, as a list of {"id", "name"}
     GET /stations/<id>     one station, or 404 if no station has that id
+    GET /openapi.json      this API's own documentation, as an OpenAPI document
 
 The stations are reference data, and read-only. Any other method on these endpoints gets
 405 Method Not Allowed, with an Allow header naming the method that is allowed. Endpoints
 added later for POST, PUT and DELETE use other paths, so what these return never changes.
+
+To use a tool such as Postman, which cannot reach a server running inside Colab, run this
+file on your own computer instead:
+
+    python practice_api.py
 
 Two details differ from a real server, both so that the output printed in a notebook matches
 what you see when you run it: the Date header always reports the same moment, and the Server
@@ -50,6 +56,54 @@ HOME = """<!doctype html>
 """
 
 
+def openapi(base):
+    """This API's documentation, as an OpenAPI 3.1 document, for a server at `base`."""
+    def ref(name):
+        return {"$ref": f"#/components/schemas/{name}"}
+
+    def json_response(description, schema):
+        return {"description": description, "content": {"application/json": {"schema": schema}}}
+
+    return {
+        "openapi": "3.1.0",
+        "info": {"title": "Practice API", "version": "1.0",
+                 "description": "Weather stations, for the APIs and JSON guide."},
+        "servers": [{"url": base}],
+        "paths": {
+            "/stations": {"get": {
+                "operationId": "listStations",
+                "summary": "List every station",
+                "responses": {
+                    "200": json_response("A summary of every station",
+                                         {"type": "array", "items": ref("StationSummary")}),
+                },
+            }},
+            "/stations/{id}": {"get": {
+                "operationId": "getStation",
+                "summary": "Get one station",
+                "parameters": [{"name": "id", "in": "path", "required": True,
+                                "description": "The station's id, in lowercase",
+                                "schema": {"type": "string"}, "example": "tromso"}],
+                "responses": {
+                    "200": json_response("The station", ref("Station")),
+                    "404": json_response("No station has that id", ref("Error")),
+                },
+            }},
+        },
+        "components": {"schemas": {
+            "StationSummary": {"type": "object", "required": ["id", "name"],
+                               "properties": {"id": {"type": "string"},
+                                              "name": {"type": "string"}}},
+            "Station": {"type": "object", "required": ["id", "name", "latitude", "longitude"],
+                        "properties": {"id": {"type": "string"}, "name": {"type": "string"},
+                                       "latitude": {"type": "number"},
+                                       "longitude": {"type": "number"}}},
+            "Error": {"type": "object", "required": ["error"],
+                      "properties": {"error": {"type": "string"}}},
+        }},
+    }
+
+
 class Handler(BaseHTTPRequestHandler):
     """Answers requests. The server creates a Handler for every connection it accepts."""
 
@@ -73,6 +127,9 @@ class Handler(BaseHTTPRequestHandler):
         path, parts = self.route()
         if not parts:
             self.reply(200, HOME, "text/html; charset=utf-8")
+        elif parts == ["openapi.json"]:
+            host, port = self.server.server_address[:2]
+            self.reply_json(200, openapi(f"http://{host}:{port}"))
         elif parts == ["stations"]:
             self.reply_json(200, [{"id": s["id"], "name": s["name"]} for s in STATIONS.values()])
         elif len(parts) == 2 and parts[0] == "stations":
@@ -87,7 +144,7 @@ class Handler(BaseHTTPRequestHandler):
         """Every method but GET. The endpoints above are read-only, and nothing else exists yet."""
         self.discard_body()
         path, parts = self.route()
-        if not parts or (parts[0] == "stations" and len(parts) <= 2):
+        if not parts or parts == ["openapi.json"] or (parts[0] == "stations" and len(parts) <= 2):
             self.reply_json(405, {"error": f"{self.command} not allowed: the stations are read-only"},
                             Allow="GET")
         else:
@@ -138,3 +195,11 @@ def start():
         threading.Thread(target=_server.serve_forever, daemon=True).start()
     host, port = _server.server_address[:2]
     return f"http://{host}:{port}"
+
+
+if __name__ == "__main__":
+    print(f"The practice API is running at {start()}. Press Ctrl+C to stop it.")
+    try:
+        threading.Event().wait()
+    except KeyboardInterrupt:
+        print("Stopped.")

@@ -222,6 +222,15 @@ def executable(path: Path, problems: list) -> None:
             problems.append((path.relative_to(ROOT),
                              f"cell {i} has no id, which nbformat 4.5 requires"))
         for out in cell.get("outputs", []):
+            # A shell command runs in a pseudo-terminal, so its output carries a carriage
+            # return on every line and, from some tools, escape codes for bold and color.
+            if out.get("output_type") == "stream":
+                stream = "".join(out.get("text", []))
+                if "\r" in stream or "\x1b[" in stream:
+                    problems.append((path.relative_to(ROOT),
+                                     f"cell {i} has terminal control characters in its output, "
+                                     f"from a shell command. tools/clean_outputs.py removes "
+                                     f"them, and the build runs it"))
             # Stream output, and also the message and frames of a traceback: an
             # exception naming a temporary file carries the author's home directory
             # into the committed output just as a print does.

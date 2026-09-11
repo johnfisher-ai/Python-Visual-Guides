@@ -38,6 +38,9 @@ checkout, including CI, without the raw material ever being present.
 - `check_content.py` — asserts the house rules, and any claim that must appear on every
   page, against tag-stripped and entity-decoded text. Put required strings in `page.py` and
   reference them, never as literals here.
+- `clean_outputs.py` removes the carriage returns and terminal escape codes that `!` shell
+  commands leave in a notebook's stream output. The build runs it after navigation, and
+  `check_notebooks.py` fails on any stream output it has not cleaned.
 - `paths.py` — every location, plus `require_raw()`. Import from here; do not hard-code paths.
 - `chart.py` — SVG chart primitives and the validated colour palette.
 - `redact_pdf.py` — removes text objects from a PDF and paints the area black. A black

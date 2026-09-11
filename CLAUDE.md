@@ -516,6 +516,29 @@ CC BY 4.0, from the ERA5 reanalysis. Generated using Copernicus Climate Change S
 **`Connection refused` differs by operating system**: `[Errno 61]` on macOS, where outputs are
 recorded, and `[Errno 111]` on Linux, which Colab and CI run. A notebook that commits it says so.
 
+**Swagger's Petstore** (`https://petstore3.swagger.io`) is the public API for Postman's OpenAPI
+import and for interactive documentation, because Open-Meteo publishes no OpenAPI document. Its
+data changes as visitors add pets, so no committed output reads it.
+
+**Never print a real API's raw body.** Open-Meteo returned the same error body with its keys in a
+different order on two requests. Parse it and print fields by name.
+
+### Shell commands in a notebook
+
+Exploring an API is the first notebook with `!` lines. IPython runs them in a pseudo-terminal, so
+their output arrives with a carriage return before every line feed, and tools that detect a
+terminal add escape codes: curl bolds header names, and Python 3.14's `json.tool` colors its output
+where Colab's 3.12 does not. `tools/clean_outputs.py`, run by the build, strips both from stream
+output, and `check_notebooks.py` fails on any it missed. Tracebacks keep their color.
+
+- `{BASE}` in a `!` line is IPython's expansion of a Python expression. If any `{...}` in the line
+  fails to evaluate, IPython expands nothing, so curl's own `%{http_code}` must be written
+  `%{{http_code}}` in a line that also uses a Python variable. A line with no Python variable can
+  keep curl's single braces. Exploring an API commits the mistake as a Common error.
+- Pass curl `-s` whenever its output is piped or saved, or it prints a progress meter.
+- A failed shell command raises nothing: the cell finishes and the error is only printed. Never tag
+  such a cell `raises-exception`; there is no exception to expect.
+
 ## Cross-references
 
 **Refer to a notebook by its title, never by its number.** Write **Lists**, not "notebook 7".
