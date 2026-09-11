@@ -271,6 +271,12 @@ its committed code teaches the reader something false, and nothing but you will 
   does. Phrasal verbs are fine when precise, and "carries on with wrong data", "the two pictures
   come apart" and "reach into a string" all name something specific.
 
+  **Describe code in the terms of code.** "The same five steps, character for character" treats
+  source code as typed text, and reads oddly. Say what is true of the code: "the same five steps;
+  only the class name on the first line is different", or "the same code as before".
+  `check_content.py` rejects "character for character". "Character by character" is still correct
+  where the subject really is text, as when two strings are compared one character at a time.
+
 - **No flourish.** This is a technical guide, and ornament reads as padding. Say what happens.
 
   | Do not write | Write |

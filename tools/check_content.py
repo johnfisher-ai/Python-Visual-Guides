@@ -41,6 +41,8 @@ BANNED = [
      r"|summaris|realis|initialis|analys)(?:e|es|ed|ing|ation|ations|er|ers)"
      r"|labelled|labelling|modelled|modelling|travelled|cancelled)\b", "British spelling"),
     (r"\b(lorem ipsum|TODO|FIXME|XXX)\b", "placeholder left in"),
+    # Describes source code as typed text. Say the code is the same, and name what differs.
+    (r"\bcharacter[- ]for[- ]character\b", "describes code as typed text; say the code is the same"),
 ]
 
 # Rules for the pages only. This one exists because documentation kept narrating
