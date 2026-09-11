@@ -320,81 +320,117 @@
       "title": "APIs and JSON",
       "subtitle": "Talking to the rest of the internet",
       "status": "building",
-      "intro": "HTTP, requests, authentication, pagination and rate limits, ending in a client you would reuse.",
-      "prerequisites": "Python from the Start, and Files, Paths and Formats.",
+      "intro": "HTTP from both sides: calling APIs and validating what comes back, then building, documenting and hosting an API of your own.",
+      "prerequisites": "Python from the Start; Files, Paths and Formats; and Object-Oriented Python.",
       "credits": "The real-API examples use weather data from <a href=\"https://open-meteo.com/\">Open-Meteo.com</a>, offered under a <a href=\"https://creativecommons.org/licenses/by/4.0/\">CC BY 4.0</a> license and drawn from the ERA5 reanalysis. Generated using Copernicus Climate Change Service information 2026. Everything else these notebooks request comes from a practice API written for this guide.",
       "notebooks": [
         {
           "n": 1,
           "slug": "what-an-api-is",
           "title": "What an API Is",
-          "blurb": "Request, response, and the shape of an HTTP conversation"
+          "blurb": "Requests, responses, methods, parameters and status codes: the vocabulary of every API"
         },
         {
           "n": 2,
+          "slug": "exploring-an-api",
+          "title": "Exploring an API",
+          "blurb": "Postman, curl and interactive docs, and reading an API's documentation before writing code"
+        },
+        {
+          "n": 3,
           "slug": "your-first-request",
           "title": "Your First Request",
           "blurb": "requests.get, and everything the response object carries"
         },
         {
-          "n": 3,
+          "n": 4,
           "slug": "status-codes",
           "title": "Status Codes",
           "blurb": "200, 404, 429, 500, and what your code should do about each"
         },
         {
-          "n": 4,
+          "n": 5,
           "slug": "query-parameters",
           "title": "Query Parameters",
           "blurb": "The params argument, encoding, and building a URL correctly"
         },
         {
-          "n": 5,
+          "n": 6,
           "slug": "json-in-a-response",
           "title": "JSON in a Response",
           "blurb": "Parsing, nested structures, and reaching the field you want"
         },
         {
-          "n": 6,
+          "n": 7,
+          "slug": "schemas-and-validation",
+          "title": "Schemas and Validation",
+          "blurb": "JSON Schema, Pydantic, and a clear error when a response changes shape"
+        },
+        {
+          "n": 8,
           "slug": "headers-and-content-types",
           "title": "Headers and Content Types",
           "blurb": "What you sent, what came back, and why it matters"
         },
         {
-          "n": 7,
+          "n": 9,
           "slug": "authentication",
           "title": "Authentication",
           "blurb": "API keys, bearer tokens, and never committing either"
         },
         {
-          "n": 8,
+          "n": 10,
           "slug": "pagination",
           "title": "Pagination",
           "blurb": "Cursors, page numbers, and a loop that terminates"
         },
         {
-          "n": 9,
+          "n": 11,
           "slug": "rate-limits",
           "title": "Rate Limits",
           "blurb": "429, backoff, and being a good citizen of someone else's server"
         },
         {
-          "n": 10,
+          "n": 12,
           "slug": "errors-and-retries",
           "title": "Errors and Retries",
           "blurb": "Timeouts, connection failures, and what is worth retrying"
         },
         {
-          "n": 11,
+          "n": 13,
           "slug": "sending-data",
           "title": "Sending Data",
           "blurb": "POST, PUT, DELETE, and what idempotent means in practice"
         },
         {
-          "n": 12,
+          "n": 14,
           "slug": "a-real-client",
           "title": "A Real Client",
           "blurb": "One API wrapped in a small, testable module you would reuse"
+        },
+        {
+          "n": 15,
+          "slug": "your-first-api-server",
+          "title": "Your First API Server",
+          "blurb": "FastAPI, a route, and the documentation it writes for you"
+        },
+        {
+          "n": 16,
+          "slug": "validating-requests",
+          "title": "Validating Requests",
+          "blurb": "Pydantic models on the server, and a 422 with a reason for bad input"
+        },
+        {
+          "n": 17,
+          "slug": "a-complete-api",
+          "title": "A Complete API",
+          "blurb": "The practice API rebuilt in FastAPI, with every method and the status codes a server chooses"
+        },
+        {
+          "n": 18,
+          "slug": "hosting-an-api",
+          "title": "Hosting an API",
+          "blurb": "From Colab to a public URL: a start command, secrets, and a free host"
         }
       ]
     },

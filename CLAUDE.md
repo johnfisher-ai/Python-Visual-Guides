@@ -419,6 +419,30 @@ way to write one. That notebook teaches the explicit `__next__` and `StopIterati
 first, so the reader knows what `for` actually does, and then `yield` as the short form.
 Generator functions used outside a class remain out of scope.
 
+**APIs and JSON grew from twelve notebooks to eighteen at review, before its second was
+written.** The author asked for the tools people use to explore an API, for schemas, and for the
+server side:
+
+- **Exploring an API**, immediately after What an API Is: Postman, curl, browser developer tools
+  and interactive documentation, and reading an OpenAPI document. A notebook rather than a section
+  of What an API Is, whose idea already runs past 1,600 words, and because curl and an OpenAPI
+  document can run in a cell. Postman cannot reach the practice API, whose `127.0.0.1` is Colab's
+  machine, so Postman walkthroughs use a public API such as Open-Meteo.
+- **Schemas and Validation**, after JSON in a Response: JSON Schema and Pydantic, and validating
+  what arrives. Placed there so A Real Client can validate the responses it receives; the server
+  section reuses the same models to validate requests. Before this, nothing in the plan checked a
+  body's shape.
+- **Your First API Server**, **Validating Requests**, **A Complete API** and **Hosting an API**,
+  at the end. FastAPI, because its request and response models are schemas and it publishes
+  OpenAPI documentation from them; Flask needs add-ons for both. A Complete API rebuilds the
+  practice API, which What an API Is promises. Hosting uses one free host as the worked example,
+  chosen when that notebook is written, because free tiers change; the deploy happens on the
+  host's website, so CI runs only the cells that build and check the app.
+
+The guide's prerequisites now include Object-Oriented Python: Pydantic models are classes and
+FastAPI routes are decorators. Pin `requests`, `jsonschema`, `pydantic`, `fastapi` and `uvicorn`
+in `requirements.txt` in the notebook that first imports each.
+
 ### Attribution
 
 When a guide draws on the tour, set that guide's `credits` field in `manifest.json`. The guide
