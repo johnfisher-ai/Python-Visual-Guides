@@ -319,9 +319,10 @@
       "band": "Foundations",
       "title": "APIs and JSON",
       "subtitle": "Talking to the rest of the internet",
-      "status": "planned",
+      "status": "building",
       "intro": "HTTP, requests, authentication, pagination and rate limits, ending in a client you would reuse.",
       "prerequisites": "Python from the Start, and Files, Paths and Formats.",
+      "credits": "The real-API examples use weather data from <a href=\"https://open-meteo.com/\">Open-Meteo.com</a>, offered under a <a href=\"https://creativecommons.org/licenses/by/4.0/\">CC BY 4.0</a> license and drawn from the ERA5 reanalysis. Generated using Copernicus Climate Change Service information 2026. Everything else these notebooks request comes from a practice API written for this guide.",
       "notebooks": [
         {
           "n": 1,

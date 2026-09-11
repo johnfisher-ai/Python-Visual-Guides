@@ -33,6 +33,8 @@ checkout, including CI, without the raw material ever being present.
   `github.com/blob` and Pages URL that points back into this repository. Those last ones
   are checked against the checkout with no network call, which is the only way to catch a
   dead Colab button: the page loads fine and the notebook 404s when a reader clicks it.
+  Self-links inside notebooks are checked the same way, including a file a Setup cell downloads
+  in Colab, a path CI never exercises because it runs beside the file.
 - `check_content.py` — asserts the house rules, and any claim that must appear on every
   page, against tag-stripped and entity-decoded text. Put required strings in `page.py` and
   reference them, never as literals here.

@@ -449,6 +449,40 @@ Build it with `PurePosixPath`, which never touches the disk, and choose a locati
 and it cannot tell an invented `/home/ada/...` from a genuine leak. `/srv/analysis/data.csv`
 reads as illustrative and keeps the check strict.
 
+## The practice API and real services
+
+Every notebook in **APIs and JSON** makes HTTP requests, and CI re-runs them without
+`--allow-errors`. Most requests go to a practice API, `notebooks/apis-and-json/practice_api.py`,
+standard library only, which the Setup cell starts inside the notebook's own process on
+`127.0.0.1`. In Colab it runs on Colab's machine, so nothing touches the reader's computer. There
+is only this mode: Colab, local Jupyter and CI all behave the same.
+
+- **Setup fetches it when it is missing.** Under CI and in a checkout, the kernel runs beside the
+  file, so `import practice_api` finds it. Colab starts with only the notebook, so Setup downloads
+  it from `main` first. CI never exercises that download, which is why `check_links.py` resolves
+  every self-link inside notebooks, this URL included. Keep the URL in one string literal, or the
+  check sees only its first half.
+- **Deterministic by construction.** The `Date` header is fixed, the `Server` header names no
+  Python version, and the port is the first free one from 8765, so committed output matches what
+  every reader sees.
+- **Failures are made here, on purpose.** 404s, 429s, 500s, slow and flaky endpoints, keys and
+  pagination belong on the practice API, never on somebody else's server.
+- **`start()` is idempotent** within a process, so rerunning Setup is safe. A second process moves
+  to the next free port.
+- **Grow it; do not change what exists.** Later notebooks add endpoints. Changing an existing
+  response changes the committed output of every notebook that printed it.
+
+**Real services** appear where the real internet is the point, and print only stable fields.
+Open-Meteo's archive is keyless and free for non-commercial use, under 10,000 calls a day. Always
+pass `models=era5`: the default model silently returned different values in testing, while ERA5
+returned the same values on every fetch. Use dates long in the past. The data is CC BY 4.0 and ERA5
+is Copernicus data, so every notebook that prints it carries: "Weather data by Open-Meteo.com, under
+CC BY 4.0, from the ERA5 reanalysis. Generated using Copernicus Climate Change Service information
+2026." The guide's `credits` says the same.
+
+**`Connection refused` differs by operating system**: `[Errno 61]` on macOS, where outputs are
+recorded, and `[Errno 111]` on Linux, which Colab and CI run. A notebook that commits it says so.
+
 ## Cross-references
 
 **Refer to a notebook by its title, never by its number.** Write **Lists**, not "notebook 7".

@@ -24,7 +24,7 @@ the question.
 | 1 | Python from the Start | 21 | Complete |
 | 2 | Files, Paths and Formats | 10 | Complete |
 | 3 | Object-Oriented Python | 14 | Complete |
-| 4 | APIs and JSON | 12 | Planned |
+| 4 | **APIs and JSON** | 12 | Being written |
 | 5 | Testing and Packaging | 10 | Planned |
 | 6 | NumPy, Deep Dive | 14 | Planned |
 | 7 | Pandas, Deep Dive | 18 | Planned |
