@@ -289,6 +289,12 @@ its committed code teaches the reader something false, and nothing but you will 
   The Your turn opening follows the same rule in every notebook: "Five tasks. Write your answer
   in the cell under each task and run it." and then "Try a task before you look at its answer."
 
+  **Use the subject's own vocabulary.** An HTTP exchange is a request and a response. "Three
+  lines and an empty line went out" describes it as typed text, the same fault as "character for
+  character". Write "the client sent a `GET` request with two headers and no body, and the server
+  returned `200 OK`". The blank line that ends the headers is still the right name for that part
+  of a message, and belongs where a message's layout is being explained.
+
 - **No flourish.** This is a technical guide, and ornament reads as padding. Say what happens.
 
   | Do not write | Write |
@@ -471,6 +477,9 @@ is only this mode: Colab, local Jupyter and CI all behave the same.
   to the next free port.
 - **Grow it; do not change what exists.** Later notebooks add endpoints. Changing an existing
   response changes the committed output of every notebook that printed it.
+- **The stations are read-only, permanently.** `GET` works on `/`, `/stations` and
+  `/stations/{id}`; every other method there responds `405` with `Allow: GET`, which What an API
+  Is commits. Writable resources for **Sending Data** go at new paths.
 
 **Real services** appear where the real internet is the point, and print only stable fields.
 Open-Meteo's archive is keyless and free for non-commercial use, under 10,000 calls a day. Always

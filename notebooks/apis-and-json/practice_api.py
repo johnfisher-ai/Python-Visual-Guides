@@ -7,14 +7,18 @@ Every notebook in the guide starts this in its Setup cell:
 
 It runs inside the notebook's own Python process, listening on 127.0.0.1, the address a
 computer uses to reach itself. In Colab that computer is Colab's, so nothing runs on yours.
-It serves the weather stations used throughout this library, and it answers every reader the
-same way, which is what lets a notebook show an error on purpose.
+It serves the weather stations used throughout this library, and it responds to every reader
+the same way, which is what lets a notebook show an error on purpose.
 
-What it serves:
+Endpoints:
 
     GET /                  a short HTML page, the kind a person would read
     GET /stations          every station, as a list of {"id", "name"}
     GET /stations/<id>     one station, or 404 if no station has that id
+
+The stations are reference data, and read-only. Any other method on these endpoints gets
+405 Method Not Allowed, with an Allow header naming the method that is allowed. Endpoints
+added later for POST, PUT and DELETE use other paths, so what these return never changes.
 
 Two details differ from a real server, both so that the output printed in a notebook matches
 what you see when you run it: the Date header always reports the same moment, and the Server
@@ -60,9 +64,13 @@ class Handler(BaseHTTPRequestHandler):
     def log_message(self, format, *args):
         """Say nothing. A real server logs every request; here that would clutter the notebook."""
 
-    def do_GET(self):
+    def route(self):
+        """The path without its query, and the path split into its segments."""
         path = self.path.split("?", 1)[0]
-        parts = [p for p in path.split("/") if p]
+        return path, [p for p in path.split("/") if p]
+
+    def do_GET(self):
+        path, parts = self.route()
         if not parts:
             self.reply(200, HOME, "text/html; charset=utf-8")
         elif parts == ["stations"]:
@@ -75,14 +83,34 @@ class Handler(BaseHTTPRequestHandler):
         else:
             self.reply_json(404, {"error": f"nothing at {path}"})
 
-    def reply_json(self, status, body):
-        self.reply(status, json.dumps(body), "application/json")
+    def refuse(self):
+        """Every method but GET. The endpoints above are read-only, and nothing else exists yet."""
+        self.discard_body()
+        path, parts = self.route()
+        if not parts or (parts[0] == "stations" and len(parts) <= 2):
+            self.reply_json(405, {"error": f"{self.command} not allowed: the stations are read-only"},
+                            Allow="GET")
+        else:
+            self.reply_json(404, {"error": f"nothing at {path}"})
 
-    def reply(self, status, text, content_type):
+    do_POST = do_PUT = do_PATCH = do_DELETE = refuse
+
+    def discard_body(self):
+        """Read and drop a request body, so it cannot be mistaken for the next request."""
+        length = int(self.headers.get("Content-Length") or 0)
+        if length:
+            self.rfile.read(length)
+
+    def reply_json(self, status, body, **headers):
+        self.reply(status, json.dumps(body), "application/json", **headers)
+
+    def reply(self, status, text, content_type, **headers):
         data = text.encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(data)))
+        for name, value in headers.items():
+            self.send_header(name, value)
         self.end_headers()
         self.wfile.write(data)
 
