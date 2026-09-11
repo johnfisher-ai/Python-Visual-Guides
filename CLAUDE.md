@@ -180,7 +180,7 @@ notebook, and a count goes stale the moment the order changes.
 
 | Path | What it is |
 |---|---|
-| `manifest.json` | **The source of truth.** Guides, notebooks, order, blurbs. Every page and nav is generated from it. |
+| `manifest.json` | **The source of truth.** Guides, notebooks, order, blurbs. Every page, the nav, and the guide table in `README.md` are generated from it. |
 | `notebooks/<guide>/NN-slug.ipynb` | The content. Committed **with outputs**. |
 | `notebooks/<guide>/NN-slug-solutions.ipynb` | Its companion. |
 | `data/` | Shared across guides. Never duplicated per guide. |

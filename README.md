@@ -16,11 +16,13 @@ notebook has a separate solutions file so nothing is spoiled by sitting next to 
 
 ## The guides
 
+<!-- guide-table: generated from manifest.json by tools/build_readme.py; edit the manifest, not this table -->
+
 | | Guide | Notebooks | |
 |---|---|---|---|
-| 1 | **Python from the Start** | 20 | Being written |
-| 2 | Files, Paths and Formats | 10 | Planned |
-| 3 | Object-Oriented Python | 12 | Planned |
+| 1 | Python from the Start | 21 | Complete |
+| 2 | Files, Paths and Formats | 10 | Complete |
+| 3 | Object-Oriented Python | 14 | Complete |
 | 4 | APIs and JSON | 12 | Planned |
 | 5 | Testing and Packaging | 10 | Planned |
 | 6 | NumPy, Deep Dive | 14 | Planned |
@@ -29,6 +31,8 @@ notebook has a separate solutions file so nothing is spoiled by sitting next to 
 | 9 | SciPy, Deep Dive | 12 | Planned |
 | 10 | scikit-learn, Deep Dive | 14 | Planned |
 | 11 | Projects, End to End | 8 | Planned |
+
+<!-- /guide-table -->
 
 Guides are finished one at a time. A guide is not published until every notebook in it runs
 top to bottom in a fresh runtime.
