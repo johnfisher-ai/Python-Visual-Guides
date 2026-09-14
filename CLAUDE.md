@@ -295,6 +295,14 @@ its committed code teaches the reader something false, and nothing but you will 
   returned `200 OK`". The blank line that ends the headers is still the right name for that part
   of a message, and belongs where a message's layout is being explained.
 
+- **A before and after only where a notebook makes a case.** Some Object-Oriented Python notebooks
+  open with one program written without their technique and then with it, because they argue for a
+  way of writing code: a class over loose functions, a decorator over repetition. A notebook that
+  teaches a protocol, a library or a tool has nothing to argue against, so its Worked examples start
+  with the technique itself. APIs and JSON had three such openings, among them Status Codes' four
+  responses read without their status codes, and all three were removed at review. A contrast that
+  is a mistake readers really make, such as `status` for `status_code`, belongs in Common errors.
+
 - **No flourish.** This is a technical guide, and ornament reads as padding. Say what happens.
 
   | Do not write | Write |
