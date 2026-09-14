@@ -32,9 +32,9 @@ The OpenAPI document describes the stations endpoints. The old /v0 addresses, /s
 and the recording are left out of it.
 
 OPEN-METEO. Public services have outages. open_meteo() sends every request the recording holds
-to Open-Meteo's archive at once, and returns the archive's address if every response comes back
-as JSON within 10 seconds. If one does not, it prints why and returns the address of the
-recording instead, which answers the requests this guide makes exactly as Open-Meteo did.
+to Open-Meteo's archive, four at a time, and returns the archive's address if every response
+comes back as JSON within 10 seconds. If one does not, it prints why and returns the address of
+the recording instead, which answers the requests this guide makes exactly as Open-Meteo did.
 Setting the environment variable OPEN_METEO_RECORDING to 1 skips the live service, which is how
 to test that path.
 
@@ -385,13 +385,15 @@ def start():
 def open_meteo(timeout=10):
     """The address to send Open-Meteo requests to: its archive, or this API's recording of it.
 
-    Sends Open-Meteo every request the recording holds, all at once, and returns the archive's
+    Sends Open-Meteo every request the recording holds, four at a time, and returns the archive's
     address if every answer comes back as JSON within `timeout` seconds. A request Open-Meteo has
     just answered comes back quickly the next time, so this also readies the requests a notebook
     goes on to make. If any answer fails, prints why and returns the recording's address.
 
     Checking every request, not one, matters: while Open-Meteo is struggling, a request it answered
-    recently can come back in half a second while another takes half a minute and fails.
+    recently can come back in half a second while another takes half a minute and fails. Sending
+    them four at a time matters too: Open-Meteo answers more than a few at once with 429, "Too many
+    concurrent requests", which would send a notebook to the recording while Open-Meteo was up.
     """
     from concurrent.futures import ThreadPoolExecutor
 
@@ -416,7 +418,7 @@ def open_meteo(timeout=10):
     if os.environ.get("OPEN_METEO_RECORDING") == "1":
         why = "OPEN_METEO_RECORDING is set"
     else:
-        with ThreadPoolExecutor(max_workers=max(1, len(RECORDING))) as pool:
+        with ThreadPoolExecutor(max_workers=4) as pool:
             failures = [result for result in pool.map(attempt, RECORDING) if result]
         if not failures:
             return LIVE_ARCHIVE

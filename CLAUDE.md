@@ -567,11 +567,13 @@ when it had to. It is also the way to run a notebook locally exactly as CI will:
 **Open-Meteo has a recorded fallback.** On 14 September 2026 its archive, a single server,
 answered with `500`s after half a minute for about an hour, for everyone. A reader in Colab met
 it as a cell that hung and a next cell that failed. So `practice_api.open_meteo()`, called in the
-Setup of every notebook that uses Open-Meteo, sends every recorded request to the archive at once,
-and returns its address if every response comes back as JSON within 10 seconds, or, with a printed
-notice, the address of `/open-meteo/v1/archive`, a recording the practice API serves. Every
+Setup of every notebook that uses Open-Meteo, sends every recorded request to the archive, four at
+a time, and returns its address if every response comes back as JSON within 10 seconds, or, with a
+printed notice, the address of `/open-meteo/v1/archive`, a recording the practice API serves. Every
 Open-Meteo request goes to `OPEN_METEO`, so curl lines use `{OPEN_METEO}` and double curl's own
-braces.
+braces. Four at a time, because Open-Meteo limits concurrent requests: once the recording held ten,
+sending all ten at once drew `429`, "Too many concurrent requests", for one or two of them, and
+Setup fell back to the recording although Open-Meteo was answering.
 
 - The recording holds only the requests this guide makes, all for 2025-01-15 to 2025-01-17 from
   ERA5: every station's daily means, in Celsius, and Tromso's and Bergen's in Fahrenheit too; and
