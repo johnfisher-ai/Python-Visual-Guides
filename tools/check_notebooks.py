@@ -250,6 +250,15 @@ def executable(path: Path, problems: list) -> None:
                                  f"path. Print something relative instead"))
                 break
 
+        # A print can be saved in pieces, and a renderer may draw each piece on a line of its own.
+        outputs = cell.get("outputs", [])
+        if any(a.get("output_type") == b.get("output_type") == "stream" and a.get("name") == b.get("name")
+               for a, b in zip(outputs, outputs[1:])):
+            problems.append((path.relative_to(ROOT),
+                             f"cell {i} has printed output saved in pieces, which a renderer can "
+                             f"show as separate lines. tools/clean_outputs.py merges them, and the "
+                             f"build runs it"))
+
         if cell.get("cell_type") != "code":
             continue
         errored = any(o.get("output_type") == "error" for o in cell.get("outputs", []))

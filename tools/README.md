@@ -43,9 +43,10 @@ checkout, including CI, without the raw material ever being present.
   disagree. A notebook whose failure names a network error runs again after a pause, up to three
   attempts, because a real service can fail on a shared runner for reasons that have nothing to do
   with the notebook. Any other failure fails at once.
-- `clean_outputs.py` removes the carriage returns and terminal escape codes that `!` shell
-  commands leave in a notebook's stream output. The build runs it after navigation, and
-  `check_notebooks.py` fails on any stream output it has not cleaned.
+- `clean_outputs.py` tidies a notebook's stream output: it removes the carriage returns and
+  terminal escape codes that `!` shell commands leave, and merges a print that was saved in
+  pieces back into one output, keeping the notebook's JSON layout. The build runs it after
+  navigation, and `check_notebooks.py` fails on any stream output it has not tidied.
 - `paths.py` — every location, plus `require_raw()`. Import from here; do not hard-code paths.
 - `chart.py` — SVG chart primitives and the validated colour palette.
 - `redact_pdf.py` — removes text objects from a PDF and paints the area black. A black
