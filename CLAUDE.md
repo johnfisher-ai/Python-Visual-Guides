@@ -533,6 +533,14 @@ is only this mode: Colab, local Jupyter and CI all behave the same.
   `"12"`, Oslo's `active` becomes `"yes"`, a Svalbard calibration becomes `30/06/2025`, and Tromso's
   `id` is renamed `station_id`. The new top-level `version` breaks nothing. Pydantic's default mode
   quietly converts the first two, and that notebook shows it.
+- **`GET /network/summary` negotiates**, for Headers and Content Types: one table of the stations as
+  JSON, CSV or HTML, chosen from `Accept` by quality, where the most specific matching range sets a
+  format's quality and ties go to that order. It sends `Vary: Accept` and an `ETag` hashed from the
+  body, so each format has its own, and answers `If-None-Match` with `304` only for the quoted value.
+  `406` lists what is available. `GET /network/summary.csv` sends the same CSV as `text/csv` with no
+  charset, which requests decodes as ISO-8859-1, so `Tromsø` reads `TromsÃ¸`. `GET /echo/headers`
+  responds with the request headers received; print chosen ones, since `Accept-Encoding` differs
+  between installations.
 - **`start()` is idempotent** within a process, so rerunning Setup is safe. After a reload, it
   stops the server an earlier copy started and starts the new code on that port, so a rerun keeps
   `BASE` and nothing answers with old code. A second process moves to the next free port.

@@ -28,6 +28,10 @@ Endpoints:
     GET /network/export          the network's stations as JSON Lines, one station on each line
     GET /beta/network            the network document as a future release will send it, with four
                                  members changed in ways that break a client
+    GET /network/summary         a table of the stations as JSON, CSV or HTML, whichever the Accept
+                                 header prefers, with an ETag, and 304 Not Modified for If-None-Match
+    GET /network/summary.csv     an older address for the same table as CSV, sent with no charset
+    GET /echo/headers            the request headers the server received
 
 The stations are reference data, and read-only. Any other method on these endpoints gets
 405 Method Not Allowed, with an Allow header naming the method that is allowed. Endpoints
@@ -56,6 +60,9 @@ Standard library only, so it runs wherever Python does.
 """
 
 import copy
+import csv
+import hashlib
+import io
 import json
 import os
 import threading
@@ -120,6 +127,60 @@ BETA_NETWORK["stations"][0]["location"]["elevation_m"] = "12"                   
 BETA_NETWORK["stations"][1]["status"]["active"] = "yes"                          # a flag as a word
 BETA_NETWORK["stations"][2]["instruments"][0]["last_calibrated"] = "30/06/2025"  # another date form
 BETA_NETWORK["stations"][3]["station_id"] = BETA_NETWORK["stations"][3].pop("id")  # a renamed member
+
+# The network as a table, for Headers and Content Types, with each station's name as it is spelled
+# locally, so that a text body has a character outside ASCII in it.
+LOCAL_NAMES = {"bergen": "Bergen", "oslo": "Oslo", "svalbard": "Svalbard", "tromso": "Tromsø"}
+SUMMARY = [{"id": station["id"], "name": station["name"], "local_name": LOCAL_NAMES[station["id"]],
+            "latitude": station["location"]["latitude"], "longitude": station["location"]["longitude"],
+            "instruments": len(station["instruments"])} for station in NETWORK["stations"]]
+SUMMARY_FORMATS = ["application/json", "text/csv", "text/html"]    # the server's order of preference
+
+
+def summary_csv():
+    out = io.StringIO()
+    writer = csv.DictWriter(out, fieldnames=list(SUMMARY[0]))
+    writer.writeheader()
+    writer.writerows(SUMMARY)
+    return out.getvalue()
+
+
+def summary_html():
+    rows = "".join(f"<tr><td>{s['id']}</td><td>{s['local_name']}</td><td>{s['latitude']}</td>"
+                   f"<td>{s['longitude']}</td><td>{s['instruments']}</td></tr>\n" for s in SUMMARY)
+    return ("<!doctype html>\n<html>\n<head><title>Stations</title></head>\n<body><table>\n"
+            "<tr><th>id</th><th>name</th><th>latitude</th><th>longitude</th><th>instruments</th></tr>\n"
+            f"{rows}</table></body>\n</html>\n")
+
+
+def negotiate(accept, available):
+    """The available media type an Accept header prefers, or None when it accepts none of them.
+
+    Each available type takes the quality of the most specific range that matches it, so that
+    application/json;q=0 refuses JSON even when */* accepts everything else. Ties go to the order
+    of the available list.
+    """
+    ranges = []
+    for part in (accept or "*/*").split(","):
+        kind, *parameters = [piece.strip() for piece in part.split(";")]
+        quality = 1.0
+        for parameter in parameters:
+            name, _, value = parameter.partition("=")
+            if name.strip().lower() == "q":
+                try:
+                    quality = float(value)
+                except ValueError:
+                    quality = 0.0
+        if kind:
+            ranges.append((kind.lower(), quality))
+    best, best_quality = None, 0.0
+    for media in available:
+        family = media.split("/")[0] + "/*"
+        matches = [(2 if kind == media else 1 if kind == family else 0, quality)
+                   for kind, quality in ranges if kind in (media, family, "*/*")]
+        if matches and max(matches)[1] > best_quality:
+            best, best_quality = media, max(matches)[1]
+    return best
 
 HOME = """<!doctype html>
 <html>
@@ -295,6 +356,12 @@ class Handler(BaseHTTPRequestHandler):
             self.reply(200, lines, "application/x-ndjson")
         elif parts == ["beta", "network"]:
             self.reply_json(200, BETA_NETWORK)
+        elif parts == ["network", "summary"]:
+            self.summary()
+        elif parts == ["network", "summary.csv"]:
+            self.reply(200, summary_csv(), "text/csv")          # an older address, with no charset
+        elif parts == ["echo", "headers"]:
+            self.reply_json(200, {"headers": dict(self.headers.items())})
         elif len(parts) == 2 and parts[0] == "status":
             self.status(parts[1])
         else:
@@ -331,6 +398,26 @@ class Handler(BaseHTTPRequestHandler):
         else:
             error = STATUS_ERRORS.get(code) or phrase or f"status {code}"
             self.reply_json(code, {"error": error}, reason=phrase, **STATUS_HEADERS.get(code, {}))
+
+    def summary(self):
+        """The network summary, in the format Accept prefers, with an ETag and Vary: Accept."""
+        chosen = negotiate(self.headers.get("Accept"), SUMMARY_FORMATS)
+        if chosen is None:
+            self.reply_json(406, {"error": "none of the formats in Accept is available",
+                                  "available": SUMMARY_FORMATS}, Vary="Accept")
+            return
+        body, content_type = {"application/json": (json.dumps(SUMMARY), "application/json"),
+                              "text/csv": (summary_csv(), "text/csv; charset=utf-8"),
+                              "text/html": (summary_html(), "text/html; charset=utf-8")}[chosen]
+        etag = '"' + hashlib.sha256(body.encode("utf-8")).hexdigest()[:16] + '"'
+        asked = [tag.strip() for tag in self.headers.get("If-None-Match", "").split(",")]
+        if etag in asked or "*" in asked:
+            self.send_response(304)
+            self.send_header("ETag", etag)
+            self.send_header("Vary", "Accept")
+            self.end_headers()
+            return
+        self.reply(200, body, content_type, ETag=etag, Vary="Accept")
 
     def recorded_archive(self):
         """Answer a request as Open-Meteo's archive answered it, from the recording.
