@@ -16,10 +16,14 @@ Endpoints:
     GET /stations          every station, as a list of {"id", "name"}
     GET /stations/<id>     one station, or 404 if no station has that id
     GET /openapi.json      this API's own documentation, as an OpenAPI document
+    GET /v0/<path>         an old address: 301 Moved Permanently, to the same path without /v0
 
 The stations are reference data, and read-only. Any other method on these endpoints gets
 405 Method Not Allowed, with an Allow header naming the method that is allowed. Endpoints
 added later for POST, PUT and DELETE use other paths, so what these return never changes.
+
+The OpenAPI document describes the stations endpoints. The old /v0 addresses are left out of
+it, as retired addresses usually are.
 
 To use a tool such as Postman, which cannot reach a server running inside Colab, run this
 file on your own computer instead:
@@ -125,7 +129,9 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         path, parts = self.route()
-        if not parts:
+        if parts[:1] == ["v0"]:
+            self.moved("/" + "/".join(parts[1:]))
+        elif not parts:
             self.reply(200, HOME, "text/html; charset=utf-8")
         elif parts == ["openapi.json"]:
             host, port = self.server.server_address[:2]
@@ -144,13 +150,22 @@ class Handler(BaseHTTPRequestHandler):
         """Every method but GET. The endpoints above are read-only, and nothing else exists yet."""
         self.discard_body()
         path, parts = self.route()
-        if not parts or parts == ["openapi.json"] or (parts[0] == "stations" and len(parts) <= 2):
+        if parts[:1] == ["v0"]:
+            self.moved("/" + "/".join(parts[1:]))
+        elif not parts or parts == ["openapi.json"] or (parts[0] == "stations" and len(parts) <= 2):
             self.reply_json(405, {"error": f"{self.command} not allowed: the stations are read-only"},
                             Allow="GET")
         else:
             self.reply_json(404, {"error": f"nothing at {path}"})
 
     do_POST = do_PUT = do_PATCH = do_DELETE = refuse
+
+    def moved(self, location):
+        """301 Moved Permanently: the resource now lives at `location`."""
+        self.send_response(301)
+        self.send_header("Location", location)
+        self.send_header("Content-Length", "0")
+        self.end_headers()
 
     def discard_body(self):
         """Read and drop a request body, so it cannot be mistaken for the next request."""

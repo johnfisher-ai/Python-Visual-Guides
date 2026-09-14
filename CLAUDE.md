@@ -501,9 +501,19 @@ is only this mode: Colab, local Jupyter and CI all behave the same.
   to the next free port.
 - **Grow it; do not change what exists.** Later notebooks add endpoints. Changing an existing
   response changes the committed output of every notebook that printed it.
-- **The stations are read-only, permanently.** `GET` works on `/`, `/stations` and
-  `/stations/{id}`; every other method there responds `405` with `Allow: GET`, which What an API
-  Is commits. Writable resources for **Sending Data** go at new paths.
+- **The stations are read-only, permanently.** `GET` works on `/`, `/stations`,
+  `/stations/{id}` and `/openapi.json`; every other method there responds `405` with
+  `Allow: GET`, which What an API Is commits. Writable resources for **Sending Data** go at new
+  paths.
+- **The OpenAPI document describes the stations endpoints and nothing else.** Exploring an API
+  commits its paths and prints them, so an endpoint added for teaching stays out of it, as
+  `GET /v0/<path>` does: an old address that answers `301 Moved Permanently` with
+  `Location: /<path>`, for Your First Request's `history`. Retired addresses are rarely documented,
+  which the notebook says.
+- **What `requests` sends depends on the installation.** Its default `Accept-Encoding` gains `br`
+  or `zstd` when brotli or zstandard is installed (this machine has zstandard; Colab and CI do not),
+  and `User-Agent` carries the version. Print chosen request headers, and only the product name
+  from `User-Agent`.
 
 **Real services** appear where the real internet is the point, and print only stable fields.
 Open-Meteo's archive is keyless and free for non-commercial use, under 10,000 calls a day. Always
