@@ -11,11 +11,16 @@ name: Notebooks run
 #
 # It runs a COPY. Nothing is written back, so a committed output is never silently
 # replaced by one from a runner with different versions.
+#
+# The running is tools/run_notebooks.sh, so a local run and this workflow cannot
+# disagree. A notebook whose failure names a network error, as a request to a real
+# service can on a shared runner, runs again after a pause, up to three attempts,
+# and the run shows a warning when that happened.
 
 on:
   push:
     branches: [main]
-    paths: ["notebooks/**", "requirements.txt", ".github/workflows/notebooks.yml"]
+    paths: ["notebooks/**", "requirements.txt", "tools/run_notebooks.sh", ".github/workflows/notebooks.yml"]
   schedule:
     - cron: "0 6 * * 1"
   workflow_dispatch:
@@ -61,19 +66,5 @@ jobs:
       - name: Execute
         if: steps.pick.outputs.count != '0'
         run: |
-          set -euo pipefail
-          mkdir -p /tmp/out
-          fail=0
-          while IFS= read -r nb; do
-            echo "::group::$nb"
-            if jupyter nbconvert --to notebook --execute \
-                 --ExecutePreprocessor.timeout=600 \
-                 --output-dir /tmp/out --output "$(basename "$nb")" "$nb"; then
-              echo "ok"
-            else
-              echo "::error file=$nb::this notebook did not run top to bottom"
-              fail=1
-            fi
-            echo "::endgroup::"
-          done < /tmp/run
-          exit $fail
+          mapfile -t notebooks < /tmp/run
+          bash tools/run_notebooks.sh "${notebooks[@]}"

@@ -530,6 +530,14 @@ recorded, and `[Errno 111]` on Linux, which Colab and CI run. A notebook that co
 import and for interactive documentation, because Open-Meteo publishes no OpenAPI document. Its
 data changes as visitors add pets, so no committed output reads it.
 
+**Open-Meteo fails intermittently from GitHub's runners, at the connection.** Two pushes on
+14 September 2026 failed on it, once in the TLS handshake and once waiting for a response, while
+the same requests took under half a second from elsewhere and the scheduled run an hour earlier
+had passed. A longer timeout would not help; a fresh attempt does. `tools/run_notebooks.sh`, which
+the notebooks workflow runs, retries a notebook whose failure names a network error, and warns
+when it had to. It is also the way to run a notebook locally exactly as CI will:
+`bash tools/run_notebooks.sh notebooks/<guide>/NN-slug.ipynb`.
+
 **Never print a real API's raw body.** Open-Meteo returned the same error body with its keys in a
 different order on two requests. Parse it and print fields by name.
 

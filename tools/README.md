@@ -38,6 +38,11 @@ checkout, including CI, without the raw material ever being present.
 - `check_content.py` — asserts the house rules, and any claim that must appear on every
   page, against tag-stripped and entity-decoded text. Put required strings in `page.py` and
   reference them, never as literals here.
+- `run_notebooks.sh` executes notebooks the way CI does, top to bottom with no
+  `--allow-errors`, and is what the notebooks workflow runs, so a local run and CI cannot
+  disagree. A notebook whose failure names a network error runs again after a pause, up to three
+  attempts, because a real service can fail on a shared runner for reasons that have nothing to do
+  with the notebook. Any other failure fails at once.
 - `clean_outputs.py` removes the carriage returns and terminal escape codes that `!` shell
   commands leave in a notebook's stream output. The build runs it after navigation, and
   `check_notebooks.py` fails on any stream output it has not cleaned.
