@@ -538,6 +538,22 @@ the notebooks workflow runs, retries a notebook whose failure names a network er
 when it had to. It is also the way to run a notebook locally exactly as CI will:
 `bash tools/run_notebooks.sh notebooks/<guide>/NN-slug.ipynb`.
 
+**Open-Meteo has a recorded fallback.** On 14 September 2026 its archive, a single server,
+answered with `500`s after half a minute for about an hour, for everyone. A reader in Colab met
+it as a cell that hung and a next cell that failed. So `practice_api.open_meteo()`, called in the
+Setup of every notebook that uses Open-Meteo, tries the archive once with a 10-second timeout and
+returns its address, or, with a printed notice, the address of `/open-meteo/v1/archive`, a
+recording the practice API serves. Every Open-Meteo request goes to `OPEN_METEO`, so curl lines
+use `{OPEN_METEO}` and double curl's own braces.
+
+- The recording holds only the requests this guide makes: every station, 2025-01-15 to 2025-01-17,
+  ERA5 daily means, in Celsius and in Fahrenheit. It copies the two behaviors notebooks show: an
+  unrecognized parameter is ignored, and an unrecognized daily variable gets Open-Meteo's `400` and
+  reason. A notebook that makes a new Open-Meteo request adds it to the recording first, recorded
+  from the live service.
+- Commit outputs from a live run. `check_notebooks.py` fails on output showing the recording was
+  used. `OPEN_METEO_RECORDING=1` forces the recording, which is how to test a notebook's fallback.
+
 **Never print a real API's raw body.** Open-Meteo returned the same error body with its keys in a
 different order on two requests. Parse it and print fields by name.
 

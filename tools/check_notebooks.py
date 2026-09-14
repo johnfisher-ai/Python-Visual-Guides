@@ -231,6 +231,13 @@ def executable(path: Path, problems: list) -> None:
                                      f"cell {i} has terminal control characters in its output, "
                                      f"from a shell command. tools/clean_outputs.py removes "
                                      f"them, and the build runs it"))
+                # Setup prints a notice when Open-Meteo did not answer and the notebook fell back
+                # to the practice API's recording. Committed output must come from the live service.
+                if "practice API's recording" in stream:
+                    problems.append((path.relative_to(ROOT),
+                                     f"cell {i} shows Open-Meteo did not answer, so the notebook "
+                                     f"ran against the practice API's recording of it. Run it "
+                                     f"again when Open-Meteo answers"))
             # Stream output, and also the message and frames of a traceback: an
             # exception naming a temporary file carries the author's home directory
             # into the committed output just as a print does.
