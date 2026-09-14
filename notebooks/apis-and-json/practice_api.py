@@ -23,13 +23,16 @@ Endpoints:
                                  server sends with that code, for seeing what a client does with it
     GET /echo                    the query the request arrived with, as sent and decoded, for
                                  seeing what a server receives
+    GET /network                 the station network as one nested document, with locations,
+                                 instruments and status, for reading JSON whose shape varies
+    GET /network/export          the network's stations as JSON Lines, one station on each line
 
 The stations are reference data, and read-only. Any other method on these endpoints gets
 405 Method Not Allowed, with an Allow header naming the method that is allowed. Endpoints
 added later for POST, PUT and DELETE use other paths, so what these return never changes.
 
-The OpenAPI document describes the stations endpoints. The old /v0 addresses, /status, /echo
-and the recording are left out of it.
+The OpenAPI document describes the stations endpoints. The old /v0 addresses, /status, /echo,
+/network and the recording are left out of it.
 
 OPEN-METEO. Public services have outages. open_meteo() sends every request the recording holds
 to Open-Meteo's archive, four at a time, and returns the archive's address if every response
@@ -68,6 +71,42 @@ STATIONS = {
     "oslo":     {"id": "oslo",     "name": "Oslo",     "latitude": 59.91, "longitude": 10.75},
     "svalbard": {"id": "svalbard", "name": "Svalbard", "latitude": 78.22, "longitude": 15.65},
     "tromso":   {"id": "tromso",   "name": "Tromso",   "latitude": 69.65, "longitude": 18.96},
+}
+
+# A made-up network document for reading nested JSON, shaped the way real responses are: objects
+# inside lists inside objects, a field one station lacks (Svalbard's elevation), fields present but
+# null (two calibrations, and Tromso's status), and dates sent as strings.
+NETWORK = {
+    "name": "Practice API station network",
+    "updated": "2026-03-01T09:00:00Z",
+    "stations": [
+        {"id": "bergen", "name": "Bergen",
+         "location": {"latitude": 60.39, "longitude": 5.32, "elevation_m": 12},
+         "instruments": [
+             {"kind": "thermometer", "installed": "2018-06-01", "last_calibrated": "2025-10-14"},
+             {"kind": "rain gauge", "installed": "2018-06-01", "last_calibrated": "2025-10-14"}],
+         "status": {"active": True, "issues": []}},
+        {"id": "oslo", "name": "Oslo",
+         "location": {"latitude": 59.91, "longitude": 10.75, "elevation_m": 94},
+         "instruments": [
+             {"kind": "thermometer", "installed": "2016-03-15", "last_calibrated": "2025-12-02"},
+             {"kind": "rain gauge", "installed": "2016-03-15", "last_calibrated": None},
+             {"kind": "anemometer", "installed": "2022-09-01", "last_calibrated": "2024-11-20"}],
+         "status": {"active": True, "issues": []}},
+        {"id": "svalbard", "name": "Svalbard",
+         "location": {"latitude": 78.22, "longitude": 15.65},
+         "instruments": [
+             {"kind": "thermometer", "installed": "2020-08-20", "last_calibrated": "2025-06-30"},
+             {"kind": "rain gauge", "installed": "2020-08-20", "last_calibrated": None}],
+         "status": {"active": False,
+                    "issues": [{"since": "2026-01-12", "summary": "rain gauge buried in snow"}]}},
+        {"id": "tromso", "name": "Tromso",
+         "location": {"latitude": 69.65, "longitude": 18.96, "elevation_m": 100},
+         "instruments": [
+             {"kind": "thermometer", "installed": "2019-05-01", "last_calibrated": "2026-01-20"},
+             {"kind": "anemometer", "installed": "2019-05-01", "last_calibrated": "2025-02-11"}],
+         "status": None},
+    ],
 }
 
 HOME = """<!doctype html>
@@ -237,6 +276,11 @@ class Handler(BaseHTTPRequestHandler):
         elif parts == ["echo"]:
             query = self.path.partition("?")[2]
             self.reply_json(200, {"query": query, "args": parse_qs(query, keep_blank_values=True)})
+        elif parts == ["network"]:
+            self.reply_json(200, NETWORK)
+        elif parts == ["network", "export"]:
+            lines = "".join(json.dumps(station) + "\n" for station in NETWORK["stations"])
+            self.reply(200, lines, "application/x-ndjson")
         elif len(parts) == 2 and parts[0] == "status":
             self.status(parts[1])
         else:

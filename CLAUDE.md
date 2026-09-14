@@ -522,6 +522,12 @@ is only this mode: Colab, local Jupyter and CI all behave the same.
   and `args` decoded with `parse_qs`. Query Parameters shows every encoding through it, and it stays
   out of the OpenAPI document too. A station id is decoded before it is looked up, as real servers
   decode a path parameter, so a `404` names an encoded id as it was written.
+- **`GET /network` is a made-up, nested document of the whole station network**, for JSON in a
+  Response: every station with a `location` object, a list of `instruments` and a `status` object.
+  Its gaps are deliberate, and that notebook's lessons depend on them: Svalbard's location has no
+  `elevation_m`, two instruments have `last_calibrated: null`, and Tromso's `status` is `null`.
+  `GET /network/export` sends the same stations as JSON Lines, one to a line, so `response.json()`
+  raises `Extra data`. Both stay out of the OpenAPI document.
 - **`start()` is idempotent** within a process, so rerunning Setup is safe. After a reload, it
   stops the server an earlier copy started and starts the new code on that port, so a rerun keeps
   `BASE` and nothing answers with old code. A second process moves to the next free port.
