@@ -518,6 +518,10 @@ is only this mode: Colab, local Jupyter and CI all behave the same.
   renamed four of its own (`413`, `414`, `416` and `422`), and on 3.12, which Colab and CI run, they
   read differently: never print `HTTPStatus(...).phrase` for those four. Like `/v0`, `/status` stays
   out of the OpenAPI document.
+- **`GET /echo` responds with the query its request arrived with**: `query` as sent, still encoded,
+  and `args` decoded with `parse_qs`. Query Parameters shows every encoding through it, and it stays
+  out of the OpenAPI document too. A station id is decoded before it is looked up, as real servers
+  decode a path parameter, so a `404` names an encoded id as it was written.
 - **`start()` is idempotent** within a process, so rerunning Setup is safe. After a reload, it
   stops the server an earlier copy started and starts the new code on that port, so a rerun keeps
   `BASE` and nothing answers with old code. A second process moves to the next free port.
@@ -569,11 +573,14 @@ notice, the address of `/open-meteo/v1/archive`, a recording the practice API se
 Open-Meteo request goes to `OPEN_METEO`, so curl lines use `{OPEN_METEO}` and double curl's own
 braces.
 
-- The recording holds only the requests this guide makes: every station, 2025-01-15 to 2025-01-17,
-  ERA5 daily means, in Celsius and in Fahrenheit. It copies the two behaviors notebooks show: an
-  unrecognized parameter is ignored, and an unrecognized daily variable gets Open-Meteo's `400` and
-  reason. A notebook that makes a new Open-Meteo request adds it to the recording first, recorded
-  from the live service.
+- The recording holds only the requests this guide makes, all for 2025-01-15 to 2025-01-17 from
+  ERA5: every station's daily means, in Celsius, and Tromso's and Bergen's in Fahrenheit too; and
+  every station's daily maximum, minimum and precipitation together, for Query Parameters. It is
+  keyed by latitude, longitude, unit and daily variables, which it reads from a comma-separated
+  value or a repeated name, as Open-Meteo does. It copies the behaviors notebooks show: an
+  unrecognized parameter is ignored, and a daily value naming a variable outside `DAILY_VARIABLES`
+  gets Open-Meteo's `400`, whose reason quotes the whole value, list and all. A notebook that makes
+  a new Open-Meteo request adds it to the recording first, recorded from the live service.
 - Commit outputs from a live run. `check_notebooks.py` fails on output showing the recording was
   used. `OPEN_METEO_RECORDING=1` forces the recording, which is how to test a notebook's fallback.
 
