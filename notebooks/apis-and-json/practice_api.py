@@ -27,11 +27,12 @@ added later for POST, PUT and DELETE use other paths, so what these return never
 The OpenAPI document describes the stations endpoints. The old /v0 addresses and the recording
 are left out of it.
 
-OPEN-METEO. Public services have outages. open_meteo() sends a request the guide makes to
-Open-Meteo's archive, once, and returns the archive's address if the answer comes back. If it
-does not, it prints why and returns the address of the recording instead, which answers the
-requests this guide makes exactly as Open-Meteo did. Setting the environment variable
-OPEN_METEO_RECORDING to 1 skips the live service, which is how to test that path.
+OPEN-METEO. Public services have outages. open_meteo() sends every request the recording holds
+to Open-Meteo's archive at once, and returns the archive's address if every response comes back
+as JSON within 10 seconds. If one does not, it prints why and returns the address of the
+recording instead, which answers the requests this guide makes exactly as Open-Meteo did.
+Setting the environment variable OPEN_METEO_RECORDING to 1 skips the live service, which is how
+to test that path.
 
 To use a tool such as Postman, which cannot reach a server running inside Colab, run this
 file on your own computer instead:
@@ -254,14 +255,26 @@ class Server(ThreadingHTTPServer):
     daemon_threads = True
 
 
-_server = None
+# Kept when Setup reloads this module, so the reloaded copy can find the server already running.
+_server = globals().get("_server")
 
 
 def start():
-    """Start the practice API, once per Python process, and return its address."""
+    """Start the practice API, once per Python process, and return its address.
+
+    Setup reloads this module every time it runs, so that a newer copy of the file takes effect in
+    a session that imported an older one. A server started by an earlier copy is then still
+    answering with the earlier code, so it is stopped and replaced, on the same port.
+    """
     global _server
+    ports = list(PORTS)
+    if _server is not None and _server.RequestHandlerClass is not Handler:
+        ports.insert(0, _server.server_address[1])
+        _server.shutdown()
+        _server.server_close()
+        _server = None
     if _server is None:
-        for port in PORTS:
+        for port in ports:
             try:
                 _server = Server((HOST, port), Handler)
                 break

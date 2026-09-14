@@ -487,18 +487,25 @@ standard library only, which the Setup cell starts inside the notebook's own pro
 `127.0.0.1`. In Colab it runs on Colab's machine, so nothing touches the reader's computer. There
 is only this mode: Colab, local Jupyter and CI all behave the same.
 
-- **Setup fetches it when it is missing.** Under CI and in a checkout, the kernel runs beside the
-  file, so `import practice_api` finds it. Colab starts with only the notebook, so Setup downloads
-  it from `main` first. CI never exercises that download, which is why `check_links.py` resolves
-  every self-link inside notebooks, this URL included. Keep the URL in one string literal, or the
-  check sees only its first half.
+- **Setup fetches it in Colab on every run, and elsewhere only when it is missing.** Under CI and
+  in a checkout, the kernel runs beside the file, so `import practice_api` finds the copy from the
+  same commit as the notebook. Colab starts with only the notebook, and keeps what Setup downloads
+  for the life of the runtime, which can outlast a push. When Setup fetched only a missing file, a
+  reader's runtime kept a copy from before `open_meteo()` existed, and no rerun could replace it.
+  So Setup fetches from `main` whenever `google.colab` is imported, and `importlib.reload` runs the
+  file as it is now instead of the module imported earlier. GitHub serves raw files with
+  `Cache-Control: max-age=300`: for five minutes after a push, Colab can still get the previous
+  copy, and running Setup again after that picks up the new one. CI never exercises the download,
+  which is why `check_links.py` resolves every self-link inside notebooks, this URL included. Keep
+  the URL in one string literal, or the check sees only its first half.
 - **Deterministic by construction.** The `Date` header is fixed, the `Server` header names no
   Python version, and the port is the first free one from 8765, so committed output matches what
   every reader sees.
 - **Failures are made here, on purpose.** 404s, 429s, 500s, slow and flaky endpoints, keys and
   pagination belong on the practice API, never on somebody else's server.
-- **`start()` is idempotent** within a process, so rerunning Setup is safe. A second process moves
-  to the next free port.
+- **`start()` is idempotent** within a process, so rerunning Setup is safe. After a reload, it
+  stops the server an earlier copy started and starts the new code on that port, so a rerun keeps
+  `BASE` and nothing answers with old code. A second process moves to the next free port.
 - **Grow it; do not change what exists.** Later notebooks add endpoints. Changing an existing
   response changes the committed output of every notebook that printed it.
 - **The stations are read-only, permanently.** `GET` works on `/`, `/stations`,
@@ -541,10 +548,11 @@ when it had to. It is also the way to run a notebook locally exactly as CI will:
 **Open-Meteo has a recorded fallback.** On 14 September 2026 its archive, a single server,
 answered with `500`s after half a minute for about an hour, for everyone. A reader in Colab met
 it as a cell that hung and a next cell that failed. So `practice_api.open_meteo()`, called in the
-Setup of every notebook that uses Open-Meteo, tries the archive once with a 10-second timeout and
-returns its address, or, with a printed notice, the address of `/open-meteo/v1/archive`, a
-recording the practice API serves. Every Open-Meteo request goes to `OPEN_METEO`, so curl lines
-use `{OPEN_METEO}` and double curl's own braces.
+Setup of every notebook that uses Open-Meteo, sends every recorded request to the archive at once,
+and returns its address if every response comes back as JSON within 10 seconds, or, with a printed
+notice, the address of `/open-meteo/v1/archive`, a recording the practice API serves. Every
+Open-Meteo request goes to `OPEN_METEO`, so curl lines use `{OPEN_METEO}` and double curl's own
+braces.
 
 - The recording holds only the requests this guide makes: every station, 2025-01-15 to 2025-01-17,
   ERA5 daily means, in Celsius and in Fahrenheit. It copies the two behaviors notebooks show: an
