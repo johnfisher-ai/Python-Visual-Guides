@@ -19,13 +19,15 @@ Endpoints:
     GET /openapi.json            this API's own documentation, as an OpenAPI document
     GET /v0/<path>               an old address: 301 Moved Permanently, to the path without /v0
     GET /open-meteo/v1/archive   a recording of Open-Meteo's archive, for when the real one is down
+    GET /status/<code>           any status code from 200 to 599, with the headers and body a real
+                                 server sends with that code, for seeing what a client does with it
 
 The stations are reference data, and read-only. Any other method on these endpoints gets
 405 Method Not Allowed, with an Allow header naming the method that is allowed. Endpoints
 added later for POST, PUT and DELETE use other paths, so what these return never changes.
 
-The OpenAPI document describes the stations endpoints. The old /v0 addresses and the recording
-are left out of it.
+The OpenAPI document describes the stations endpoints. The old /v0 addresses, /status and the
+recording are left out of it.
 
 OPEN-METEO. Public services have outages. open_meteo() sends every request the recording holds
 to Open-Meteo's archive at once, and returns the archive's address if every response comes back
@@ -51,6 +53,7 @@ import os
 import threading
 import urllib.error
 import urllib.request
+from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlencode
 
@@ -71,6 +74,42 @@ HOME = """<!doctype html>
 <body><h1>Practice API</h1><p>The stations are at <a href="/stations">/stations</a>.</p></body>
 </html>
 """
+
+# /status/<code> sends the phrases RFC 9110 gives. Python 3.13 renamed four in its own table, so
+# they are fixed here, and a response reads the same on every Python version.
+PHRASES = {status.value: status.phrase for status in HTTPStatus} | {
+    413: "Content Too Large", 414: "URI Too Long", 416: "Range Not Satisfiable",
+    422: "Unprocessable Content",
+}
+
+# What an API says went wrong, for the codes a client meets most. Other codes give their phrase.
+STATUS_ERRORS = {
+    400: "the request is malformed",
+    401: "the request needs a valid API key",
+    403: "the API key does not allow this request",
+    404: "the resource does not exist",
+    405: "that method is not allowed here",
+    409: "the request conflicts with the resource's current state",
+    410: "the resource has been removed, permanently",
+    422: "a value in the request is invalid",
+    429: "too many requests: wait 30 seconds before sending another",
+    500: "the server failed while handling the request",
+    503: "the service is down for maintenance: try again in 120 seconds",
+}
+
+# The headers a real server sends with these codes.
+STATUS_HEADERS = {
+    401: {"WWW-Authenticate": "Bearer"},
+    405: {"Allow": "GET"},
+    429: {"Retry-After": "30"},
+    503: {"Retry-After": "120"},
+}
+
+# A 502 or 504 comes from a gateway in front of an API, so its body is the gateway's HTML page.
+GATEWAY_FAILURES = {
+    502: "The server in front of the API received an invalid response from it.",
+    504: "The server in front of the API received no response from it in time.",
+}
 
 LIVE_ARCHIVE = "https://archive-api.open-meteo.com/v1/archive"
 
@@ -179,8 +218,42 @@ class Handler(BaseHTTPRequestHandler):
                 self.reply_json(200, STATIONS[parts[1]])
             else:
                 self.reply_json(404, {"error": f"no station with id {parts[1]!r}"})
+        elif len(parts) == 2 and parts[0] == "status":
+            self.status(parts[1])
         else:
             self.reply_json(404, {"error": f"nothing at {path}"})
+
+    def status(self, value):
+        """Respond with the status code the path names, as a real server sends that code.
+
+        For seeing what a client does with a status code, without waiting for a server to fail.
+        Each response carries what a real one usually does: Retry-After on 429 and 503,
+        WWW-Authenticate on 401, Allow on 405, no body on 204 and 304, a Location on the other
+        3xx codes, and on 502 and 504 an HTML page, because those come from a gateway in front
+        of an API rather than from the API itself.
+        """
+        if not (value.isascii() and value.isdigit() and 200 <= int(value) <= 599):
+            self.reply_json(400, {"error": f"the status must be a number from 200 to 599, not {value!r}"})
+            return
+        code = int(value)
+        phrase = PHRASES.get(code, "")
+        if code in (204, 304):                  # these never carry a body
+            self.send_response(code, phrase)
+            self.end_headers()
+        elif code // 100 == 3:
+            self.send_response(code, phrase)
+            self.send_header("Location", "/status/200")
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+        elif code in GATEWAY_FAILURES:
+            page = (f"<!doctype html>\n<html>\n<head><title>{code} {phrase}</title></head>\n"
+                    f"<body><h1>{code} {phrase}</h1><p>{GATEWAY_FAILURES[code]}</p></body>\n</html>\n")
+            self.reply(code, page, "text/html; charset=utf-8", reason=phrase)
+        elif code // 100 == 2:
+            self.reply_json(code, {"status": code, "reason": phrase}, reason=phrase)
+        else:
+            error = STATUS_ERRORS.get(code) or phrase or f"status {code}"
+            self.reply_json(code, {"error": error}, reason=phrase, **STATUS_HEADERS.get(code, {}))
 
     def recorded_archive(self):
         """Answer a request as Open-Meteo's archive answered it, from the recording.
@@ -236,12 +309,13 @@ class Handler(BaseHTTPRequestHandler):
         if length:
             self.rfile.read(length)
 
-    def reply_json(self, status, body, **headers):
-        self.reply(status, json.dumps(body), "application/json", **headers)
+    def reply_json(self, status, body, reason=None, **headers):
+        self.reply(status, json.dumps(body), "application/json", reason, **headers)
 
-    def reply(self, status, text, content_type, **headers):
+    def reply(self, status, text, content_type, reason=None, **headers):
+        """Send a response. Without a reason, the status line takes Python's phrase for the code."""
         data = text.encode("utf-8")
-        self.send_response(status)
+        self.send_response(status, reason)
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(data)))
         for name, value in headers.items():

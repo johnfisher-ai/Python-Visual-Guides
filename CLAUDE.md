@@ -503,6 +503,13 @@ is only this mode: Colab, local Jupyter and CI all behave the same.
   every reader sees.
 - **Failures are made here, on purpose.** 404s, 429s, 500s, slow and flaky endpoints, keys and
   pagination belong on the practice API, never on somebody else's server.
+- **`GET /status/<code>` responds with any code from 200 to 599**, carrying what a real server
+  sends with it: `Retry-After` on `429` (30 seconds) and `503` (120), `WWW-Authenticate` on `401`,
+  `Allow` on `405`, no body on `204` and `304`, and an HTML page on `502` and `504`, as a gateway
+  would send. Status Codes commits these. Its phrases come from a fixed table, because Python 3.13
+  renamed four of its own (`413`, `414`, `416` and `422`), and on 3.12, which Colab and CI run, they
+  read differently: never print `HTTPStatus(...).phrase` for those four. Like `/v0`, `/status` stays
+  out of the OpenAPI document.
 - **`start()` is idempotent** within a process, so rerunning Setup is safe. After a reload, it
   stops the server an earlier copy started and starts the new code on that port, so a rerun keeps
   `BASE` and nothing answers with old code. A second process moves to the next free port.
