@@ -26,13 +26,15 @@ Endpoints:
     GET /network                 the station network as one nested document, with locations,
                                  instruments and status, for reading JSON whose shape varies
     GET /network/export          the network's stations as JSON Lines, one station on each line
+    GET /beta/network            the network document as a future release will send it, with four
+                                 members changed in ways that break a client
 
 The stations are reference data, and read-only. Any other method on these endpoints gets
 405 Method Not Allowed, with an Allow header naming the method that is allowed. Endpoints
 added later for POST, PUT and DELETE use other paths, so what these return never changes.
 
 The OpenAPI document describes the stations endpoints. The old /v0 addresses, /status, /echo,
-/network and the recording are left out of it.
+/network, /beta and the recording are left out of it.
 
 OPEN-METEO. Public services have outages. open_meteo() sends every request the recording holds
 to Open-Meteo's archive, four at a time, and returns the archive's address if every response
@@ -53,6 +55,7 @@ header does not name a Python version.
 Standard library only, so it runs wherever Python does.
 """
 
+import copy
 import json
 import os
 import threading
@@ -108,6 +111,15 @@ NETWORK = {
          "status": None},
     ],
 }
+
+# The network document as a future release will send it, for Schemas and Validation. Four members
+# change in ways that break a client; the new member, version, breaks nothing.
+BETA_NETWORK = copy.deepcopy(NETWORK)
+BETA_NETWORK["version"] = 2
+BETA_NETWORK["stations"][0]["location"]["elevation_m"] = "12"                    # a number as text
+BETA_NETWORK["stations"][1]["status"]["active"] = "yes"                          # a flag as a word
+BETA_NETWORK["stations"][2]["instruments"][0]["last_calibrated"] = "30/06/2025"  # another date form
+BETA_NETWORK["stations"][3]["station_id"] = BETA_NETWORK["stations"][3].pop("id")  # a renamed member
 
 HOME = """<!doctype html>
 <html>
@@ -281,6 +293,8 @@ class Handler(BaseHTTPRequestHandler):
         elif parts == ["network", "export"]:
             lines = "".join(json.dumps(station) + "\n" for station in NETWORK["stations"])
             self.reply(200, lines, "application/x-ndjson")
+        elif parts == ["beta", "network"]:
+            self.reply_json(200, BETA_NETWORK)
         elif len(parts) == 2 and parts[0] == "status":
             self.status(parts[1])
         else:

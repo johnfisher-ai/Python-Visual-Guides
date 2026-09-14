@@ -528,6 +528,11 @@ is only this mode: Colab, local Jupyter and CI all behave the same.
   `elevation_m`, two instruments have `last_calibrated: null`, and Tromso's `status` is `null`.
   `GET /network/export` sends the same stations as JSON Lines, one to a line, so `response.json()`
   raises `Extra data`. Both stay out of the OpenAPI document.
+- **`GET /beta/network` is the network document as a future release will send it**, for Schemas and
+  Validation. Four members change in ways a schema reports: Bergen's `elevation_m` becomes the text
+  `"12"`, Oslo's `active` becomes `"yes"`, a Svalbard calibration becomes `30/06/2025`, and Tromso's
+  `id` is renamed `station_id`. The new top-level `version` breaks nothing. Pydantic's default mode
+  quietly converts the first two, and that notebook shows it.
 - **`start()` is idempotent** within a process, so rerunning Setup is safe. After a reload, it
   stops the server an earlier copy started and starts the new code on that port, so a rerun keeps
   `BASE` and nothing answers with old code. A second process moves to the next free port.
