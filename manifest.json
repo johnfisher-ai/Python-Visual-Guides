@@ -319,7 +319,7 @@
       "band": "Foundations",
       "title": "APIs and JSON",
       "subtitle": "Talking to the rest of the internet",
-      "status": "building",
+      "status": "published",
       "intro": "HTTP from both sides: calling APIs and validating what comes back, then building, documenting and hosting an API of your own.",
       "prerequisites": "Python from the Start; Files, Paths and Formats; and Object-Oriented Python.",
       "credits": "The real-API examples use weather data from <a href=\"https://open-meteo.com/\">Open-Meteo.com</a>, offered under a <a href=\"https://creativecommons.org/licenses/by/4.0/\">CC BY 4.0</a> license and drawn from the ERA5 reanalysis. Generated using Copernicus Climate Change Service information 2026. Everything else these notebooks request comes from a practice API written for this guide.",
