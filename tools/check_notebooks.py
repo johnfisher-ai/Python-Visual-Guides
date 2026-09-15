@@ -10,6 +10,7 @@ remembering. Each rule below is a failure that has a cost for the reader:
   empty tasks   it is very easy to solve your own exercise while testing it,
                 save the notebook, and ship the answer inside the question
   solutions     every notebook needs its companion
+  credentials   a key printed in a cell is published with the notebook, practice keys included
 """
 
 import ast
@@ -37,6 +38,10 @@ PARTS = [
     "What is next",
 ]
 HEAD = re.compile(r"^##\s+(.+?)\s*$", re.M)
+
+# The practice API's made-up key and secret, which start practice-key- and practice-secret-, and any
+# JSON Web Token, whose header and claims both start eyJ, the Base64 of {".
+CREDENTIAL = re.compile(r"practice-(?:key|secret)-[\w-]{8,}|eyJ[\w-]{8,}\.eyJ[\w-]{8,}\.[\w-]{8,}")
 
 
 def cells(nb: dict):
@@ -370,6 +375,28 @@ def self_contained(path: Path, problems: list) -> None:
         defined |= stores(text)
 
 
+def no_credentials(path: Path, problems: list) -> None:
+    """No cell shows a credential, in its source or in its output.
+
+    A notebook is committed with its outputs, so a key a cell prints is published with the notebook.
+    APIs and JSON teaches readers to print facts about a credential instead, such as its length, and
+    its notebooks keep that rule with the practice API's made-up credentials too.
+    """
+    doc = json.loads(path.read_text())
+    for i, cell in enumerate(doc.get("cells", [])):
+        texts = [src(cell)]
+        for out in cell.get("outputs", []):
+            texts.append("".join(out.get("text", [])))
+            texts.append(str(out.get("evalue", "")))
+            texts.append("".join(out.get("traceback", [])))
+            texts += [v if isinstance(v, str) else "".join(v) for v in (out.get("data") or {}).values()]
+        found = next((m.group() for m in map(CREDENTIAL.search, texts) if m), None)
+        if found:
+            problems.append((path.relative_to(ROOT),
+                             f"cell {i} shows a credential, starting {found[:12]!r}. Print facts "
+                             f"about it instead, such as its length, or text with it replaced"))
+
+
 def main() -> int:
     _site, guides = load()
     problems: list = []
@@ -383,6 +410,7 @@ def main() -> int:
             executable(nb.path, problems)
             orientation(nb.path, problems)
             self_contained(nb.path, problems)
+            no_credentials(nb.path, problems)
             checked += 1
             # A solutions notebook is read on its own, so it needs navigation too.
             # It is exempt from the eight-part shape, which is for teaching notebooks.
@@ -391,6 +419,7 @@ def main() -> int:
                 tags = [t for c in doc.get("cells", [])
                         for t in c.get("metadata", {}).get("tags", [])]
                 executable(nb.solutions, problems)
+                no_credentials(nb.solutions, problems)
                 if "nav-top" not in tags or "nav-bottom" not in tags:
                     problems.append((nb.solutions.relative_to(ROOT),
                                      "no navigation cells. Run tools/inject_nav.py"))

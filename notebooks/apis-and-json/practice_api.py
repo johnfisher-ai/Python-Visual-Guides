@@ -32,13 +32,27 @@ Endpoints:
                                  header prefers, with an ETag, and 304 Not Modified for If-None-Match
     GET /network/summary.csv     an older address for the same table as CSV, sent with no charset
     GET /echo/headers            the request headers the server received
+    GET /me                      who sent the request, for a request with an API key or an access
+                                 token, and 401 Unauthorized for a request without one
+    GET /network/maintenance     the network's maintenance schedule, for a credential with the
+                                 maintenance:read scope, and 403 Forbidden for one without it
+    POST /auth/token             an access token, for a client id and secret sent with Basic
+                                 authentication and the form field grant_type=client_credentials
+    GET /auth/expired-token      an access token that has already expired, for testing a client
+
+AUTHENTICATION. The credentials are made up, and open nothing but this practice API. credentials()
+returns them, named as the environment variables a program reads them from. An API key or an
+access token goes in the header Authorization: Bearer, and an API key is also accepted in an
+X-API-Key header or an api_key query parameter. The API's clock stops at DATE, so a token issued
+by /auth/token never expires, and is the same on every run. access_log() returns the line a real
+server would log for each request, which is where a key sent in a query ends up.
 
 The stations are reference data, and read-only. Any other method on these endpoints gets
 405 Method Not Allowed, with an Allow header naming the method that is allowed. Endpoints
 added later for POST, PUT and DELETE use other paths, so what these return never changes.
 
 The OpenAPI document describes the stations endpoints. The old /v0 addresses, /status, /echo,
-/network, /beta and the recording are left out of it.
+/network, /beta, /me, /auth and the recording are left out of it.
 
 OPEN-METEO. Public services have outages. open_meteo() sends every request the recording holds
 to Open-Meteo's archive, four at a time, and returns the archive's address if every response
@@ -59,9 +73,13 @@ header does not name a Python version.
 Standard library only, so it runs wherever Python does.
 """
 
+import base64
+import collections
 import copy
 import csv
+import email.utils
 import hashlib
+import hmac
 import io
 import json
 import os
@@ -135,6 +153,68 @@ SUMMARY = [{"id": station["id"], "name": station["name"], "local_name": LOCAL_NA
             "latitude": station["location"]["latitude"], "longitude": station["location"]["longitude"],
             "instruments": len(station["instruments"])} for station in NETWORK["stations"]]
 SUMMARY_FORMATS = ["application/json", "text/csv", "text/html"]    # the server's order of preference
+
+# Made-up credentials, for Authentication. They open nothing but this practice API. The maintenance
+# schedule they protect follows from the network's gaps: Svalbard's buried gauge, the two rain gauges
+# never calibrated, and the two anemometers last calibrated more than a year before DATE.
+API_KEYS = {"practice-key-station-report-5f2a9c71": {"client": "station-report", "scopes": ["stations:read"]}}
+CLIENTS = {"maintenance-console": {"secret": "practice-secret-4e7b1d9f02a6c85e",
+                                   "scopes": ["stations:read", "maintenance:read"]}}
+SIGNING_KEY = b"practice-api-token-signing-key"           # signs access tokens, so a changed one fails
+NOW = int(email.utils.parsedate_to_datetime(DATE).timestamp())   # the API's clock stops at DATE
+TOKEN_LIFETIME = 3600
+REALM = 'Bearer realm="practice-api"'
+_when = email.utils.parsedate_to_datetime(DATE)
+LOG_TIME = f"{_when.day:02d}/{BaseHTTPRequestHandler.monthname[_when.month]}/{_when.year} {_when:%H:%M:%S}"
+LOG = collections.deque(maxlen=1000)                     # access_log()'s lines, oldest first
+
+MAINTENANCE = {
+    "visits": [
+        {"station": "svalbard", "date": "2026-03-09",
+         "work": ["clear the rain gauge of snow", "calibrate the rain gauge"]},
+        {"station": "oslo", "date": "2026-03-16", "work": ["calibrate the rain gauge", "calibrate the anemometer"]},
+        {"station": "tromso", "date": "2026-03-23", "work": ["calibrate the anemometer"]},
+    ],
+}
+
+
+def access_log():
+    """The line logged for each request the practice API answered, oldest first, as a server's access log holds them."""
+    return list(LOG)
+
+
+def credentials():
+    """The practice API's made-up credentials, named as the environment variables a program reads."""
+    client_id = next(iter(CLIENTS))
+    return {"PRACTICE_API_KEY": next(iter(API_KEYS)), "PRACTICE_CLIENT_ID": client_id,
+            "PRACTICE_CLIENT_SECRET": CLIENTS[client_id]["secret"]}
+
+
+def _b64(data):
+    return base64.urlsafe_b64encode(data).decode("ascii").rstrip("=")
+
+
+def _sign(signing_input):
+    return _b64(hmac.new(SIGNING_KEY, signing_input.encode("ascii"), hashlib.sha256).digest())
+
+
+def make_token(client, scopes, issued):
+    """A JSON Web Token for a client, issued at a moment on the API's clock, signed with HMAC-SHA256."""
+    header = _b64(json.dumps({"alg": "HS256", "typ": "JWT"}, separators=(",", ":")).encode())
+    payload = _b64(json.dumps({"sub": client, "scope": " ".join(scopes), "iat": issued,
+                               "exp": issued + TOKEN_LIFETIME}, separators=(",", ":")).encode())
+    return f"{header}.{payload}.{_sign(f'{header}.{payload}')}"
+
+
+def read_token(token):
+    """The claims of a token this API signed, or None when the token is malformed or has been changed."""
+    try:
+        header, payload, signature = token.split(".")
+        if not hmac.compare_digest(signature, _sign(f"{header}.{payload}")):
+            return None
+        return json.loads(base64.urlsafe_b64decode(payload + "=" * (-len(payload) % 4)))
+    except (ValueError, TypeError, UnicodeError):
+        return None
 
 
 def summary_csv():
@@ -320,7 +400,8 @@ class Handler(BaseHTTPRequestHandler):
         return DATE
 
     def log_message(self, format, *args):
-        """Say nothing. A real server logs every request; here that would clutter the notebook."""
+        """Keep the line a real server logs for each request, for access_log(), instead of printing it."""
+        LOG.append(f"{self.address_string()} - - [{LOG_TIME}] {format % args}")
 
     def route(self):
         """The path without its query, and the path split into its segments."""
@@ -362,6 +443,18 @@ class Handler(BaseHTTPRequestHandler):
             self.reply(200, summary_csv(), "text/csv")          # an older address, with no charset
         elif parts == ["echo", "headers"]:
             self.reply_json(200, {"headers": dict(self.headers.items())})
+        elif parts == ["me"]:
+            caller = self.caller()
+            if caller is not None:
+                self.reply_json(200, caller)
+        elif parts == ["network", "maintenance"]:
+            self.maintenance()
+        elif parts == ["auth", "token"]:
+            self.reply_json(405, {"error": "GET not allowed: ask for a token with POST"}, Allow="POST")
+        elif parts == ["auth", "expired-token"]:
+            client_id = next(iter(CLIENTS))
+            expired = make_token(client_id, CLIENTS[client_id]["scopes"], NOW - 86400 - TOKEN_LIFETIME)
+            self.reply_json(200, {"access_token": expired, "token_type": "Bearer"})
         elif len(parts) == 2 and parts[0] == "status":
             self.status(parts[1])
         else:
@@ -398,6 +491,82 @@ class Handler(BaseHTTPRequestHandler):
         else:
             error = STATUS_ERRORS.get(code) or phrase or f"status {code}"
             self.reply_json(code, {"error": error}, reason=phrase, **STATUS_HEADERS.get(code, {}))
+
+    def caller(self):
+        """Who sent a request, as a dictionary, or None once the request has been answered with 401."""
+        authorization = self.headers.get("Authorization")
+        if authorization is not None:
+            scheme, _, credential = authorization.strip().partition(" ")
+            credential = credential.strip()
+            if scheme.lower() != "bearer" or not credential:
+                return self.unauthorized("the Authorization header must be Bearer, a space, and a key or token")
+            if credential in API_KEYS:
+                return {**API_KEYS[credential], "credential": "API key"}
+            claims = read_token(credential)
+            if claims is None:
+                return self.unauthorized("the key or access token is not valid", 'error="invalid_token"')
+            if claims["exp"] <= NOW:
+                return self.unauthorized("the access token has expired",
+                                         'error="invalid_token", error_description="the access token has expired"')
+            return {"client": claims["sub"], "scopes": claims["scope"].split(), "credential": "access token"}
+        key = self.headers.get("X-API-Key") or parse_qs(self.path.partition("?")[2]).get("api_key", [None])[-1]
+        if key is None:
+            return self.unauthorized("this endpoint needs an API key or an access token")
+        if key not in API_KEYS:
+            return self.unauthorized("the API key is not valid")
+        return {**API_KEYS[key], "credential": "API key"}
+
+    def unauthorized(self, error, challenge=None):
+        """Answer 401, with a WWW-Authenticate header naming the scheme and, for a credential refused, why.
+
+        A request with no credential, or one in a scheme the API does not use, gets the scheme alone,
+        as RFC 6750 asks.
+        """
+        self.reply_json(401, {"error": error}, **{"WWW-Authenticate": f"{REALM}, {challenge}" if challenge else REALM})
+
+    def maintenance(self):
+        """The maintenance schedule, for a credential with the maintenance:read scope."""
+        caller = self.caller()
+        if caller is None:
+            return
+        if "maintenance:read" not in caller["scopes"]:
+            self.reply_json(403, {"error": f"this needs the maintenance:read scope, and this {caller['credential']} "
+                                           f"has only {', '.join(caller['scopes'])}"},
+                            **{"WWW-Authenticate": f'{REALM}, error="insufficient_scope", scope="maintenance:read"'})
+            return
+        self.reply_json(200, MAINTENANCE)
+
+    def token(self):
+        """POST /auth/token: an access token, for a client id and secret sent with Basic authentication."""
+        length = int(self.headers.get("Content-Length") or 0)
+        form = parse_qs(self.rfile.read(length).decode("utf-8", "replace")) if length else {}
+        scheme, _, encoded = (self.headers.get("Authorization") or "").strip().partition(" ")
+        if scheme.lower() != "basic":
+            self.token_error(401, "invalid_client", "send the client id and secret with Basic authentication")
+            return
+        try:
+            client_id, _, secret = base64.b64decode(encoded.strip(), validate=True).decode("utf-8").partition(":")
+        except (ValueError, UnicodeError):
+            client_id, secret = None, ""
+        client = CLIENTS.get(client_id)
+        if client is None or not hmac.compare_digest(secret.encode("utf-8"), client["secret"].encode("utf-8")):
+            self.token_error(401, "invalid_client", "the client id or secret is not valid")
+            return
+        if "grant_type" not in form:
+            self.token_error(400, "invalid_request", "the request has no grant_type form field")
+            return
+        if form["grant_type"] != ["client_credentials"]:
+            self.token_error(400, "unsupported_grant_type", "this server issues tokens for client_credentials only")
+            return
+        self.reply_json(200, {"access_token": make_token(client_id, client["scopes"], NOW), "token_type": "Bearer",
+                              "expires_in": TOKEN_LIFETIME, "scope": " ".join(client["scopes"])},
+                        **{"Cache-Control": "no-store", "Pragma": "no-cache"})
+
+    def token_error(self, status, error, description):
+        """An OAuth 2.0 error response from the token endpoint, with Basic's challenge on a 401."""
+        headers = {"WWW-Authenticate": 'Basic realm="practice-api"'} if status == 401 else {}
+        self.reply_json(status, {"error": error, "error_description": description},
+                        **headers, **{"Cache-Control": "no-store"})
 
     def summary(self):
         """The network summary, in the format Accept prefers, with an ETag and Vary: Accept."""
@@ -448,8 +617,14 @@ class Handler(BaseHTTPRequestHandler):
             self.reply_json(404, {"error": True,
                                   "reason": "this recording holds only the requests the guide makes"})
 
+    def do_POST(self):
+        if self.route()[1] == ["auth", "token"]:
+            self.token()
+        else:
+            self.refuse()
+
     def refuse(self):
-        """Every method but GET. The endpoints above are read-only, and nothing else exists yet."""
+        """Every method but GET, apart from POST /auth/token. The stations are read-only."""
         self.discard_body()
         path, parts = self.route()
         if parts[:1] == ["v0"]:
@@ -460,7 +635,7 @@ class Handler(BaseHTTPRequestHandler):
         else:
             self.reply_json(404, {"error": f"nothing at {path}"})
 
-    do_POST = do_PUT = do_PATCH = do_DELETE = refuse
+    do_PUT = do_PATCH = do_DELETE = refuse
 
     def moved(self, location):
         """301 Moved Permanently: the resource now lives at `location`."""

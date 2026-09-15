@@ -541,6 +541,19 @@ is only this mode: Colab, local Jupyter and CI all behave the same.
   charset, which requests decodes as ISO-8859-1, so `Tromsø` reads `TromsÃ¸`. `GET /echo/headers`
   responds with the request headers received; print chosen ones, since `Accept-Encoding` differs
   between installations.
+- **`GET /me`, `GET /network/maintenance`, `POST /auth/token` and `GET /auth/expired-token`
+  authenticate**, for Authentication. The credentials are made up: `credentials()` returns them
+  named as environment variables, and that notebook's Setup puts them in `os.environ`. `/me` says
+  who sent a request, and takes the API key as `Authorization: Bearer`, in `X-API-Key`, or as an
+  `api_key` query parameter. `/network/maintenance` needs the `maintenance:read` scope, which the key
+  lacks, so the key gets `403` with `error="insufficient_scope"`. `/auth/token` is OAuth 2.0's
+  client credentials grant, with Basic authentication and a form, and errors in `error` and
+  `error_description`. Tokens are JWTs signed with HMAC, and the API's clock stops at the `Date`
+  header's moment, so a token is the same on every run and never expires; `/auth/expired-token`
+  hands out one that has. A request with no credential, or with a scheme other than Bearer, gets
+  the challenge with no error code, as RFC 6750 asks. `access_log()` returns the line the server
+  logs for each request, which is where a key sent in a query shows. A credential added later keeps
+  the form `practice-key-...` or `practice-secret-...`, which is how `check_notebooks.py` finds one.
 - **`start()` is idempotent** within a process, so rerunning Setup is safe. After a reload, it
   stops the server an earlier copy started and starts the new code on that port, so a rerun keeps
   `BASE` and nothing answers with old code. A second process moves to the next free port.
@@ -607,6 +620,12 @@ Setup fell back to the recording although Open-Meteo was answering.
 
 **Never print a real API's raw body.** Open-Meteo returned the same error body with its keys in a
 different order on two requests. Parse it and print fields by name.
+
+**Never show a credential, even a practice one.** A notebook is committed with its outputs, and
+APIs and JSON teaches readers never to print a key. Print facts about a credential instead: its
+length and last four characters, whether some text holds it, or text with it replaced by the name
+of its variable. `check_notebooks.py` fails on the practice API's key or secret, or on any JSON Web
+Token, in a notebook's source or output.
 
 ### Shell commands in a notebook
 
