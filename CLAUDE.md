@@ -757,6 +757,15 @@ readings: a module, `readings.py`, a script, `summary.py`, and their tests, writ
   versions, and print only what does not depend on the day or on pip's cache: exit codes, package
   names, the `Would install` line of a fully pinned `--dry-run`, and the last line of an error. Never
   print a version that floats, or a path inside an environment, which names its Python's version.
+- **Continuous Integration runs a workflow's job on this computer.** `run_job` reads the workflow
+  from the last commit with `git show`, clones that commit with `git clone --depth 1` from a
+  `file://` address, makes a `--without-pip` environment in the clone and installs `pip==25.3` into
+  it, so that the workflow's own `python -m pip` commands run unchanged, and runs every `run` step
+  with `bash -e -c` and the environment's `bin` first on `PATH`. Setup sets `GIT_CONFIG_GLOBAL` to
+  `os.devnull` and `GIT_CONFIG_NOSYSTEM`, so that a signing or branch setting on this Mac cannot
+  change a commit, and gives commits a practice author through `GIT_AUTHOR_*` and
+  `GIT_COMMITTER_*`. Print exit codes and pytest's `E`, `FAILED` and `ERROR` lines, never a hash or
+  a date. PyYAML is pinned to 6.0.3, Colab's version, and reads a workflow's `on` key as `True`.
 
 ## Cross-references
 
