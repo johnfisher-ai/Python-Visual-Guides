@@ -744,6 +744,10 @@ readings: a module, `readings.py`, a script, `summary.py`, and their tests, writ
 - **pytest is pinned to 8.4.2, Colab's version**, and docs.pytest.org's stable pages now describe
   pytest 9. Check a message against the 8.4 pages at `docs.pytest.org/en/8.4.x/`: 8.4 prints
   `DID NOT RAISE <class 'ValueError'>`, where 9.1 prints the name alone.
+- **Show at most one differing item when an `assert` compares dictionaries.** pytest 8.4.2 lists
+  "Differing items" by walking a set of the keys, so two or more differences under string keys print
+  in an order that changes from one run to the next. Test Structure's whole-value example breaks one
+  station for that reason.
 
 ## Cross-references
 
