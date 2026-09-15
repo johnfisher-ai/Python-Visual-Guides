@@ -39,6 +39,17 @@ Endpoints:
     POST /auth/token             an access token, for a client id and secret sent with Basic
                                  authentication and the form field grant_type=client_credentials
     GET /auth/expired-token      an access token that has already expired, for testing a client
+    GET /network/readings        three days of made-up hourly readings, a page at a time: page and
+                                 per_page (30, at most 100), a total, and a Link header to other pages
+    GET /network/events          the network's event log, newest first, a page at a time: a cursor
+                                 and a limit (10, at most 50), or the older page and per_page
+
+PAGINATION. /network/readings numbers its pages, as GitHub's API does, and a per_page above 100
+gets 100. /network/events hands out cursors, as Slack's and Stripe's APIs do. Given a station, a
+page of events holds that station's events from among the limit it looked through, so a page can be
+short, or empty, before the last. The log is busy: in page mode it gains an event before every page
+after the first, so page N is served after N - 1 new events, and page numbers repeat an event that a
+cursor does not. On both endpoints a parameter given twice gets 400.
 
 AUTHENTICATION. The credentials are made up, and open nothing but this practice API. credentials()
 returns them, named as the environment variables a program reads them from. An API key or an
@@ -82,10 +93,12 @@ import hashlib
 import hmac
 import io
 import json
+import math
 import os
 import threading
 import urllib.error
 import urllib.request
+from datetime import date, timedelta
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, unquote, urlencode
@@ -176,6 +189,89 @@ MAINTENANCE = {
         {"station": "tromso", "date": "2026-03-23", "work": ["calibrate the anemometer"]},
     ],
 }
+
+
+# Three days of hourly readings to DATE, for Pagination. Made up: a daily swing around each station's
+# mean, coldest at 03:00, with a small wobble. Svalbard has been inactive since January 12, so it has none.
+READING_STATIONS = {"bergen": (3.0, 1.5), "oslo": (-4.0, 3.5), "tromso": (-6.0, 2.0)}    # mean, swing
+
+
+def _reading(station, hours_before):
+    time = _when - timedelta(hours=hours_before)
+    mean, swing = READING_STATIONS[station]
+    wobble = int(hashlib.sha256(f"{station} {time:%Y-%m-%dT%H}".encode()).hexdigest()[:8], 16) % 9 / 10 - 0.4
+    celsius = round(mean - swing * math.cos(2 * math.pi * (time.hour - 3) / 24) + wobble, 1) + 0.0
+    return {"station": station, "time": f"{time:%Y-%m-%dT%H:%M}Z", "temperature_c": celsius}
+
+
+READINGS = [_reading(station, hours) for hours in range(71, -1, -1) for station in READING_STATIONS]
+
+# The network's event log, for Pagination: a daily upload from each reporting station, and the events
+# NETWORK and the maintenance schedule record. Numbered oldest first, and sent newest first.
+_UPLOADS = [(f"{date(2026, 2, 15) + timedelta(days=day):%Y-%m-%d}T06:{minute:02d}Z", station, "readings uploaded")
+            for day in range(15) for minute, station in zip((0, 5, 10), READING_STATIONS)]
+_NOTABLE = [
+    ("2025-10-14T09:00Z", "bergen", "thermometer and rain gauge calibrated"),
+    ("2025-12-02T11:30Z", "oslo", "thermometer calibrated"),
+    ("2026-01-12T07:45Z", "svalbard", "rain gauge buried in snow"),
+    ("2026-01-12T08:00Z", "svalbard", "station set to inactive"),
+    ("2026-01-20T13:15Z", "tromso", "thermometer calibrated"),
+    ("2026-02-20T14:00Z", "bergen", "power restored after an outage"),
+    ("2026-02-27T10:00Z", "svalbard", "maintenance visit booked for 2026-03-09"),
+    ("2026-02-27T10:05Z", "oslo", "maintenance visit booked for 2026-03-16"),
+    ("2026-02-27T10:10Z", "tromso", "maintenance visit booked for 2026-03-23"),
+]
+EVENTS = [{"id": number, "time": time, "station": station, "summary": summary}
+          for number, (time, station, summary) in enumerate(sorted(_UPLOADS + _NOTABLE), start=1)][::-1]
+# The events that arrive while a client pages by number, newest last.
+ARRIVALS = [{"id": len(EVENTS) + number, "time": time, "station": station, "summary": f"wind gust of {gust} m/s"}
+            for number, (time, station, gust) in enumerate([
+                ("2026-03-01T08:41Z", "tromso", 21), ("2026-03-01T08:44Z", "oslo", 20),
+                ("2026-03-01T08:47Z", "tromso", 23), ("2026-03-01T08:52Z", "tromso", 24),
+                ("2026-03-01T08:58Z", "oslo", 22)], start=1)]
+
+
+class BadRequest(Exception):
+    """A request an endpoint refuses with 400, with the reason it gives."""
+
+
+def single_values(query):
+    """The parameters of a query string, one value each. A parameter given twice is refused."""
+    values = parse_qs(query, keep_blank_values=True)
+    for name, found in values.items():
+        if len(found) > 1:
+            raise BadRequest(f"{name} was given more than once")
+    return {name: found[0] for name, found in values.items()}
+
+
+def whole_number(query, name, default, most=None):
+    """A parameter that must be a whole number from 1, and at most `most` when that is given."""
+    value = query.get(name)
+    if value is None:
+        return default
+    if not (value.isascii() and value.isdigit()) or int(value) < 1 or (most is not None and int(value) > most):
+        raise BadRequest(f"{name} must be a whole number, " + (f"from 1 to {most}" if most else "1 or more"))
+    return int(value)
+
+
+def known_station(query):
+    station = query.get("station")
+    if station is not None and station not in STATIONS:
+        raise BadRequest(f"no station has the id {station!r}")
+    return station
+
+
+def events_cursor(event_id):
+    """The cursor for the events older than event_id: an encoded bookmark, which clients send back unread."""
+    return base64.urlsafe_b64encode(f"before:{event_id}".encode()).decode("ascii").rstrip("=")
+
+
+def read_events_cursor(cursor):
+    try:
+        prefix, _, number = base64.urlsafe_b64decode(cursor + "=" * (-len(cursor) % 4)).decode("ascii").partition(":")
+    except (ValueError, UnicodeError):
+        return None
+    return int(number) if prefix == "before" and number.isascii() and number.isdigit() else None
 
 
 def access_log():
@@ -455,6 +551,10 @@ class Handler(BaseHTTPRequestHandler):
             client_id = next(iter(CLIENTS))
             expired = make_token(client_id, CLIENTS[client_id]["scopes"], NOW - 86400 - TOKEN_LIFETIME)
             self.reply_json(200, {"access_token": expired, "token_type": "Bearer"})
+        elif parts == ["network", "readings"]:
+            self.readings()
+        elif parts == ["network", "events"]:
+            self.events()
         elif len(parts) == 2 and parts[0] == "status":
             self.status(parts[1])
         else:
@@ -567,6 +667,59 @@ class Handler(BaseHTTPRequestHandler):
         headers = {"WWW-Authenticate": 'Basic realm="practice-api"'} if status == 401 else {}
         self.reply_json(status, {"error": error, "error_description": description},
                         **headers, **{"Cache-Control": "no-store"})
+
+    def readings(self):
+        """Hourly readings a page at a time, with page, per_page and total, and a Link header."""
+        try:
+            query = single_values(self.path.partition("?")[2])
+            page = whole_number(query, "page", 1)
+            per_page = min(whole_number(query, "per_page", 30), 100)       # more than 100 gets 100
+            station = known_station(query)
+        except BadRequest as problem:
+            self.reply_json(400, {"error": str(problem)})
+            return
+        chosen = [reading for reading in READINGS if station in (None, reading["station"])]
+        last = max(1, math.ceil(len(chosen) / per_page))
+        host, port = self.server.server_address[:2]
+
+        def link(number, rel):
+            return f'<http://{host}:{port}/network/readings?{urlencode({**query, "page": number})}>; rel="{rel}"'
+
+        links = ([link(page - 1, "prev")] if page > 1 else []) + \
+                ([link(page + 1, "next"), link(last, "last")] if page < last else []) + \
+                ([link(1, "first")] if page > 1 else [])
+        start = (page - 1) * per_page
+        body = {"readings": chosen[start:start + per_page], "page": page, "per_page": per_page, "total": len(chosen)}
+        self.reply_json(200, body, **({"Link": ", ".join(links)} if links else {}))
+
+    def events(self):
+        """The event log, newest first: a cursor and a limit, or page and per_page, with events arriving."""
+        try:
+            query = single_values(self.path.partition("?")[2])
+            if "page" in query and "cursor" in query:
+                raise BadRequest("send page or cursor, not both")
+            station = known_station(query)
+            if "page" in query or "per_page" in query:
+                page = whole_number(query, "page", 1)
+                per_page = whole_number(query, "per_page", 10, most=50)
+            else:
+                limit = whole_number(query, "limit", 10, most=50)
+                before = read_events_cursor(query["cursor"]) if "cursor" in query else len(EVENTS) + 1
+                if before is None:
+                    raise BadRequest("the cursor is not one this API sent")
+        except BadRequest as problem:
+            self.reply_json(400, {"error": str(problem)})
+            return
+        if "page" in query or "per_page" in query:
+            log = ARRIVALS[:min(page - 1, len(ARRIVALS))][::-1] + EVENTS      # a busy log, between pages
+            chosen = [event for event in log if station in (None, event["station"])]
+            start = (page - 1) * per_page
+            self.reply_json(200, {"events": chosen[start:start + per_page], "page": page, "per_page": per_page})
+            return
+        older = [event for event in EVENTS if event["id"] < before]
+        looked = older[:limit]
+        self.reply_json(200, {"events": [event for event in looked if station in (None, event["station"])],
+                              "next_cursor": events_cursor(looked[-1]["id"]) if len(older) > limit else None})
 
     def summary(self):
         """The network summary, in the format Accept prefers, with an ETag and Vary: Accept."""

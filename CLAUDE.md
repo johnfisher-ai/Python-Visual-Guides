@@ -554,6 +554,17 @@ is only this mode: Colab, local Jupyter and CI all behave the same.
   the challenge with no error code, as RFC 6750 asks. `access_log()` returns the line the server
   logs for each request, which is where a key sent in a query shows. A credential added later keeps
   the form `practice-key-...` or `practice-secret-...`, which is how `check_notebooks.py` finds one.
+- **`GET /network/readings` and `GET /network/events` paginate**, for Pagination. The readings are
+  made up: 72 hours at Bergen, Oslo and Tromso up to the `Date` header's moment, 216 in all, since
+  Svalbard is inactive. They take `page` and `per_page` (30, and more than 100 gets 100), send a
+  `total`, and a `Link` header whose addresses keep the request's own query. The events are a log of
+  54, newest first, paged by an opaque `next_cursor` that is `null` on the last page, with a `limit`
+  of 10 that refuses more than 50. With `station`, an events page holds that station's events from
+  among the `limit` it looked through, so a page can be short or empty before the last, as Slack
+  warns. Events also answer `page` and `per_page`, and in that mode gain one event before every page
+  after the first, so page numbers repeat event 45 on every run and cursors do not. On both, a
+  parameter given twice gets `400`, which is what a next link followed with `params=` still set
+  runs into.
 - **`start()` is idempotent** within a process, so rerunning Setup is safe. After a reload, it
   stops the server an earlier copy started and starts the new code on that port, so a rerun keeps
   `BASE` and nothing answers with old code. A second process moves to the next free port.
