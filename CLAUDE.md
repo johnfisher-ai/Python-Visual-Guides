@@ -576,6 +576,19 @@ is only this mode: Colab, local Jupyter and CI all behave the same.
   limit calls `wait_for_reset()` first. A wait taken from a response always reaches the window's end,
   because the server rounds up and the client starts waiting after the server counted; spacing
   requests on the client's own clock needs a margin, which `Throttle` adds.
+- **`GET /network/report`, `/network/unstable`, `/hang-up` and `/trickle` fail on purpose**, for
+  Errors and Retries. `/network/report` answers after 2 seconds, so `timeout=1` raises `ReadTimeout`.
+  `/hang-up` closes every connection without a response, which requests raises as `ConnectionError`
+  with "Remote end closed connection without response". `/trickle` sends the report in 6 pieces half
+  a second apart, so a read timeout of 1 never fires on a 3-second response. `/network/unstable`
+  counts attempts by `X-Request-Id`: the first is closed without a response, the second gets `503`
+  with `Retry-After: 1`, the third is answered, and a request with no id gets `400`. Examples send a
+  fresh `uuid4` id, so a rerun meets the same failures. `Server.handle_error` ignores a client that
+  went away, so a timed-out request's late reply never prints a traceback into a notebook. Never run
+  a host name that fails in DNS: `stations.invalid` took 30 seconds to fail on macOS. A refused
+  connection's message carries the operating system's error number, so print only its class. Seeds
+  for jittered waits are chosen so that a deadline's stop-or-continue decision is at least half a
+  second from its boundary.
 - **`start()` is idempotent** within a process, so rerunning Setup is safe. After a reload, it
   stops the server an earlier copy started and starts the new code on that port, so a rerun keeps
   `BASE` and nothing answers with old code. A second process moves to the next free port.

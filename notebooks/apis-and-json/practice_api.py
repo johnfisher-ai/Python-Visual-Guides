@@ -48,6 +48,20 @@ Endpoints:
     GET /beta/network/latest     the same, as a future release will send it: a 429's Retry-After is
                                  a date instead of a number of seconds
     GET /rate-limit              how much of that limit is left, without spending any of it
+    GET /network/report          a small report that takes 2 seconds to build, for timeouts
+    GET /network/unstable        the latest readings, after failing the first two attempts of every
+                                 request: a connection closed without a response, then 503
+    GET /hang-up                 a connection closed without any response, every time
+    GET /trickle                 the report's body, sent a few bytes at a time over 3 seconds
+
+ERRORS AND RETRIES. /network/report waits 2 seconds before it answers, so a read timeout shorter than
+that raises. /hang-up closes every connection without a response, which requests raises as
+ConnectionError. /trickle sends its body in 6 pieces half a second apart, so a read timeout of 1
+second never fires on a response that takes 3. /network/unstable counts the attempts of each
+request by its X-Request-Id header: it closes the first attempt's connection without a response,
+answers the second with 503 and Retry-After: 1, and answers the third. A client that sends a new id
+with every attempt never gets past the first failure, and a request with no id gets 400. The server
+says nothing when a client goes away before its response is sent, as a client that timed out does.
 
 RATE LIMITS. /network/latest allows 5 requests in a window of 2 seconds, which opens at the first
 request after the last window closed, and is shared by every caller, as a limit on an address would
@@ -109,6 +123,7 @@ import io
 import json
 import math
 import os
+import sys
 import threading
 import time
 import urllib.error
@@ -313,6 +328,19 @@ def allowance(spend):
         if spend and allowed:
             _window["used"] += 1
         return RATE_LIMIT - _window["used"], math.ceil(_window["opened"] + RATE_WINDOW - now), allowed
+
+
+# Failures for Errors and Retries: a slow report, a connection closed without a response, a body
+# that trickles in, and an endpoint that fails the first attempts of every request before answering.
+REPORT_SECONDS = 2
+TRICKLE_PIECES, TRICKLE_PAUSE = 6, 0.5
+_unstable_lock = threading.Lock()
+_unstable_attempts = collections.OrderedDict()    # X-Request-Id -> attempts seen, the oldest first
+
+
+def network_report():
+    return {"stations": len(STATIONS), "reporting": len(READING_STATIONS), "readings": len(READINGS),
+            "events": len(EVENTS)}
 
 
 def access_log():
@@ -603,6 +631,15 @@ class Handler(BaseHTTPRequestHandler):
             self.reply_json(200, {"limit": RATE_LIMIT, "remaining": remaining, "reset": reset})
         elif parts == ["network", "events"]:
             self.events()
+        elif parts == ["network", "report"]:
+            time.sleep(REPORT_SECONDS)                       # a report that takes a while to build
+            self.reply_json(200, network_report())
+        elif parts == ["network", "unstable"]:
+            self.unstable()
+        elif parts == ["hang-up"]:
+            self.close_connection = True                     # close the connection, sending nothing
+        elif parts == ["trickle"]:
+            self.trickle()
         elif len(parts) == 2 and parts[0] == "status":
             self.status(parts[1])
         else:
@@ -715,6 +752,41 @@ class Handler(BaseHTTPRequestHandler):
         headers = {"WWW-Authenticate": 'Basic realm="practice-api"'} if status == 401 else {}
         self.reply_json(status, {"error": error, "error_description": description},
                         **headers, **{"Cache-Control": "no-store"})
+
+    def unstable(self):
+        """The latest readings, once the first two attempts of a request have failed.
+
+        Attempts of one request share an X-Request-Id. The first attempt's connection is closed
+        without a response, the second gets 503 with Retry-After: 1, and the third is answered.
+        """
+        request_id = self.headers.get("X-Request-Id")
+        if not request_id:
+            self.reply_json(400, {"error": "send an X-Request-Id header, the same on every attempt of a request"})
+            return
+        with _unstable_lock:
+            attempt = _unstable_attempts.pop(request_id, 0) + 1
+            _unstable_attempts[request_id] = attempt
+            while len(_unstable_attempts) > 1000:
+                _unstable_attempts.popitem(last=False)
+        if attempt == 1:
+            self.close_connection = True
+        elif attempt == 2:
+            self.reply_json(503, {"error": "the service is busy: try again"}, **{"Retry-After": "1"})
+        else:
+            self.reply_json(200, {"attempt": attempt, "readings": READINGS[-len(READING_STATIONS):]})
+
+    def trickle(self):
+        """The report's body, a few bytes at a time, with a pause before every piece."""
+        data = json.dumps(network_report()).encode("utf-8")
+        size = math.ceil(len(data) / TRICKLE_PIECES)
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(data)))
+        self.end_headers()
+        for start in range(0, len(data), size):
+            time.sleep(TRICKLE_PAUSE)
+            self.wfile.write(data[start:start + size])
+            self.wfile.flush()
 
     def latest(self, dated):
         """The latest reading at each reporting station, or at one, within the rate limit.
@@ -896,6 +968,12 @@ class Handler(BaseHTTPRequestHandler):
 class Server(ThreadingHTTPServer):
     allow_reuse_port = False       # never share a port with another server, even where allowed
     daemon_threads = True
+
+    def handle_error(self, request, client_address):
+        """Say nothing when a client went away before its response was sent, as one that timed out has."""
+        if isinstance(sys.exc_info()[1], (BrokenPipeError, ConnectionResetError, ConnectionAbortedError)):
+            return
+        super().handle_error(request, client_address)
 
 
 # Kept when Setup reloads this module, so the reloaded copy can find the server already running.
