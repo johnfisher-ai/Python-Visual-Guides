@@ -565,6 +565,17 @@ is only this mode: Colab, local Jupyter and CI all behave the same.
   after the first, so page numbers repeat event 45 on every run and cursors do not. On both, a
   parameter given twice gets `400`, which is what a next link followed with `params=` still set
   runs into.
+- **`GET /network/latest` and `GET /beta/network/latest` are rate limited, and `GET /rate-limit`
+  reports the limit**, for Rate Limits: 5 requests in a 2-second window of real time, which opens at
+  the first request after the last window closed and is shared by every caller. Every response
+  carries `X-RateLimit-Limit`, `X-RateLimit-Remaining` and `X-RateLimit-Reset`, the seconds to the
+  window's end rounded up, and a request past the limit gets `429` with `Retry-After` in the same
+  seconds. The beta endpoint spends the same allowance and sends `Retry-After` as an HTTP date on the
+  stopped clock, so the date minus the response's `Date` is the wait. `/rate-limit` does not count.
+  Committed output depends on each example starting a fresh window, so every example that spends the
+  limit calls `wait_for_reset()` first. A wait taken from a response always reaches the window's end,
+  because the server rounds up and the client starts waiting after the server counted; spacing
+  requests on the client's own clock needs a margin, which `Throttle` adds.
 - **`start()` is idempotent** within a process, so rerunning Setup is safe. After a reload, it
   stops the server an earlier copy started and starts the new code on that port, so a rerun keeps
   `BASE` and nothing answers with old code. A second process moves to the next free port.

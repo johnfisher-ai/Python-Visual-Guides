@@ -43,6 +43,20 @@ Endpoints:
                                  per_page (30, at most 100), a total, and a Link header to other pages
     GET /network/events          the network's event log, newest first, a page at a time: a cursor
                                  and a limit (10, at most 50), or the older page and per_page
+    GET /network/latest          the latest reading at each reporting station, or at ?station=,
+                                 limited to 5 requests every 2 seconds, with X-RateLimit headers
+    GET /beta/network/latest     the same, as a future release will send it: a 429's Retry-After is
+                                 a date instead of a number of seconds
+    GET /rate-limit              how much of that limit is left, without spending any of it
+
+RATE LIMITS. /network/latest allows 5 requests in a window of 2 seconds, which opens at the first
+request after the last window closed, and is shared by every caller, as a limit on an address would
+be. Every response carries X-RateLimit-Limit, X-RateLimit-Remaining, and X-RateLimit-Reset, the
+whole seconds until the window closes, and a request past the limit gets 429 with a Retry-After of
+the same seconds. /beta/network/latest spends the same allowance, and sends Retry-After as an HTTP
+date, on the API's stopped clock: subtracted from the response's Date header, it gives the same
+seconds. /rate-limit reports the allowance and does not count. The windows run on real time, unlike
+the Date header, and are short, so that a notebook meets the limit in seconds.
 
 PAGINATION. /network/readings numbers its pages, as GitHub's API does, and a per_page above 100
 gets 100. /network/events hands out cursors, as Slack's and Stripe's APIs do. Given a station, a
@@ -96,6 +110,7 @@ import json
 import math
 import os
 import threading
+import time
 import urllib.error
 import urllib.request
 from datetime import date, timedelta
@@ -272,6 +287,32 @@ def read_events_cursor(cursor):
     except (ValueError, UnicodeError):
         return None
     return int(number) if prefix == "before" and number.isascii() and number.isdigit() else None
+
+
+# A rate limit for Rate Limits: 5 requests in a window of 2 seconds, which opens at the first request
+# after the last one closed. One allowance, shared by every caller, as a limit on an address would be.
+RATE_LIMIT = 5
+RATE_WINDOW = 2
+_limit_lock = threading.Lock()
+_window = {"opened": None, "used": 0}
+
+
+def allowance(spend):
+    """(requests remaining, whole seconds until the window closes, whether a request is allowed).
+
+    With spend true, a request that is allowed uses one of the window's requests, and a request
+    after the window closed opens a new one. With spend false, nothing changes.
+    """
+    with _limit_lock:
+        now = time.monotonic()
+        if _window["opened"] is None or now - _window["opened"] >= RATE_WINDOW:
+            if not spend:
+                return RATE_LIMIT, 0, True
+            _window["opened"], _window["used"] = now, 0
+        allowed = _window["used"] < RATE_LIMIT
+        if spend and allowed:
+            _window["used"] += 1
+        return RATE_LIMIT - _window["used"], math.ceil(_window["opened"] + RATE_WINDOW - now), allowed
 
 
 def access_log():
@@ -553,6 +594,13 @@ class Handler(BaseHTTPRequestHandler):
             self.reply_json(200, {"access_token": expired, "token_type": "Bearer"})
         elif parts == ["network", "readings"]:
             self.readings()
+        elif parts == ["network", "latest"]:
+            self.latest(dated=False)
+        elif parts == ["beta", "network", "latest"]:
+            self.latest(dated=True)
+        elif parts == ["rate-limit"]:
+            remaining, reset, _ = allowance(spend=False)
+            self.reply_json(200, {"limit": RATE_LIMIT, "remaining": remaining, "reset": reset})
         elif parts == ["network", "events"]:
             self.events()
         elif len(parts) == 2 and parts[0] == "status":
@@ -667,6 +715,33 @@ class Handler(BaseHTTPRequestHandler):
         headers = {"WWW-Authenticate": 'Basic realm="practice-api"'} if status == 401 else {}
         self.reply_json(status, {"error": error, "error_description": description},
                         **headers, **{"Cache-Control": "no-store"})
+
+    def latest(self, dated):
+        """The latest reading at each reporting station, or at one, within the rate limit.
+
+        Every request counts, whatever it asks for. With dated true, a 429's Retry-After is an HTTP
+        date on the API's stopped clock, so that it is the response's Date plus the seconds to wait.
+        """
+        remaining, reset, allowed = allowance(spend=True)
+        headers = {"X-RateLimit-Limit": str(RATE_LIMIT), "X-RateLimit-Remaining": str(remaining),
+                   "X-RateLimit-Reset": str(reset)}
+        if not allowed:
+            retry = email.utils.format_datetime(_when + timedelta(seconds=reset), usegmt=True) if dated else str(reset)
+            self.reply_json(429, {"error": f"rate limit exceeded: {RATE_LIMIT} requests every {RATE_WINDOW} seconds"},
+                            **headers, **{"Retry-After": retry})
+            return
+        try:
+            station = known_station(single_values(self.path.partition("?")[2]))
+        except BadRequest as problem:
+            self.reply_json(400, {"error": str(problem)}, **headers)
+            return
+        latest = READINGS[-len(READING_STATIONS):]
+        if station is None:
+            self.reply_json(200, latest, **headers)
+        elif station in READING_STATIONS:
+            self.reply_json(200, next(reading for reading in latest if reading["station"] == station), **headers)
+        else:
+            self.reply_json(404, {"error": f"no recent readings from {station!r}"}, **headers)
 
     def readings(self):
         """Hourly readings a page at a time, with page, per_page and total, and a Link header."""
