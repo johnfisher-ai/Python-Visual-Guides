@@ -28,3 +28,6 @@ venv/
 # after themselves, but a cell that fails partway would leave them behind, and CI
 # executes notebooks with the notebook's own directory as the working directory.
 notebooks/**/scratch/
+# A Real Client writes the module it teaches beside the notebook, where import finds it,
+# and removes it at the end, so the same applies.
+notebooks/apis-and-json/network_client.py
