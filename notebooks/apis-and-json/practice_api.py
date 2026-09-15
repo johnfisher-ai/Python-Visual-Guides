@@ -53,6 +53,22 @@ Endpoints:
                                  request: a connection closed without a response, then 503
     GET /hang-up                 a connection closed without any response, every time
     GET /trickle                 the report's body, sent a few bytes at a time over 3 seconds
+    GET /network/plans           the stations the network plans to build, which a client can change
+    POST /network/plans          a new plan: 201 Created, with its Location and an ETag
+    GET /network/plans/<id>      one plan, with an ETag
+    PUT /network/plans/<id>      the plan replaced by the body sent
+    PATCH /network/plans/<id>    the fields the body names changed, and a field sent as null removed
+    DELETE /network/plans/<id>   the plan removed: 204 No Content
+
+SENDING DATA. /network/plans is the one collection a client can change, and it is empty whenever
+this module loads. A plan has a name, a latitude and a longitude, and may have elevation_m and
+opens, a date. A body must be JSON sent with Content-Type: application/json, or 415 comes back, and a
+plan with problems gets 422 and a list of them. POST with an Idempotency-Key header saves the plan it
+creates under that key: a repeat with the same key and body gets the same 201 again, marked
+Idempotent-Replayed: true, and creates nothing, while the same key with another body gets 422. POST
+with ?delay=N, up to 5, waits N seconds after creating the plan and before answering, so that a
+client's timeout can lose the response to a request that worked. PUT, PATCH and DELETE take
+If-Match with a plan's ETag, and answer 412 when the plan has changed since.
 
 ERRORS AND RETRIES. /network/report waits 2 seconds before it answers, so a read timeout shorter than
 that raises. /hang-up closes every connection without a response, which requests raises as
@@ -120,9 +136,11 @@ import email.utils
 import hashlib
 import hmac
 import io
+import itertools
 import json
 import math
 import os
+import re
 import sys
 import threading
 import time
@@ -336,6 +354,64 @@ REPORT_SECONDS = 2
 TRICKLE_PIECES, TRICKLE_PAUSE = 6, 0.5
 _unstable_lock = threading.Lock()
 _unstable_attempts = collections.OrderedDict()    # X-Request-Id -> attempts seen, the oldest first
+
+
+# Planned stations for Sending Data: the one collection a client can change. It is empty whenever
+# this module loads, and a plan lasts until it is deleted or the module loads again.
+PLAN_FIELDS = ("name", "latitude", "longitude", "elevation_m", "opens")
+NO_BODY = object()                                   # what json_body returns once it has answered
+_plans_lock = threading.Lock()
+_plans = {}                                          # plan id -> plan
+_plan_ids = itertools.count(1)
+_idempotent_posts = collections.OrderedDict()        # Idempotency-Key -> the body's digest and the plan
+
+
+def is_number(value):
+    return isinstance(value, (int, float)) and not isinstance(value, bool) and value == value    # NaN is not
+
+
+def is_date(value):
+    if not (isinstance(value, str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", value)):
+        return False
+    try:
+        date.fromisoformat(value)
+    except ValueError:
+        return False
+    return True
+
+
+def plan_problems(body, partial):
+    """What is wrong with a plan's body, as a list of {"field", "problem"}.
+
+    With partial true, as for PATCH, a required field may be left out, but never sent as null.
+    """
+    if not isinstance(body, dict):
+        return [{"field": None, "problem": "the body must be a JSON object"}]
+    rules = [("name", lambda v: isinstance(v, str) and 0 < len(v.strip()) and len(v) <= 50,
+              "must be text, from 1 to 50 characters"),
+             ("latitude", lambda v: is_number(v) and -90 <= v <= 90, "must be a number from -90 to 90"),
+             ("longitude", lambda v: is_number(v) and -180 <= v <= 180, "must be a number from -180 to 180")]
+    problems = []
+    for field, valid, problem in rules:
+        if body.get(field) is None:
+            if not partial or field in body:
+                problems.append({"field": field, "problem": "is required"})
+        elif not valid(body[field]):
+            problems.append({"field": field, "problem": problem})
+    if body.get("elevation_m") is not None and not is_number(body["elevation_m"]):
+        problems.append({"field": "elevation_m", "problem": "must be a number"})
+    if body.get("opens") is not None and not is_date(body["opens"]):
+        problems.append({"field": "opens", "problem": "must be a date like 2027-06-01"})
+    return problems
+
+
+def plan_from(plan_id, fields):
+    """A plan: its id, then the fields it has, in their usual order. A field that is None is left out."""
+    return {"id": plan_id, **{field: fields[field] for field in PLAN_FIELDS if fields.get(field) is not None}}
+
+
+def plan_etag(plan):
+    return '"' + hashlib.sha256(json.dumps(plan, sort_keys=True).encode("utf-8")).hexdigest()[:16] + '"'
 
 
 def network_report():
@@ -631,6 +707,17 @@ class Handler(BaseHTTPRequestHandler):
             self.reply_json(200, {"limit": RATE_LIMIT, "remaining": remaining, "reset": reset})
         elif parts == ["network", "events"]:
             self.events()
+        elif parts == ["network", "plans"]:
+            with _plans_lock:
+                plans = [_plans[plan_id] for plan_id in sorted(_plans)]
+            self.reply_json(200, plans)
+        elif len(parts) == 3 and parts[:2] == ["network", "plans"]:
+            with _plans_lock:
+                plan = _plans.get(int(parts[2])) if parts[2].isdigit() else None
+            if plan is None:
+                self.reply_json(404, {"error": f"no plan has the id {unquote(parts[2])}"})
+            else:
+                self.reply_json(200, plan, ETag=plan_etag(plan))
         elif parts == ["network", "report"]:
             time.sleep(REPORT_SECONDS)                       # a report that takes a while to build
             self.reply_json(200, network_report())
@@ -918,13 +1005,130 @@ class Handler(BaseHTTPRequestHandler):
                                   "reason": "this recording holds only the requests the guide makes"})
 
     def do_POST(self):
-        if self.route()[1] == ["auth", "token"]:
+        parts = self.route()[1]
+        if parts == ["auth", "token"]:
             self.token()
+        elif parts == ["network", "plans"]:
+            self.create_plan()
         else:
             self.refuse()
 
+    def do_PUT(self):
+        parts = self.route()[1]
+        if len(parts) == 3 and parts[:2] == ["network", "plans"]:
+            body = self.json_body()
+            if body is not NO_BODY:
+                self.write_plan(parts, lambda current: (plan_problems(body, partial=False), body))
+        else:
+            self.refuse()
+
+    def do_PATCH(self):
+        parts = self.route()[1]
+        if len(parts) == 3 and parts[:2] == ["network", "plans"]:
+            body = self.json_body(("application/json", "application/merge-patch+json"))
+            if body is not NO_BODY:
+                self.write_plan(parts, lambda current: (
+                    plan_problems(body, partial=True),
+                    {**current, **({k: v for k, v in body.items() if k in PLAN_FIELDS} if isinstance(body, dict) else {})}))
+        else:
+            self.refuse()
+
+    def do_DELETE(self):
+        parts = self.route()[1]
+        if len(parts) == 3 and parts[:2] == ["network", "plans"]:
+            self.discard_body()
+            self.write_plan(parts, None)
+        else:
+            self.refuse()
+
+    def json_body(self, types=("application/json",)):
+        """The request's body read as JSON, or NO_BODY once a 415 or a 400 has been sent instead."""
+        length = int(self.headers.get("Content-Length") or 0)
+        raw = self.rfile.read(length) if length else b""
+        kind = (self.headers.get("Content-Type") or "").split(";")[0].strip().lower()
+        if kind not in types:
+            extra = {"Accept-Patch": ", ".join(types)} if self.command == "PATCH" else {}
+            self.reply_json(415, {"error": f"send the body as JSON, with Content-Type: {types[0]}"}, **extra)
+            return NO_BODY
+        try:
+            return json.loads(raw.decode("utf-8"))
+        except ValueError as problem:
+            self.reply_json(400, {"error": f"the body is not valid JSON: {problem}"})
+            return NO_BODY
+
+    def create_plan(self):
+        """POST /network/plans: a new plan, or, for an Idempotency-Key seen before, the plan it created."""
+        body = self.json_body()
+        if body is NO_BODY:
+            return
+        delay = parse_qs(self.path.partition("?")[2]).get("delay", ["0"])[-1]
+        if not (delay.isascii() and delay.isdigit() and int(delay) <= 5):
+            self.reply_json(400, {"error": "delay must be a whole number of seconds, from 0 to 5"})
+            return
+        key = self.headers.get("Idempotency-Key")
+        digest = hashlib.sha256(json.dumps(body, sort_keys=True).encode("utf-8")).hexdigest()
+        with _plans_lock:
+            saved = _idempotent_posts.get(key) if key is not None else None
+            if saved is not None:
+                outcome, plan = ("replayed", saved["plan"]) if saved["digest"] == digest else ("reused", None)
+            else:
+                problems = plan_problems(body, partial=False)
+                if problems:
+                    outcome, plan = "problems", None
+                else:
+                    outcome, plan = "created", plan_from(next(_plan_ids), body)
+                    _plans[plan["id"]] = plan
+                    if key is not None:
+                        _idempotent_posts[key] = {"digest": digest, "plan": plan}
+                        while len(_idempotent_posts) > 1000:
+                            _idempotent_posts.popitem(last=False)
+        if outcome == "reused":
+            self.reply_json(422, {"error": "this Idempotency-Key was already used with a different body"},
+                            reason=PHRASES[422])
+        elif outcome == "problems":
+            self.reply_json(422, {"error": "the plan has problems", "problems": problems}, reason=PHRASES[422])
+        else:
+            if outcome == "created":
+                time.sleep(int(delay))                  # the plan is saved, and the answer is late
+            headers = {"Location": f"/network/plans/{plan['id']}", "ETag": plan_etag(plan)}
+            if outcome == "replayed":
+                headers["Idempotent-Replayed"] = "true"
+            self.reply_json(201, plan, **headers)
+
+    def write_plan(self, parts, new_fields):
+        """PUT, PATCH or DELETE on /network/plans/<id>. new_fields turns the current plan into the
+        problems with the change and the fields it leaves, and is None for DELETE."""
+        with _plans_lock:
+            current = _plans.get(int(parts[2])) if parts[2].isdigit() else None
+            if current is None:
+                outcome = "missing"
+            elif self.headers.get("If-Match") not in (None, "*", plan_etag(current)):
+                outcome = "changed"
+            elif new_fields is None:
+                del _plans[current["id"]]
+                outcome = "removed"
+            else:
+                problems, fields = new_fields(current)
+                if problems:
+                    outcome = "problems"
+                else:
+                    plan = plan_from(current["id"], fields)
+                    _plans[plan["id"]] = plan
+                    outcome = "written"
+        if outcome == "missing":
+            self.reply_json(404, {"error": f"no plan has the id {unquote(parts[2])}"})
+        elif outcome == "changed":
+            self.reply_json(412, {"error": "the plan has changed since that ETag was sent"})
+        elif outcome == "removed":
+            self.send_response(204)
+            self.end_headers()
+        elif outcome == "problems":
+            self.reply_json(422, {"error": "the plan has problems", "problems": problems}, reason=PHRASES[422])
+        else:
+            self.reply_json(200, plan, ETag=plan_etag(plan))
+
     def refuse(self):
-        """Every method but GET, apart from POST /auth/token. The stations are read-only."""
+        """A method a path does not take. The stations are read-only, and plans take what HTTP defines for them."""
         self.discard_body()
         path, parts = self.route()
         if parts[:1] == ["v0"]:
@@ -932,10 +1136,12 @@ class Handler(BaseHTTPRequestHandler):
         elif not parts or parts == ["openapi.json"] or (parts[0] == "stations" and len(parts) <= 2):
             self.reply_json(405, {"error": f"{self.command} not allowed: the stations are read-only"},
                             Allow="GET")
+        elif parts == ["network", "plans"]:
+            self.reply_json(405, {"error": f"{self.command} not allowed on the list of plans"}, Allow="GET, POST")
+        elif len(parts) == 3 and parts[:2] == ["network", "plans"]:
+            self.reply_json(405, {"error": f"{self.command} not allowed on a plan"}, Allow="GET, PUT, PATCH, DELETE")
         else:
             self.reply_json(404, {"error": f"nothing at {path}"})
-
-    do_PUT = do_PATCH = do_DELETE = refuse
 
     def moved(self, location):
         """301 Moved Permanently: the resource now lives at `location`."""

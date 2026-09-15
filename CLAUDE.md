@@ -589,6 +589,21 @@ is only this mode: Colab, local Jupyter and CI all behave the same.
   connection's message carries the operating system's error number, so print only its class. Seeds
   for jittered waits are chosen so that a deadline's stop-or-continue decision is at least half a
   second from its boundary.
+- **`/network/plans` is the one collection a client can change**, for Sending Data. `GET` lists the
+  plans, and `GET /network/plans/<id>` sends one with an `ETag`. `POST` creates a plan (`201`, with
+  `Location` and `ETag`), `PUT` replaces one, `PATCH` changes the fields its body names and removes a
+  field sent as `null`, and `DELETE` answers `204`. A body must be JSON with
+  `Content-Type: application/json`, or `415` comes back; a dictionary passed to `requests.post` by
+  position is sent as a form, and draws it. A plan with problems gets `422` and a list of them, with
+  the reason phrase sent from `PHRASES`, since Python 3.13 renamed 422's. `POST` with an
+  `Idempotency-Key` saves the created plan under the key: a repeat with the same body gets the same
+  `201` with `Idempotent-Replayed: true` and creates nothing, the same key with another body gets
+  `422`, and a body that failed validation is not saved. `POST ?delay=N`, up to 5, sleeps after
+  creating the plan and before answering, so that a client's timeout loses the response to a
+  request that worked. `If-Match` on `PUT`, `PATCH` and `DELETE` answers `412` when the plan has
+  changed. The collection is empty whenever the module loads, so a notebook run from the top prints
+  the same ids every time. Running a `POST` cell again makes another plan, which the notebook says,
+  since showing that is the point of the notebook.
 - **`start()` is idempotent** within a process, so rerunning Setup is safe. After a reload, it
   stops the server an earlier copy started and starts the new code on that port, so a rerun keeps
   `BASE` and nothing answers with old code. A second process moves to the next free port.
