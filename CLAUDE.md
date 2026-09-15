@@ -446,6 +446,13 @@ server side:
   practice API, which What an API Is promises. Hosting uses one free host as the worked example,
   chosen when that notebook is written, because free tiers change; the deploy happens on the
   host's website, so CI runs only the cells that build and check the app.
+  **The host is Render**, checked on 15 September 2026. Its docs confirm a free web service with
+  no payment method, a spin-down after 15 minutes without traffic and about a minute to wake,
+  750 free hours a month, an ephemeral filesystem, deploys from a Git repository, `PORT`
+  (default 10000) and automatic HTTPS. Hugging Face was the other candidate, and its Docker and
+  Gradio Spaces now need a paid plan to create. The notebook runs the start command locally
+  with `127.0.0.1` in place of `0.0.0.0`, because this Mac's firewall is on and could prompt,
+  and says why. Recheck the free tier before editing that notebook.
 
 The guide's prerequisites now include Object-Oriented Python: Pydantic models are classes and
 FastAPI routes are decorators. Pin `requests`, `jsonschema`, `pydantic`, `fastapi` and `uvicorn`
