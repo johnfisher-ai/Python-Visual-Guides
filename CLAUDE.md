@@ -748,6 +748,12 @@ readings: a module, `readings.py`, a script, `summary.py`, and their tests, writ
   "Differing items" by walking a set of the keys, so two or more differences under string keys print
   in an order that changes from one run to the next. Test Structure's whole-value example breaks one
   station for that reason.
+- **Virtual Environments, Requirements and Pinning and Project Layout install packages from PyPI.**
+  Every environment is made with `--without-pip`, since Colab's Python has no `ensurepip`, and
+  packages go in with the notebook's own pip, as `python -m pip --python ENV`. Install pinned
+  versions, and print only what does not depend on the day or on pip's cache: exit codes, package
+  names, the `Would install` line of a fully pinned `--dry-run`, and the last line of an error. Never
+  print a version that floats, or a path inside an environment, which names its Python's version.
 
 ## Cross-references
 
