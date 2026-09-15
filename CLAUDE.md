@@ -722,12 +722,28 @@ readings: a module, `readings.py`, a script, `summary.py`, and their tests, writ
   program a cell starts inherits them. Python 3.13 and later then color a traceback, pytest colors its
   report, and the codes land in whatever a cell captures. `os.environ["NO_COLOR"] = "1"` keeps
   captured text the same in Colab, in CI and here.
+- **Setup also sets `PYTHONDONTWRITEBYTECODE`**, from Your First Test on. A compiled copy in
+  `__pycache__`, whether Python's or pytest's rewritten test file, counts as current while its source
+  keeps its size and its modification time in whole seconds. A cell that rewrites a file to the same
+  size within a second of the last run gets the old code: a test corrected from `return ... == 213`
+  to `assert ... == 212` still warned until this was set.
 - **Colab, CI and this Mac run three different Pythons.** Colab's published environment
   (`googlecolab/backend-info`, checked 15 September 2026) has Python 3.13.15, CI runs 3.12, and this
   Mac 3.14. Print nothing whose text depends on the version, such as the `^^^` markers under a line
   of a traceback, or the files a new virtual environment holds.
 - **A notebook that rewrites a module reloads it.** `importlib.reload` runs the file as it is now. Why
   Test commits the mistake of testing the copy imported before the file changed as a Common error.
+- **Notebooks run pytest through `run_pytest`**, which runs `python -m pytest --no-header` in the
+  project's folder with `subprocess.run` and prints the report. It sets `COLUMNS=80`,
+  `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1`, since Colab installs anyio, langsmith and typeguard, which
+  register pytest plugins, and `PYTHONNODEBUGRANGES=1`, which removes the `^^^` under a failing line.
+  It takes out the folder's path, the path to pytest's own files and the time a run took. Your First
+  Test explains every setting, and later notebooks define the function in Setup. `pytest_report`
+  returns the text, for a cell that prints only some lines, such as a collection error's `E` line,
+  whose traceback carries Python's own file paths.
+- **pytest is pinned to 8.4.2, Colab's version**, and docs.pytest.org's stable pages now describe
+  pytest 9. Check a message against the 8.4 pages at `docs.pytest.org/en/8.4.x/`: 8.4 prints
+  `DID NOT RAISE <class 'ValueError'>`, where 9.1 prints the name alone.
 
 ## Cross-references
 
