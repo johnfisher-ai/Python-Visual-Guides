@@ -522,7 +522,7 @@ is only this mode: Colab, local Jupyter and CI all behave the same.
   sends with it: `Retry-After` on `429` (30 seconds) and `503` (120), `WWW-Authenticate` on `401`,
   `Allow` on `405`, no body on `204` and `304`, and an HTML page on `502` and `504`, as a gateway
   would send. Status Codes commits these. Its phrases come from a fixed table, because Python 3.13
-  renamed four of its own (`413`, `414`, `416` and `422`), and on 3.12, which Colab and CI run, they
+  renamed four of its own (`413`, `414`, `416` and `422`), and on 3.12, which CI runs, they
   read differently: never print `HTTPStatus(...).phrase` for those four. Like `/v0`, `/status` stays
   out of the OpenAPI document.
 - **`GET /echo` responds with the query its request arrived with**: `query` as sent, still encoded,
@@ -620,7 +620,7 @@ is only this mode: Colab, local Jupyter and CI all behave the same.
   is critical, because a log line from the server's thread lands in whichever cell is running, with
   a traceback and a local path in it. uvicorn is imported inside `serve()`, so the module still needs
   only the standard library. uvicorn takes a reason phrase from the running Python's `HTTPStatus`,
-  so a `422` from an app reads differently in Colab (3.12) and here (3.14): never print it, which
+  so a `422` from an app reads differently in CI (3.12) and here (3.14): never print it, which
   rules out a `raise_for_status()` message for an app's `422`. FastAPI's `TestClient` warns, with
   this machine's starlette, that its httpx is deprecated, and the warning carries a path, so a
   notebook tests an app by serving it and sending it requests. A cell that adds routes creates its
@@ -710,6 +710,24 @@ output, and `check_notebooks.py` fails on any it missed. Tracebacks keep their c
 - Pass curl `-s` whenever its output is piped or saved, or it prints a progress meter.
 - A failed shell command raises nothing: the cell finishes and the error is only printed. Never tag
   such a cell `raises-exception`; there is no exception to expect.
+
+## Testing and Packaging
+
+Every notebook in **Testing and Packaging** works on one small project, the weather stations'
+readings: a module, `readings.py`, a script, `summary.py`, and their tests, written into
+`scratch/stations` with `%%writefile` and removed by the notebook's last cell.
+
+- **Setup sets `NO_COLOR`.** ipykernel puts `FORCE_COLOR=1` and `CLICOLOR_FORCE=1` into the kernel's
+  environment (6.30.1, which CI installs, and 7.2.0 on this Mac; Colab's 6.17.1 does not), and every
+  program a cell starts inherits them. Python 3.13 and later then color a traceback, pytest colors its
+  report, and the codes land in whatever a cell captures. `os.environ["NO_COLOR"] = "1"` keeps
+  captured text the same in Colab, in CI and here.
+- **Colab, CI and this Mac run three different Pythons.** Colab's published environment
+  (`googlecolab/backend-info`, checked 15 September 2026) has Python 3.13.15, CI runs 3.12, and this
+  Mac 3.14. Print nothing whose text depends on the version, such as the `^^^` markers under a line
+  of a traceback, or the files a new virtual environment holds.
+- **A notebook that rewrites a module reloads it.** `importlib.reload` runs the file as it is now. Why
+  Test commits the mistake of testing the copy imported before the file changed as a Common error.
 
 ## Cross-references
 

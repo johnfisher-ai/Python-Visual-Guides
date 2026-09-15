@@ -440,7 +440,7 @@
       "band": "Foundations",
       "title": "Testing and Packaging",
       "subtitle": "Making it survive contact with other people",
-      "status": "planned",
+      "status": "building",
       "intro": "pytest, virtual environments, project layout, and running the suite on every push.",
       "prerequisites": "Python from the Start, and Object-Oriented Python.",
       "notebooks": [
