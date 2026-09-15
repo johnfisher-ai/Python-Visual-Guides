@@ -4,7 +4,8 @@ A notebook line that starts with `!` runs a shell command inside a pseudo-termin
 it prints arrives the way a terminal would receive it: every line ends in a carriage return
 and a line feed, and tools that detect a terminal add escape codes for bold and color. curl
 bolds header names, and Python 3.14's json.tool colors its output where Colab's 3.12 does
-not. Jupyter and Colab hide both, but they are still in the committed file, where an HTML
+not. Recent versions of curl also wrap a Location header in a terminal hyperlink, an escape
+sequence that starts ESC ] 8, which Colab's older curl does not send. Jupyter and Colab hide both, but they are still in the committed file, where an HTML
 rendering can show every line followed by an empty one, and where the escape codes record
 the machine that ran the notebook rather than what a reader will see.
 
@@ -27,7 +28,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 NOTEBOOKS = ROOT / "notebooks"
 
-ESCAPE = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")      # bold, color and reset codes
+ESCAPE = re.compile(r"\x1b\[[0-9;]*[A-Za-z]"        # bold, color and reset codes
+                    r"|\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)")   # a hyperlink, and other OSC sequences
 LINE_END = re.compile(r"\r+\n")                     # a terminal's \r\n, and curl's \r\r\n
 
 

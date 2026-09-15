@@ -228,10 +228,10 @@ def executable(path: Path, problems: list) -> None:
                              f"cell {i} has no id, which nbformat 4.5 requires"))
         for out in cell.get("outputs", []):
             # A shell command runs in a pseudo-terminal, so its output carries a carriage
-            # return on every line and, from some tools, escape codes for bold and color.
+            # return on every line and, from some tools, escape codes for bold, color and links.
             if out.get("output_type") == "stream":
                 stream = "".join(out.get("text", []))
-                if "\r" in stream or "\x1b[" in stream:
+                if "\r" in stream or "\x1b[" in stream or "\x1b]" in stream:
                     problems.append((path.relative_to(ROOT),
                                      f"cell {i} has terminal control characters in its output, "
                                      f"from a shell command. tools/clean_outputs.py removes "
