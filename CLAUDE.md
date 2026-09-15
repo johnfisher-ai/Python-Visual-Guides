@@ -721,7 +721,10 @@ readings: a module, `readings.py`, a script, `summary.py`, and their tests, writ
   environment (6.30.1, which CI installs, and 7.2.0 on this Mac; Colab's 6.17.1 does not), and every
   program a cell starts inherits them. Python 3.13 and later then color a traceback, pytest colors its
   report, and the codes land in whatever a cell captures. `os.environ["NO_COLOR"] = "1"` keeps
-  captured text the same in Colab, in CI and here.
+  captured text the same in Colab, in CI and here. pip is the exception: it colors its error
+  messages under `FORCE_COLOR` whatever `NO_COLOR` says, since it hands its own `--no-color` setting
+  to rich, so the `pip` function passes `--no-color` from Requirements and Pinning on. The build
+  strips terminal codes, so a colored line would be committed as an empty one.
 - **Setup also sets `PYTHONDONTWRITEBYTECODE`**, from Your First Test on. A compiled copy in
   `__pycache__`, whether Python's or pytest's rewritten test file, counts as current while its source
   keeps its size and its modification time in whole seconds. A cell that rewrites a file to the same
