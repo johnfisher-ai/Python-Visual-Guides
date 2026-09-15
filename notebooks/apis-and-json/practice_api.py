@@ -116,6 +116,12 @@ the recording instead, which answers the requests this guide makes exactly as Op
 Setting the environment variable OPEN_METEO_RECORDING to 1 skips the live service, which is how
 to test that path.
 
+YOUR OWN APP. serve(app) runs an app that a notebook writes, such as a FastAPI app, in the
+background, and returns its address, as start() does for the practice API, because a cell that ran
+a server itself would never finish. It takes the first free port from 8000 and serves one app at a
+time: serving another app, or the same app after a change, stops the one before and takes its port.
+It keeps uvicorn's log quiet, because a server thread's log lands in whichever cell is running.
+
 To use a tool such as Postman, which cannot reach a server running inside Colab, run this
 file on your own computer instead:
 
@@ -125,7 +131,7 @@ Two details differ from a real server, both so that the output printed in a note
 what you see when you run it: the Date header always reports the same moment, and the Server
 header does not name a Python version.
 
-Standard library only, so it runs wherever Python does.
+Standard library only, so it runs wherever Python does, except serve(), which needs uvicorn.
 """
 
 import base64
@@ -153,6 +159,7 @@ from urllib.parse import parse_qs, unquote, urlencode
 
 HOST = "127.0.0.1"
 PORTS = range(8765, 8785)          # the first free port in this range is used
+APP_PORTS = range(8000, 8020)      # serve() takes the first free port in this range for an app of your own
 DATE = "Sun, 01 Mar 2026 09:00:00 GMT"
 
 STATIONS = {
@@ -1212,6 +1219,39 @@ def start():
         threading.Thread(target=_server.serve_forever, daemon=True).start()
     host, port = _server.server_address[:2]
     return f"http://{host}:{port}"
+
+
+# Kept when Setup reloads this module, so the reloaded copy can stop the app it was serving.
+_app_server = globals().get("_app_server")
+
+
+def serve(app):
+    """Run an app of your own, such as a FastAPI app, in the background, and return its address.
+
+    A cell that ran a server itself would never finish, so this runs the app with uvicorn in a
+    thread, as start() runs the practice API. It serves one app at a time: serving another app, or
+    the same app after a change, stops the one before and takes its port.
+    """
+    global _app_server
+    import uvicorn                     # only here, so that everything else needs only the standard library
+    ports = list(APP_PORTS)
+    if _app_server is not None:
+        server, thread = _app_server
+        ports.insert(0, server.config.port)
+        server.should_exit = True
+        thread.join()
+        _app_server = None
+    for port in ports:
+        # Quiet, because a log line from the server's thread lands in whichever cell is running.
+        server = uvicorn.Server(uvicorn.Config(app, host=HOST, port=port, log_level="critical"))
+        thread = threading.Thread(target=server.run, daemon=True)
+        thread.start()
+        while thread.is_alive() and not server.started:
+            time.sleep(0.01)
+        if server.started:
+            _app_server = (server, thread)
+            return f"http://{HOST}:{port}"
+    raise RuntimeError(f"no free port for the app in {APP_PORTS}")
 
 
 def open_meteo(timeout=10):

@@ -607,6 +607,17 @@ is only this mode: Colab, local Jupyter and CI all behave the same.
 - **`start()` is idempotent** within a process, so rerunning Setup is safe. After a reload, it
   stops the server an earlier copy started and starts the new code on that port, so a rerun keeps
   `BASE` and nothing answers with old code. A second process moves to the next free port.
+- **`serve(app)` runs an app a notebook writes**, from Your First API Server on. It runs uvicorn in a
+  daemon thread on the first free port from 8000, serves one app at a time (serving another stops
+  the first and takes its port), and survives Setup's reload as `start()` does. uvicorn's log level
+  is critical, because a log line from the server's thread lands in whichever cell is running, with
+  a traceback and a local path in it. uvicorn is imported inside `serve()`, so the module still needs
+  only the standard library. uvicorn takes a reason phrase from the running Python's `HTTPStatus`,
+  so a `422` from an app reads differently in Colab (3.12) and here (3.14): never print it, which
+  rules out a `raise_for_status()` message for an app's `422`. FastAPI's `TestClient` warns, with
+  this machine's starlette, that its httpx is deprecated, and the warning carries a path, so a
+  notebook tests an app by serving it and sending it requests. A cell that adds routes creates its
+  app too, because a route added again when a cell reruns never replaces the first.
 - **Grow it; do not change what exists.** Later notebooks add endpoints. Changing an existing
   response changes the committed output of every notebook that printed it.
 - **The stations are read-only, permanently.** `GET` works on `/`, `/stations`,

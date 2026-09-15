@@ -7,3 +7,5 @@ openpyxl==3.1.5
 requests==2.32.5
 jsonschema==4.26.0
 pydantic==2.12.5
+fastapi==0.141.1
+uvicorn==0.52.4
