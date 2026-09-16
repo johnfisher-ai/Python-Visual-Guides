@@ -26,12 +26,12 @@ the question.
 | 3 | Object-Oriented Python | 14 | Complete |
 | 4 | APIs and JSON | 18 | Complete |
 | 5 | Testing and Packaging | 10 | Complete |
-| 6 | SQLAlchemy, Deep Dive |  | Planned |
-| 7 | SQLModel, Deep Dive |  | Planned |
-| 8 | Peewee, Deep Dive |  | Planned |
-| 9 | sqlite3, Deep Dive |  | Planned |
-| 10 | asyncpg and psycopg3, Deep Dive |  | Planned |
-| 11 | PyMongo and Beanie, Deep Dive |  | Planned |
+| 6 | SQLAlchemy, Deep Dive | 19 | Planned |
+| 7 | SQLModel, Deep Dive | 14 | Planned |
+| 8 | Peewee, Deep Dive | 12 | Planned |
+| 9 | sqlite3, Deep Dive | 17 | Planned |
+| 10 | asyncpg and psycopg3, Deep Dive | 17 | Planned |
+| 11 | PyMongo and Beanie, Deep Dive | 16 | Planned |
 | 12 | NumPy, Deep Dive | 14 | Planned |
 | 13 | Pandas, Deep Dive | 18 | Planned |
 | 14 | scikit-learn, Deep Dive | 14 | Planned |

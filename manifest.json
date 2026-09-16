@@ -515,7 +515,122 @@
       "status": "planned",
       "intro": "The mapper and the query engine together: what a session really does, and the SQL your Python turns into.",
       "prerequisites": "Object-Oriented Python, and Files, Paths and Formats.",
-      "notebooks": []
+      "notebooks": [
+        {
+          "n": 1,
+          "slug": "why-sqlalchemy",
+          "title": "Why SQLAlchemy",
+          "blurb": "The query you build in three ifs, and the string you stop concatenating"
+        },
+        {
+          "n": 2,
+          "slug": "engines-and-urls",
+          "title": "Engines and URLs",
+          "blurb": "create_engine, echo, the pool you did not ask for, and the in-memory database that looks empty from another thread"
+        },
+        {
+          "n": 3,
+          "slug": "connections-and-transactions",
+          "title": "Connections and Transactions",
+          "blurb": "connect against begin, savepoints, and the rows that were never actually saved"
+        },
+        {
+          "n": 4,
+          "slug": "reading-results",
+          "title": "Reading Results",
+          "blurb": "Row, scalars, one, and the result you already consumed"
+        },
+        {
+          "n": 5,
+          "slug": "tables-and-metadata",
+          "title": "Tables and Metadata",
+          "blurb": "Table, MetaData, constraints that have names, and reflecting a database you did not design"
+        },
+        {
+          "n": 6,
+          "slug": "sql-expressions",
+          "title": "SQL Expressions",
+          "blurb": "select, insert, update, and delete as objects, and the where clause that quietly lost half of itself"
+        },
+        {
+          "n": 7,
+          "slug": "declarative-models",
+          "title": "Declarative Models",
+          "blurb": "DeclarativeBase, Mapped and mapped_column, and the annotation it cannot map"
+        },
+        {
+          "n": 8,
+          "slug": "column-types",
+          "title": "Column Types",
+          "blurb": "Naive datetimes, the precision SQLite quietly loses, and the type that only accepts a datetime"
+        },
+        {
+          "n": 9,
+          "slug": "the-session",
+          "title": "The Session",
+          "blurb": "sessionmaker, add, flush, commit, and what autoflush does behind your back"
+        },
+        {
+          "n": 10,
+          "slug": "the-identity-map",
+          "title": "The Identity Map",
+          "blurb": "Session.get, two queries and one object, and the attribute that expired the moment you committed"
+        },
+        {
+          "n": 11,
+          "slug": "relationships",
+          "title": "Relationships",
+          "blurb": "ForeignKey, back_populates, and the join condition it cannot determine"
+        },
+        {
+          "n": 12,
+          "slug": "many-to-many",
+          "title": "Many to Many",
+          "blurb": "secondary, the association table, and the extra column it cannot reach"
+        },
+        {
+          "n": 13,
+          "slug": "loading-strategies",
+          "title": "Loading Strategies",
+          "blurb": "The N plus 1 queries you did not know you wrote, selectinload against joinedload, and unique"
+        },
+        {
+          "n": 14,
+          "slug": "joins-and-aggregates",
+          "title": "Joins and Aggregates",
+          "blurb": "join, aliased, group_by, any and has, and the warning that you built a cartesian product"
+        },
+        {
+          "n": 15,
+          "slug": "cascades-and-deletes",
+          "title": "Cascades and Deletes",
+          "blurb": "delete-orphan against passive_deletes, and the SELECT that loads every child just to delete it"
+        },
+        {
+          "n": 16,
+          "slug": "async-sqlalchemy",
+          "title": "Async SQLAlchemy",
+          "blurb": "AsyncSession and async_sessionmaker over a database that gains nothing from them, and the greenlet error from one unloaded attribute"
+        },
+        {
+          "n": 17,
+          "slug": "migrations-with-alembic",
+          "title": "Migrations with Alembic",
+          "blurb": "autogenerate, upgrade, downgrade, and the batch mode SQLite makes you use"
+        },
+        {
+          "n": 18,
+          "slug": "testing-a-data-layer",
+          "title": "Testing a Data Layer",
+          "blurb": "A fixture that builds the schema once, a transaction rolled back after every test, and the object that detached when the session closed"
+        },
+        {
+          "n": 19,
+          "slug": "a-complete-data-layer",
+          "title": "A Complete Data Layer",
+          "blurb": "Schema, migration, load, and query in one script against one small database"
+        }
+      ]
     },
     {
       "slug": "sqlmodel-deep-dive",
@@ -526,7 +641,92 @@
       "status": "planned",
       "intro": "A Pydantic model and a database table in one class, and the places that convenience stops.",
       "prerequisites": "APIs and JSON, and SQLAlchemy, Deep Dive.",
-      "notebooks": []
+      "notebooks": [
+        {
+          "n": 1,
+          "slug": "table-true",
+          "title": "table=True",
+          "blurb": "The schema and the model in one class, and the table that is already defined"
+        },
+        {
+          "n": 2,
+          "slug": "engine-and-create-all",
+          "title": "Engine and create_all",
+          "blurb": "SQLModel.metadata.create_all, no such table, and the foreign keys SQLite ignores"
+        },
+        {
+          "n": 3,
+          "slug": "sessions",
+          "title": "Sessions",
+          "blurb": "sqlmodel.Session, expire_on_commit, and the id that was still None"
+        },
+        {
+          "n": 4,
+          "slug": "field-types-and-defaults",
+          "title": "Field Types and Defaults",
+          "blurb": "datetime, Enum, UUID, and the dict that has no matching SQLAlchemy type"
+        },
+        {
+          "n": 5,
+          "slug": "reading-rows",
+          "title": "Reading Rows",
+          "blurb": "session.exec, one() when two rows match, and the Row tuple you did not expect"
+        },
+        {
+          "n": 6,
+          "slug": "validation-and-table-true",
+          "title": "Validation and table=True",
+          "blurb": "The validator that silently never ran on your table model"
+        },
+        {
+          "n": 7,
+          "slug": "create-read-and-update-models",
+          "title": "Create, Read and Update Models",
+          "blurb": "model_validate, sqlmodel_update, and the update that wrote None over every field"
+        },
+        {
+          "n": 8,
+          "slug": "relationships",
+          "title": "Relationships",
+          "blurb": "back_populates, cascade_delete, and the heroes orphaned by a deleted team"
+        },
+        {
+          "n": 9,
+          "slug": "many-to-many",
+          "title": "Many to Many",
+          "blurb": "Link models, a composite primary key, and the extra column that landed NULL"
+        },
+        {
+          "n": 10,
+          "slug": "loading-and-n-plus-one",
+          "title": "Loading and N+1",
+          "blurb": "sa_relationship_kwargs, and the 200 queries hiding behind one loop"
+        },
+        {
+          "n": 11,
+          "slug": "sa-column-and-table-args",
+          "title": "sa_column and __table_args__",
+          "blurb": "Real column types, unique constraints, and where SQLModel hands you back to SQLAlchemy"
+        },
+        {
+          "n": 12,
+          "slug": "migrations",
+          "title": "Migrations",
+          "blurb": "The import Alembic leaves out of the script it generates, and the column create_all will never add"
+        },
+        {
+          "n": 13,
+          "slug": "sqlmodel-in-fastapi",
+          "title": "SQLModel in FastAPI",
+          "blurb": "A session dependency, response_model, and the response that referred to itself"
+        },
+        {
+          "n": 14,
+          "slug": "a-small-service",
+          "title": "A Small Service",
+          "blurb": "Table models, public models, a migration, and a tested API in one notebook"
+        }
+      ]
     },
     {
       "slug": "peewee-deep-dive",
@@ -537,7 +737,80 @@
       "status": "planned",
       "intro": "A light object-relational mapper for scripts and small applications, from model to migration.",
       "prerequisites": "Object-Oriented Python.",
-      "notebooks": []
+      "notebooks": [
+        {
+          "n": 1,
+          "slug": "why-peewee",
+          "title": "Why Peewee",
+          "blurb": "A single peewee.py module with no required dependencies, and the cases where SQLAlchemy wins"
+        },
+        {
+          "n": 2,
+          "slug": "models-and-fields",
+          "title": "Models and Fields",
+          "blurb": "Meta.database, create_tables, and the model that was bound to no database at all"
+        },
+        {
+          "n": 3,
+          "slug": "creating-and-changing-rows",
+          "title": "Creating and Changing Rows",
+          "blurb": "create, save, insert_many, and the save() that silently inserted nothing"
+        },
+        {
+          "n": 4,
+          "slug": "selecting-rows",
+          "title": "Selecting Rows",
+          "blurb": "where, order_by, fn.COUNT, and the and that quietly dropped half your filter"
+        },
+        {
+          "n": 5,
+          "slug": "transactions",
+          "title": "Transactions",
+          "blurb": "atomic, savepoints, and the exception you caught that committed anyway"
+        },
+        {
+          "n": 6,
+          "slug": "relationships",
+          "title": "Relationships",
+          "blurb": "ForeignKeyField, backref, and the join that still ran one query per row"
+        },
+        {
+          "n": 7,
+          "slug": "prefetch-and-load",
+          "title": "prefetch and Load",
+          "blurb": "Load, per_parent, and the backref that no join can flatten"
+        },
+        {
+          "n": 8,
+          "slug": "json-columns",
+          "title": "JSON Columns",
+          "blurb": "JSONField, path queries, and the numeric filter that compared JSON text until as_int()"
+        },
+        {
+          "n": 9,
+          "slug": "fts5model-and-searchfield",
+          "title": "FTS5Model and SearchField",
+          "blurb": "SearchField, web_query, and the search box that is secretly a query language"
+        },
+        {
+          "n": 10,
+          "slug": "migrations",
+          "title": "Migrations",
+          "blurb": "pwmigrate, the schema diff, and the down() nobody tested"
+        },
+        {
+          "n": 11,
+          "slug": "sqlite-and-postgresql",
+          "title": "SQLite and PostgreSQL",
+          "blurb": "One models module, two backends, and the SQL that changes when you swap the URL"
+        },
+        {
+          "n": 12,
+          "slug": "a-small-catalog",
+          "title": "A Small Catalog",
+          "blurb": "Models, migrations, search, and what the backend switch costs the ranking"
+        }
+      ]
     },
     {
       "slug": "sqlite3-deep-dive",
@@ -548,7 +821,110 @@
       "status": "planned",
       "intro": "The database in the standard library: transactions, types, and a whole database in one file you can copy.",
       "prerequisites": "Files, Paths and Formats.",
-      "notebooks": []
+      "notebooks": [
+        {
+          "n": 1,
+          "slug": "why-sqlite3",
+          "title": "Why sqlite3",
+          "blurb": "One file, one import, and the CSV you can stop re-reading"
+        },
+        {
+          "n": 2,
+          "slug": "connections-and-cursors",
+          "title": "Connections and Cursors",
+          "blurb": "connect, cursor, fetchone against fetchall, and the connection you forgot to close"
+        },
+        {
+          "n": 3,
+          "slug": "tables-and-queries",
+          "title": "Tables and Queries",
+          "blurb": "CREATE TABLE, SELECT, JOIN, and the double quotes that became a string"
+        },
+        {
+          "n": 4,
+          "slug": "parameters",
+          "title": "Parameters",
+          "blurb": "Question marks against f-strings, and the injection an f-string invites"
+        },
+        {
+          "n": 5,
+          "slug": "row-factories",
+          "title": "Row Factories",
+          "blurb": "sqlite3.Row, a dict factory, and rows that answer to a column name"
+        },
+        {
+          "n": 6,
+          "slug": "type-affinity",
+          "title": "Type Affinity",
+          "blurb": "Why a column declared INTEGER accepted the string, and what STRICT changes"
+        },
+        {
+          "n": 7,
+          "slug": "adapters-and-converters",
+          "title": "Adapters and Converters",
+          "blurb": "register_adapter, PARSE_DECLTYPES, and the datetime adapter deprecated in 3.12"
+        },
+        {
+          "n": 8,
+          "slug": "transactions",
+          "title": "Transactions",
+          "blurb": "commit, rollback, and the rows that were gone when you reopened the file"
+        },
+        {
+          "n": 9,
+          "slug": "autocommit-and-isolation-level",
+          "title": "autocommit and isolation_level",
+          "blurb": "LEGACY_TRANSACTION_CONTROL, autocommit=False, and the CREATE TABLE that rollback could not undo"
+        },
+        {
+          "n": 10,
+          "slug": "constraints",
+          "title": "Constraints",
+          "blurb": "UNIQUE constraint failed, and the foreign key nobody was enforcing"
+        },
+        {
+          "n": 11,
+          "slug": "changing-a-schema",
+          "title": "Changing a Schema",
+          "blurb": "ALTER TABLE ADD COLUMN, the twelve step table rebuild, and user_version as the migration number you already have"
+        },
+        {
+          "n": 12,
+          "slug": "executemany",
+          "title": "executemany",
+          "blurb": "executemany, one transaction, and the lastrowid that came back None"
+        },
+        {
+          "n": 13,
+          "slug": "indexes-and-query-plans",
+          "title": "Indexes and Query Plans",
+          "blurb": "EXPLAIN QUERY PLAN, SCAN against SEARCH, and the index your WHERE clause cannot use"
+        },
+        {
+          "n": 14,
+          "slug": "full-text-search",
+          "title": "Full-Text Search",
+          "blurb": "FTS5, bm25 ranking, and the MATCH you cannot use on an ordinary table"
+        },
+        {
+          "n": 15,
+          "slug": "concurrency-and-wal",
+          "title": "Concurrency and WAL",
+          "blurb": "database is locked, busy_timeout, and the single writer WAL does not remove"
+        },
+        {
+          "n": 16,
+          "slug": "backup-and-copying",
+          "title": "Backup and Copying",
+          "blurb": "conn.backup, VACUUM INTO, iterdump, and why copying the file mid-write is not a backup"
+        },
+        {
+          "n": 17,
+          "slug": "a-searchable-archive",
+          "title": "A Searchable Archive",
+          "blurb": "A folder of documents into one indexed, searchable, backed-up file"
+        }
+      ]
     },
     {
       "slug": "asyncpg-and-psycopg3-deep-dive",
@@ -559,7 +935,110 @@
       "status": "planned",
       "intro": "Two PostgreSQL drivers, one asynchronous and one standard, and when the difference in speed is worth it.",
       "prerequisites": "sqlite3, Deep Dive.",
-      "notebooks": []
+      "notebooks": [
+        {
+          "n": 1,
+          "slug": "a-server-of-your-own",
+          "title": "A Server of Your Own",
+          "blurb": "The second writer your SQLite file refused, and PostgreSQL running in your session in about two minutes"
+        },
+        {
+          "n": 2,
+          "slug": "connecting-and-executing",
+          "title": "Connecting and Executing",
+          "blurb": "execute and fetchall, dict_row instead of tuples, and what the with block actually commits"
+        },
+        {
+          "n": 3,
+          "slug": "transactions-and-errors",
+          "title": "Transactions and Errors",
+          "blurb": "InFailedSqlTransaction, and the savepoint that saves the rest of the batch"
+        },
+        {
+          "n": 4,
+          "slug": "placeholders-and-identifiers",
+          "title": "Placeholders and Identifiers",
+          "blurb": "%s against the f-string, executemany, and sql.Identifier for what no placeholder can carry"
+        },
+        {
+          "n": 5,
+          "slug": "types-and-adaptation",
+          "title": "Types and Adaptation",
+          "blurb": "Every value becomes bytes on the wire, and three of your Python objects have no rule for it"
+        },
+        {
+          "n": 6,
+          "slug": "jsonb",
+          "title": "JSONB",
+          "blurb": "Wrap the dict in Jsonb, query with @>, and read EXPLAIN before and after a GIN index"
+        },
+        {
+          "n": 7,
+          "slug": "server-side-cursors",
+          "title": "Server-Side Cursors",
+          "blurb": "execute has already pulled every row into memory before fetchall runs, and a named cursor is how you stop it"
+        },
+        {
+          "n": 8,
+          "slug": "copy",
+          "title": "COPY",
+          "blurb": "Bulk loading in both drivers, out as well as in, and the row with one column too many"
+        },
+        {
+          "n": 9,
+          "slug": "pipeline-mode",
+          "title": "Pipeline Mode",
+          "blurb": "Round trips removed, and the PipelineAborted raised at a statement that was fine"
+        },
+        {
+          "n": 10,
+          "slug": "async-connection",
+          "title": "AsyncConnection",
+          "blurb": "await psycopg, and the two tasks that share one connection and take turns"
+        },
+        {
+          "n": 11,
+          "slug": "asyncpg",
+          "title": "asyncpg",
+          "blurb": "$1 rather than %s, and every statement in autocommit until you open a transaction"
+        },
+        {
+          "n": 12,
+          "slug": "prepared-statements",
+          "title": "Prepared Statements",
+          "blurb": "And the ALTER TABLE that invalidates a statement the server is still holding"
+        },
+        {
+          "n": 13,
+          "slug": "connection-pools",
+          "title": "Connection Pools",
+          "blurb": "psycopg_pool, create_pool, and why a pool sized to the database's cores beats one sized to your traffic"
+        },
+        {
+          "n": 14,
+          "slug": "connecting-to-a-hosted-server",
+          "title": "Connecting to a Hosted Server",
+          "blurb": "A DSN out of the environment, sslmode against asyncpg's ssl argument, and the connection limit a managed server enforces"
+        },
+        {
+          "n": 15,
+          "slug": "listen-and-notify",
+          "title": "LISTEN and NOTIFY",
+          "blurb": "A push from the database, and the notification that never arrives without autocommit"
+        },
+        {
+          "n": 16,
+          "slug": "which-driver",
+          "title": "Which Driver",
+          "blurb": "Where async wins, where it does not, and the missing await that fakes a win"
+        },
+        {
+          "n": 17,
+          "slug": "an-event-store",
+          "title": "An Event Store",
+          "blurb": "COPY in, JSONB out, a pool in front, and one wake-up for a thousand rows"
+        }
+      ]
     },
     {
       "slug": "pymongo-and-beanie-deep-dive",
@@ -570,7 +1049,104 @@
       "status": "planned",
       "intro": "MongoDB from Python: queries without SQL, and typed documents through an asynchronous mapper.",
       "prerequisites": "APIs and JSON.",
-      "notebooks": []
+      "notebooks": [
+        {
+          "n": 1,
+          "slug": "why-documents",
+          "title": "Why Documents",
+          "blurb": "One object instead of five tables, and a MongoDB running inside this notebook"
+        },
+        {
+          "n": 2,
+          "slug": "collections-and-documents",
+          "title": "Collections and Documents",
+          "blurb": "insert_one, insert_many, the _id you did not choose, and the collection a typo invents"
+        },
+        {
+          "n": 3,
+          "slug": "bson-types",
+          "title": "BSON Types",
+          "blurb": "The set you cannot store, the datetime that comes back naive, and the ObjectId json.dumps refuses"
+        },
+        {
+          "n": 4,
+          "slug": "find-and-find-one",
+          "title": "find and find_one",
+          "blurb": "One document against a cursor you can walk only once, and a projection that keeps it small"
+        },
+        {
+          "n": 5,
+          "slug": "query-operators",
+          "title": "Query Operators",
+          "blurb": "Why {'size': {'w': 1}} matches nothing when {'size.w': 1} matches every document where w is 1"
+        },
+        {
+          "n": 6,
+          "slug": "update-operators",
+          "title": "Update Operators",
+          "blurb": "$set against the replacement that dropped every other field, and the upsert that inserted a second copy"
+        },
+        {
+          "n": 7,
+          "slug": "bulk-writes-and-transactions",
+          "title": "Bulk Writes and Transactions",
+          "blurb": "bulk_write, ordered against unordered, and the write you forgot to pass the session to"
+        },
+        {
+          "n": 8,
+          "slug": "indexes",
+          "title": "Indexes",
+          "blurb": "Compound order, explain, $text, and the unique index that refuses to build"
+        },
+        {
+          "n": 9,
+          "slug": "the-aggregation-pipeline",
+          "title": "The Aggregation Pipeline",
+          "blurb": "$match, $group, $unwind, and the stage order that decides how long it runs"
+        },
+        {
+          "n": 10,
+          "slug": "modeling-without-joins",
+          "title": "Modeling Without Joins",
+          "blurb": "Embed until the document will not fit, and the $lookup that scans because the foreign field has no index"
+        },
+        {
+          "n": 11,
+          "slug": "beanie-documents",
+          "title": "Beanie Documents",
+          "blurb": "A Pydantic model that is also a collection, init_beanie, and the await a Colab cell already allows"
+        },
+        {
+          "n": 12,
+          "slug": "async-queries",
+          "title": "Async Queries",
+          "blurb": "find, to_list, beanie.operators, and the projection model that will not validate"
+        },
+        {
+          "n": 13,
+          "slug": "saving-changes",
+          "title": "Saving Changes",
+          "blurb": "set and inc against save, save_changes, and the revision that moved under you"
+        },
+        {
+          "n": 14,
+          "slug": "link-and-backlink",
+          "title": "Link and BackLink",
+          "blurb": "Link, BackLink, fetch_links, and the single $lookup pipeline that saves a round trip per document"
+        },
+        {
+          "n": 15,
+          "slug": "migrations",
+          "title": "Migrations",
+          "blurb": "beanie new-migration, iterative against free fall, and the replica set beanie migrate assumes"
+        },
+        {
+          "n": 16,
+          "slug": "a-product-catalog",
+          "title": "A Product Catalog",
+          "blurb": "One real job: loaded with PyMongo, indexed for the queries it serves, typed with Beanie"
+        }
+      ]
     },
     {
       "slug": "numpy-deep-dive",
