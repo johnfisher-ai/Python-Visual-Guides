@@ -769,9 +769,11 @@ readings: a module, `readings.py`, a script, `summary.py`, and their tests, writ
 
 ## sqlite3, Deep Dive
 
-Every notebook in **sqlite3, Deep Dive** works on the weather stations' hourly readings. Setup writes
-a year of them for Bergen, Oslo, Svalbard and Tromso to `scratch/readings.csv`, with Svalbard's
-readings empty for 2 March, and the notebook's last cell removes the scratch folder.
+Every notebook in **sqlite3, Deep Dive** works on the weather stations' hourly readings for 2025 at
+Bergen, Oslo, Svalbard and Tromso, with Svalbard's readings empty for 2 March. Why sqlite3's Setup
+writes them to `scratch/readings.csv` and loads that into a table. Later notebooks build
+`scratch/stations.db` directly, handing a generator of the same values to `executemany`, and every
+notebook's last cell removes the scratch folder.
 
 - **The readings come from a formula, never from `random`.** Every number a notebook prints is then
   the same in Colab, in CI and here, and a later notebook can quote a value an earlier one printed.
@@ -783,7 +785,16 @@ readings empty for 2 March, and the notebook's last cell removes the scratch fol
   exists opens it as `file:PATH?mode=rw` with `uri=True`, which Why sqlite3 teaches as a Common error.
 - **Close a connection in the cell that opens it**, unless the next cell carries on with it. An open
   connection holds the file, and Python 3.13 and later emit `ResourceWarning` for a connection
-  collected without being closed.
+  collected without being closed. CI runs Python 3.12, which emits nothing, so a cell that shows
+  the warning prints what it caught and never indexes into it.
+- **Close a cursor you stop reading before a later cell writes.** A cursor stopped partway through
+  its results keeps a read lock on the database until it is closed, read to the end or deleted, even
+  after its connection's `close()`, and a write from another connection then fails with
+  `database is locked`. Connections and Cursors failed its first run this way, and now teaches it.
+- **Replace a memory address or a thread number before printing a message.** The
+  `ResourceWarning` names the connection's address, and the thread error names two thread ids,
+  all different on every run. Print them through `re.sub`, as Connections and Cursors does. An error
+  raised in another thread never reaches the cell, so the thread catches it for the cell to print.
 - **The guide's research lives outside git**, in `source/outlines/relational-and-document-databases.md`
   beside `site/`: the error each notebook is meant to show, the versions its claims were checked
   against, and the corrections the fact-check made.
