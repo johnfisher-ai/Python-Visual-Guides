@@ -773,7 +773,10 @@ Every notebook in **sqlite3, Deep Dive** works on the weather stations' hourly r
 Bergen, Oslo, Svalbard and Tromso, with Svalbard's readings empty for 2 March. Why sqlite3's Setup
 writes them to `scratch/readings.csv` and loads that into a table. Later notebooks build
 `scratch/stations.db` directly, handing a generator of the same values to `executemany`, and every
-notebook's last cell removes the scratch folder.
+notebook's last cell removes the scratch folder. Tables and Queries splits the data into two tables,
+`stations (id, name, latitude)` and `readings (id, station_id, hour, celsius)`, and adds Kirkenes
+(latitude 69.73) as a station with no readings, which the left joins rely on. A later notebook that
+joins stations to readings builds those two tables the way Tables and Queries does.
 
 - **The readings come from a formula, never from `random`.** Every number a notebook prints is then
   the same in Colab, in CI and here, and a later notebook can quote a value an earlier one printed.
@@ -795,6 +798,11 @@ notebook's last cell removes the scratch folder.
   `ResourceWarning` names the connection's address, and the thread error names two thread ids,
   all different on every run. Print them through `re.sub`, as Connections and Cursors does. An error
   raised in another thread never reaches the cell, so the thread catches it for the cell to print.
+- **Set SQLite's double-quote fallback, never assume it.** A build of SQLite can be compiled so that
+  a double-quoted word naming no column is an error instead of text, so a cell that shows the
+  fallback first calls `conn.setconfig(sqlite3.SQLITE_DBCONFIG_DQS_DML, True)`, which needs Python
+  3.12. With the fallback off, SQLite 3.46 and later add `- should this be a string literal in
+  single-quotes?` to `no such column`, and 3.45 does not, so print only the part before the colon.
 - **The guide's research lives outside git**, in `source/outlines/relational-and-document-databases.md`
   beside `site/`: the error each notebook is meant to show, the versions its claims were checked
   against, and the corrections the fact-check made.
