@@ -794,6 +794,12 @@ joins stations to readings builds those two tables the way Tables and Queries do
   its results keeps a read lock on the database until it is closed, read to the end or deleted, even
   after its connection's `close()`, and a write from another connection then fails with
   `database is locked`. Connections and Cursors failed its first run this way, and now teaches it.
+- **Look through a connection that holds no transaction.** A connection opened with
+  `autocommit=False` begins a transaction as it connects, and its first read takes a shared lock that
+  it keeps until it commits, so a write from any other connection then waits and fails with
+  `database is locked`. autocommit and isolation_level checks what a load did through a `checker`
+  connection opened with `autocommit=True`, and a later notebook that keeps an `autocommit=False`
+  connection open beside other writers does the same.
 - **Replace a memory address or a thread number before printing a message.** The
   `ResourceWarning` names the connection's address, a printed `sqlite3.Row` shows only its own
   address, and the thread error names two thread ids, all different on every run. Print the warning
