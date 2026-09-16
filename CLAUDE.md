@@ -798,6 +798,10 @@ joins stations to readings builds those two tables the way Tables and Queries do
   `ResourceWarning` names the connection's address, and the thread error names two thread ids,
   all different on every run. Print them through `re.sub`, as Connections and Cursors does. An error
   raised in another thread never reaches the cell, so the thread catches it for the cell to print.
+- **A cell whose behavior changed between Pythons prints what happened.** A tuple for named
+  placeholders raises `ProgrammingError` on Python 3.14 and only emits a `DeprecationWarning` on 3.12
+  and 3.13, so Parameters runs it inside `warnings.catch_warnings(record=True)` and a `try`, and
+  prints whichever came. Its Common errors heading is the 3.14 message, and the prose names both.
 - **Set SQLite's double-quote fallback, never assume it.** A build of SQLite can be compiled so that
   a double-quoted word naming no column is an error instead of text, so a cell that shows the
   fallback first calls `conn.setconfig(sqlite3.SQLITE_DBCONFIG_DQS_DML, True)`, which needs Python
