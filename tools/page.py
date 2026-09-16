@@ -28,7 +28,7 @@ def _sequence():
 # The pager walks every guide in order.
 PAGES = _sequence()
 
-# The nav stays short. Eleven guides across the top would wrap to three lines and
+# The nav stays short. The guides across the top would wrap to several lines and
 # tell a reader nothing; the library page lists them properly.
 NAV = [("./", "index.html", "The guides")]
 

@@ -1,7 +1,7 @@
 # Python, Visually
 
-A library of interactive Python guides. Eleven guides, each a set of numbered Colab
-notebooks you open and run.
+A library of interactive Python guides, each a set of numbered Colab notebooks you open and
+run.
 
 **The notebook is the product.** The explanation, the code, its output and the figures all
 live in the notebook. These pages exist only to get you to the right one.
@@ -26,12 +26,94 @@ the question.
 | 3 | Object-Oriented Python | 14 | Complete |
 | 4 | APIs and JSON | 18 | Complete |
 | 5 | Testing and Packaging | 10 | Complete |
-| 6 | NumPy, Deep Dive | 14 | Planned |
-| 7 | Pandas, Deep Dive | 18 | Planned |
-| 8 | Matplotlib, Deep Dive | 12 | Planned |
-| 9 | SciPy, Deep Dive | 12 | Planned |
-| 10 | scikit-learn, Deep Dive | 14 | Planned |
-| 11 | Projects, End to End | 8 | Planned |
+| 6 | SQLAlchemy, Deep Dive |  | Planned |
+| 7 | SQLModel, Deep Dive |  | Planned |
+| 8 | Peewee, Deep Dive |  | Planned |
+| 9 | sqlite3, Deep Dive |  | Planned |
+| 10 | asyncpg and psycopg3, Deep Dive |  | Planned |
+| 11 | PyMongo and Beanie, Deep Dive |  | Planned |
+| 12 | NumPy, Deep Dive | 14 | Planned |
+| 13 | Pandas, Deep Dive | 18 | Planned |
+| 14 | scikit-learn, Deep Dive | 14 | Planned |
+| 15 | PyTorch and TensorFlow, Deep Dive |  | Planned |
+| 16 | LightGBM and XGBoost, Deep Dive |  | Planned |
+| 17 | GeoPandas, Deep Dive |  | Planned |
+| 18 | Shapely, Deep Dive |  | Planned |
+| 19 | Polars, Deep Dive |  | Planned |
+| 20 | DuckDB, Deep Dive |  | Planned |
+| 21 | PyArrow, Deep Dive |  | Planned |
+| 22 | PySpark, Deep Dive |  | Planned |
+| 23 | SciPy, Deep Dive | 12 | Planned |
+| 24 | Statsmodels, Deep Dive |  | Planned |
+| 25 | PyMC, Deep Dive |  | Planned |
+| 26 | Pingouin, Deep Dive |  | Planned |
+| 27 | LlamaIndex, Deep Dive |  | Planned |
+| 28 | Haystack, Deep Dive |  | Planned |
+| 29 | DSPy, Deep Dive |  | Planned |
+| 30 | LangChain and LangGraph, Deep Dive |  | Planned |
+| 31 | CrewAI, Deep Dive |  | Planned |
+| 32 | AutoGen, Deep Dive |  | Planned |
+| 33 | PydanticAI, Deep Dive |  | Planned |
+| 34 | smolagents, Deep Dive |  | Planned |
+| 35 | Unsloth, Deep Dive |  | Planned |
+| 36 | Axolotl, Deep Dive |  | Planned |
+| 37 | Torchtune, Deep Dive |  | Planned |
+| 38 | LLaMA-Factory, Deep Dive |  | Planned |
+| 39 | PEFT and TRL, Deep Dive |  | Planned |
+| 40 | Accelerate, Deep Dive |  | Planned |
+| 41 | DeepSpeed and Megatron-LM, Deep Dive |  | Planned |
+| 42 | PyTorch FSDP, Deep Dive |  | Planned |
+| 43 | vLLM, Deep Dive |  | Planned |
+| 44 | llama-cpp-python and Ollama, Deep Dive |  | Planned |
+| 45 | OpenCV, Deep Dive |  | Planned |
+| 46 | Ultralytics YOLO, Deep Dive |  | Planned |
+| 47 | MediaPipe, Deep Dive |  | Planned |
+| 48 | Pillow and Albumentations, Deep Dive |  | Planned |
+| 49 | Whisper and faster-whisper, Deep Dive |  | Planned |
+| 50 | Vosk, Deep Dive |  | Planned |
+| 51 | SpeechRecognition, Deep Dive |  | Planned |
+| 52 | Coqui TTS and XTTS, Deep Dive |  | Planned |
+| 53 | edge-tts, Deep Dive |  | Planned |
+| 54 | pyttsx3, Deep Dive |  | Planned |
+| 55 | Librosa, Deep Dive |  | Planned |
+| 56 | Pydub and PyAudio, Deep Dive |  | Planned |
+| 57 | Pygame and Pygame CE, Deep Dive |  | Planned |
+| 58 | Arcade, Deep Dive |  | Planned |
+| 59 | Pyglet, Deep Dive |  | Planned |
+| 60 | Ursina, Deep Dive |  | Planned |
+| 61 | Panda3D, Deep Dive |  | Planned |
+| 62 | UPBGE, Deep Dive |  | Planned |
+| 63 | Ren'Py, Deep Dive |  | Planned |
+| 64 | Pymunk, Deep Dive |  | Planned |
+| 65 | FastAPI, Deep Dive |  | Planned |
+| 66 | Django, Deep Dive |  | Planned |
+| 67 | Flask, Deep Dive |  | Planned |
+| 68 | Requests and httpx, Deep Dive |  | Planned |
+| 69 | BeautifulSoup and Scrapy, Deep Dive |  | Planned |
+| 70 | Matplotlib, Deep Dive | 12 | Planned |
+| 71 | Seaborn, Deep Dive |  | Planned |
+| 72 | Plotly, Deep Dive |  | Planned |
+| 73 | Streamlit, Deep Dive |  | Planned |
+| 74 | Gradio, Deep Dive |  | Planned |
+| 75 | Dagster and Prefect, Deep Dive |  | Planned |
+| 76 | Apache Airflow, Deep Dive |  | Planned |
+| 77 | Celery, Deep Dive |  | Planned |
+| 78 | pytest, Deep Dive |  | Planned |
+| 79 | Pydantic, Deep Dive |  | Planned |
+| 80 | uv and Ruff, Deep Dive |  | Planned |
+| 81 | yfinance, Deep Dive |  | Planned |
+| 82 | Backtrader, Deep Dive |  | Planned |
+| 83 | TA-Lib, Deep Dive |  | Planned |
+| 84 | CCXT, Deep Dive |  | Planned |
+| 85 | pypdf and PyMuPDF, Deep Dive |  | Planned |
+| 86 | openpyxl and XlsxWriter, Deep Dive |  | Planned |
+| 87 | python-docx, Deep Dive |  | Planned |
+| 88 | Ray, Deep Dive |  | Planned |
+| 89 | Dask, Deep Dive |  | Planned |
+| 90 | Joblib, Deep Dive |  | Planned |
+| 91 | Scapy, Deep Dive |  | Planned |
+| 92 | Impacket, Deep Dive |  | Planned |
+| 93 | Projects, End to End | 8 | Planned |
 
 <!-- /guide-table -->
 

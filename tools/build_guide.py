@@ -54,8 +54,21 @@ def rows(g):
     return "".join(out)
 
 
+def table(g):
+    """The table of notebooks, or nothing at all while the outline is unwritten."""
+    if not g.notebooks:
+        return ""
+    return f"""
+    <div class="scroll">
+      <table class="nbs"><tbody>{rows(g)}</tbody></table>
+    </div>"""
+
+
 def how_to_open(g):
     """What the links in the table do, by the names the reader sees on them."""
+    if not g.notebooks:
+        return ("The outline for this guide is not written yet. It will name every notebook, in "
+                "reading order, before the first one is written.")
     if not any(nb.exists for nb in g.notebooks):
         return "None of these notebooks is written yet. This is the plan, in reading order."
     return (f"<b>{RUN}</b> runs a notebook in your browser, and <b>{READ}</b> shows it on "
@@ -75,21 +88,19 @@ def build_one(site, g):
         kicker=f"Guide {g.number} · {g.band}",
         byline=e(g.subtitle),
     )
+    counts = (f"<span>{len(g.notebooks)} notebooks</span>\n       <span>{g.written} written</span>"
+              if g.notebooks else "<span>outline not written yet</span>")
     body += f"""
   <section>
     <p class="lede">{e(g.intro)}</p>
     <p class="meta"><span class="badge {cls}">{e(label)}</span>
-       <span>{len(g.notebooks)} notebooks</span>
-       <span>{g.written} written</span></p>
+       {counts}</p>
     <p class="pre"><b>Before this guide:</b> {e(g.prerequisites)}</p>
   </section>
 
   <section>
     <h2>The notebooks</h2>
-    <p>{how_to_open(g)}</p>
-    <div class="scroll">
-      <table class="nbs"><tbody>{rows(g)}</tbody></table>
-    </div>
+    <p>{how_to_open(g)}</p>{table(g)}
   </section>
 """
     if g.credits:

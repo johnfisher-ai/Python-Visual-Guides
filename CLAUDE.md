@@ -1,7 +1,7 @@
 # Python-Visual-Guides
 
-A library of interactive Python guides. Eleven guides, each a set of numbered Colab
-notebooks. **The notebook is the product.** The explanation, the code, the output and the
+A library of interactive Python guides, each a set of numbered Colab notebooks.
+**The notebook is the product.** The explanation, the code, the output and the
 figures all live in the notebook; the site is a thin index that gets a reader to the right
 one and gets out of the way.
 
@@ -811,8 +811,8 @@ suspect, so a plausible wrong title still needs a human to notice.
 - **A slice from a heading cell starts AT it, not after it.** The `## Heading` shares a cell
   with the text under it, so `cells[idx + 1:]` silently skips the first paragraph. This made a
   checker rule fail on a notebook that was correct.
-- **The nav is not the guide list.** Eleven guides across the top would wrap to three lines.
-  Nav is the library plus the repository; the pager walks the guides.
+- **The nav is not the guide list.** The guides across the top would wrap to several lines and
+  tell a reader nothing. Nav is the library plus the repository; the pager walks the guides.
 - **Never let a cell recurse without bound, even inside `try`.** The Jupyter kernel handles runaway
   recursion inconsistently. In **Dunder Methods**, a `__repr__` that formats itself raised a
   catchable `RecursionError`, but its message reports how many kilobytes of stack were used, which
@@ -822,3 +822,9 @@ suspect, so a plausible wrong title still needs a human to notice.
   survive, and which would fail CI and wipe a reader's Colab session. Plain Python raised a clean
   `RecursionError` for the same code, so testing it outside a notebook proves nothing. To teach
   runaway recursion, make the cell count its own calls and stop itself, as Properties does.
+- **A guide can have no outline yet.** `"notebooks": []` is valid: its page says the outline is
+  not written yet instead of printing an empty table, and the index and the README leave the
+  count blank. Write the outline into the manifest before that guide's first notebook.
+- **A band is a block of consecutive guides.** The index prints a band heading whenever the band
+  changes as it walks the guides by number, so the guides of one band are numbered together, and
+  moving a guide into another band renumbers everything after it.

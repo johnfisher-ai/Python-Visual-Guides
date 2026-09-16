@@ -25,7 +25,8 @@ def table(guides):
     rows = ["| | Guide | Notebooks | |", "|---|---|---|---|"]
     for g in guides:
         title = f"**{g.title}**" if g.status == "building" else g.title   # the one being written
-        rows.append(f"| {g.number} | {title} | {len(g.notebooks)} | {STATUS[g.status][0]} |")
+        count = len(g.notebooks) or ""            # a guide whose outline is not written yet
+        rows.append(f"| {g.number} | {title} | {count} | {STATUS[g.status][0]} |")
     return "\n".join(rows)
 
 

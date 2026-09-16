@@ -24,7 +24,7 @@ def band_rows(guides):
         out.append(
             f'<tr><td class="n">{g.number}</td>'
             f'<td class="t"><b>{link}</b><span>{e(g.subtitle)}</span></td>'
-            f'<td class="c">{len(g.notebooks)}</td>'
+            f'<td class="c">{len(g.notebooks) or ""}</td>'
             f'<td class="s"><span class="badge {cls}">{e(label)}</span></td></tr>')
     return "".join(out)
 
@@ -72,8 +72,9 @@ def build():
   <section>
     <h2>The guides</h2>
     <p><b>Foundations</b> teaches the language itself, and is best worked through in order:
-    each guide depends on the one before it. <b>Libraries</b> covers the packages you will reach
-    for once you can write Python. <b>Projects</b> puts everything to work on real problems.</p>
+    each guide depends on the one before it. The deep dives take one library apiece, grouped by
+    what the library is for, and any of them can be read once you have the foundations it names.
+    <b>Projects</b> puts everything to work on real problems.</p>
     <div class="scroll">
       <table class="guides"><tbody>{band_rows(guides)}</tbody></table>
     </div>

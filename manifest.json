@@ -507,9 +507,75 @@
       ]
     },
     {
-      "slug": "numpy-deep-dive",
+      "slug": "sqlalchemy-deep-dive",
       "number": 6,
-      "band": "Libraries",
+      "band": "Relational and Document Databases",
+      "title": "SQLAlchemy, Deep Dive",
+      "subtitle": "Sessions, models and the SQL underneath",
+      "status": "planned",
+      "intro": "The mapper and the query engine together: what a session really does, and the SQL your Python turns into.",
+      "prerequisites": "Object-Oriented Python, and Files, Paths and Formats.",
+      "notebooks": []
+    },
+    {
+      "slug": "sqlmodel-deep-dive",
+      "number": 7,
+      "band": "Relational and Document Databases",
+      "title": "SQLModel, Deep Dive",
+      "subtitle": "One model for the table and the API",
+      "status": "planned",
+      "intro": "A Pydantic model and a database table in one class, and the places that convenience stops.",
+      "prerequisites": "APIs and JSON, and SQLAlchemy, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "peewee-deep-dive",
+      "number": 8,
+      "band": "Relational and Document Databases",
+      "title": "Peewee, Deep Dive",
+      "subtitle": "A small mapper, end to end",
+      "status": "planned",
+      "intro": "A light object-relational mapper for scripts and small applications, from model to migration.",
+      "prerequisites": "Object-Oriented Python.",
+      "notebooks": []
+    },
+    {
+      "slug": "sqlite3-deep-dive",
+      "number": 9,
+      "band": "Relational and Document Databases",
+      "title": "sqlite3, Deep Dive",
+      "subtitle": "The database already on your machine",
+      "status": "planned",
+      "intro": "The database in the standard library: transactions, types, and a whole database in one file you can copy.",
+      "prerequisites": "Files, Paths and Formats.",
+      "notebooks": []
+    },
+    {
+      "slug": "asyncpg-and-psycopg3-deep-dive",
+      "number": 10,
+      "band": "Relational and Document Databases",
+      "title": "asyncpg and psycopg3, Deep Dive",
+      "subtitle": "PostgreSQL, from Python",
+      "status": "planned",
+      "intro": "Two PostgreSQL drivers, one asynchronous and one standard, and when the difference in speed is worth it.",
+      "prerequisites": "sqlite3, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "pymongo-and-beanie-deep-dive",
+      "number": 11,
+      "band": "Relational and Document Databases",
+      "title": "PyMongo and Beanie, Deep Dive",
+      "subtitle": "Documents instead of rows",
+      "status": "planned",
+      "intro": "MongoDB from Python: queries without SQL, and typed documents through an asynchronous mapper.",
+      "prerequisites": "APIs and JSON.",
+      "notebooks": []
+    },
+    {
+      "slug": "numpy-deep-dive",
+      "number": 12,
+      "band": "Data Science and Machine Learning",
       "title": "NumPy, Deep Dive",
       "subtitle": "Arrays, shapes and vectorization",
       "status": "planned",
@@ -604,8 +670,8 @@
     },
     {
       "slug": "pandas-deep-dive",
-      "number": 7,
-      "band": "Libraries",
+      "number": 13,
+      "band": "Data Science and Machine Learning",
       "title": "Pandas, Deep Dive",
       "subtitle": "Tabular data, properly",
       "status": "planned",
@@ -723,177 +789,9 @@
       ]
     },
     {
-      "slug": "matplotlib-deep-dive",
-      "number": 8,
-      "band": "Libraries",
-      "title": "Matplotlib, Deep Dive",
-      "subtitle": "Plots you can defend",
-      "status": "planned",
-      "intro": "The figure and axes object model, and taking one chart all the way to publishable.",
-      "prerequisites": "NumPy, Deep Dive.",
-      "notebooks": [
-        {
-          "n": 1,
-          "slug": "figure-and-axes",
-          "title": "Figure and Axes",
-          "blurb": "The object model, instead of pyplot as magic"
-        },
-        {
-          "n": 2,
-          "slug": "your-first-plot",
-          "title": "Your First Plot",
-          "blurb": "plot, and understanding what each call returned"
-        },
-        {
-          "n": 3,
-          "slug": "lines-and-scatter",
-          "title": "Lines and Scatter",
-          "blurb": "The two workhorses, and when each one lies"
-        },
-        {
-          "n": 4,
-          "slug": "bars-and-histograms",
-          "title": "Bars and Histograms",
-          "blurb": "Categorical and distributional, and bin choice as a decision"
-        },
-        {
-          "n": 5,
-          "slug": "multiple-axes",
-          "title": "Multiple Axes",
-          "blurb": "subplots, shared scales, and a grid that reads"
-        },
-        {
-          "n": 6,
-          "slug": "labels",
-          "title": "Labels",
-          "blurb": "Titles, axis labels, and the units you left off"
-        },
-        {
-          "n": 7,
-          "slug": "ticks",
-          "title": "Ticks",
-          "blurb": "Locators, formatters, and putting dates on an axis"
-        },
-        {
-          "n": 8,
-          "slug": "color",
-          "title": "Color",
-          "blurb": "A validated palette, and why the default is not one"
-        },
-        {
-          "n": 9,
-          "slug": "annotation",
-          "title": "Annotation",
-          "blurb": "Text, arrows, and pointing at the thing that matters"
-        },
-        {
-          "n": 10,
-          "slug": "style",
-          "title": "Style",
-          "blurb": "rcParams and stylesheets, for consistency without repetition"
-        },
-        {
-          "n": 11,
-          "slug": "saving",
-          "title": "Saving",
-          "blurb": "dpi, vector against raster, and a size that survives a document"
-        },
-        {
-          "n": 12,
-          "slug": "a-chart-you-would-publish",
-          "title": "A Chart You Would Publish",
-          "blurb": "One figure taken all the way to finished"
-        }
-      ]
-    },
-    {
-      "slug": "scipy-deep-dive",
-      "number": 9,
-      "band": "Libraries",
-      "title": "SciPy, Deep Dive",
-      "subtitle": "Optimization, signals and statistics",
-      "status": "planned",
-      "intro": "The parts of SciPy worth knowing, and how to navigate a library that is really twelve libraries.",
-      "prerequisites": "NumPy, Deep Dive.",
-      "notebooks": [
-        {
-          "n": 1,
-          "slug": "what-scipy-is",
-          "title": "What SciPy Is",
-          "blurb": "A toolbox rather than a topic, and how to navigate it"
-        },
-        {
-          "n": 2,
-          "slug": "interpolation",
-          "title": "Interpolation",
-          "blurb": "Filling gaps, and the honesty of the method you picked"
-        },
-        {
-          "n": 3,
-          "slug": "optimization",
-          "title": "Optimization",
-          "blurb": "minimize, and reading the result object it hands back"
-        },
-        {
-          "n": 4,
-          "slug": "curve-fitting",
-          "title": "Curve Fitting",
-          "blurb": "curve_fit, and the covariance you should be reporting"
-        },
-        {
-          "n": 5,
-          "slug": "root-finding",
-          "title": "Root Finding",
-          "blurb": "brentq, bracketing, and why it failed to converge"
-        },
-        {
-          "n": 6,
-          "slug": "numerical-integration",
-          "title": "Numerical Integration",
-          "blurb": "quad, and recognizing when the answer is nonsense"
-        },
-        {
-          "n": 7,
-          "slug": "decompositions",
-          "title": "Decompositions",
-          "blurb": "Linear algebra past what NumPy gives you"
-        },
-        {
-          "n": 8,
-          "slug": "sparse-matrices",
-          "title": "Sparse Matrices",
-          "blurb": "When your matrix is mostly zeros, and the memory you save"
-        },
-        {
-          "n": 9,
-          "slug": "signal-processing",
-          "title": "Signal Processing",
-          "blurb": "Filtering and smoothing without inventing a trend"
-        },
-        {
-          "n": 10,
-          "slug": "statistics",
-          "title": "Statistics",
-          "blurb": "Distributions, tests, and what scipy.stats will and will not do"
-        },
-        {
-          "n": 11,
-          "slug": "spatial",
-          "title": "Spatial",
-          "blurb": "Distances, KD-trees, and nearest neighbors"
-        },
-        {
-          "n": 12,
-          "slug": "images-as-arrays",
-          "title": "Images as Arrays",
-          "blurb": "ndimage, and an image as data you can index"
-        }
-      ]
-    },
-    {
       "slug": "scikit-learn-deep-dive",
-      "number": 10,
-      "band": "Libraries",
+      "number": 14,
+      "band": "Data Science and Machine Learning",
       "title": "scikit-learn, Deep Dive",
       "subtitle": "Estimators, pipelines, evaluation",
       "status": "planned",
@@ -987,8 +885,1012 @@
       ]
     },
     {
+      "slug": "pytorch-and-tensorflow-deep-dive",
+      "number": 15,
+      "band": "Data Science and Machine Learning",
+      "title": "PyTorch and TensorFlow, Deep Dive",
+      "subtitle": "Tensors, gradients and training loops",
+      "status": "planned",
+      "intro": "Building and training a network in both frameworks, and reading the shape errors they raise at you.",
+      "prerequisites": "NumPy, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "lightgbm-and-xgboost-deep-dive",
+      "number": 16,
+      "band": "Data Science and Machine Learning",
+      "title": "LightGBM and XGBoost, Deep Dive",
+      "subtitle": "Gradient boosting on tables",
+      "status": "planned",
+      "intro": "The models that win on tabular data: training them, tuning them, and reading what they learned.",
+      "prerequisites": "scikit-learn, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "geopandas-deep-dive",
+      "number": 17,
+      "band": "Data Science and Machine Learning",
+      "title": "GeoPandas, Deep Dive",
+      "subtitle": "Tables with geometry in them",
+      "status": "planned",
+      "intro": "Spatial joins and coordinate systems, in a DataFrame you already know how to use.",
+      "prerequisites": "Pandas, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "shapely-deep-dive",
+      "number": 18,
+      "band": "Data Science and Machine Learning",
+      "title": "Shapely, Deep Dive",
+      "subtitle": "Points, lines and polygons",
+      "status": "planned",
+      "intro": "Geometry as objects: intersections, buffers, and the invalid shape that stops a calculation.",
+      "prerequisites": "Python from the Start.",
+      "notebooks": []
+    },
+    {
+      "slug": "polars-deep-dive",
+      "number": 19,
+      "band": "Data Engineering and Analytics",
+      "title": "Polars, Deep Dive",
+      "subtitle": "Expressions, and the query it plans",
+      "status": "planned",
+      "intro": "A DataFrame built on expressions and lazy evaluation, and the Pandas habits that mislead you here.",
+      "prerequisites": "Pandas, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "duckdb-deep-dive",
+      "number": 20,
+      "band": "Data Engineering and Analytics",
+      "title": "DuckDB, Deep Dive",
+      "subtitle": "SQL over files, with no server",
+      "status": "planned",
+      "intro": "Querying Parquet, CSV and JSON where they sit, without loading everything into memory first.",
+      "prerequisites": "sqlite3, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "pyarrow-deep-dive",
+      "number": 21,
+      "band": "Data Engineering and Analytics",
+      "title": "PyArrow, Deep Dive",
+      "subtitle": "The columnar format underneath",
+      "status": "planned",
+      "intro": "The memory format Pandas, Polars, DuckDB and Spark share, and what passing data without copying means.",
+      "prerequisites": "Pandas, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "pyspark-deep-dive",
+      "number": 22,
+      "band": "Data Engineering and Analytics",
+      "title": "PySpark, Deep Dive",
+      "subtitle": "When the data outgrows the machine",
+      "status": "planned",
+      "intro": "DataFrames across a cluster: what runs where, what comes back, and the shuffle that costs you.",
+      "prerequisites": "Pandas, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "scipy-deep-dive",
+      "number": 23,
+      "band": "Statistics and Econometrics",
+      "title": "SciPy, Deep Dive",
+      "subtitle": "Optimization, signals and statistics",
+      "status": "planned",
+      "intro": "The parts of SciPy worth knowing, and how to navigate a library that is really twelve libraries.",
+      "prerequisites": "NumPy, Deep Dive.",
+      "notebooks": [
+        {
+          "n": 1,
+          "slug": "what-scipy-is",
+          "title": "What SciPy Is",
+          "blurb": "A toolbox rather than a topic, and how to navigate it"
+        },
+        {
+          "n": 2,
+          "slug": "interpolation",
+          "title": "Interpolation",
+          "blurb": "Filling gaps, and the honesty of the method you picked"
+        },
+        {
+          "n": 3,
+          "slug": "optimization",
+          "title": "Optimization",
+          "blurb": "minimize, and reading the result object it hands back"
+        },
+        {
+          "n": 4,
+          "slug": "curve-fitting",
+          "title": "Curve Fitting",
+          "blurb": "curve_fit, and the covariance you should be reporting"
+        },
+        {
+          "n": 5,
+          "slug": "root-finding",
+          "title": "Root Finding",
+          "blurb": "brentq, bracketing, and why it failed to converge"
+        },
+        {
+          "n": 6,
+          "slug": "numerical-integration",
+          "title": "Numerical Integration",
+          "blurb": "quad, and recognizing when the answer is nonsense"
+        },
+        {
+          "n": 7,
+          "slug": "decompositions",
+          "title": "Decompositions",
+          "blurb": "Linear algebra past what NumPy gives you"
+        },
+        {
+          "n": 8,
+          "slug": "sparse-matrices",
+          "title": "Sparse Matrices",
+          "blurb": "When your matrix is mostly zeros, and the memory you save"
+        },
+        {
+          "n": 9,
+          "slug": "signal-processing",
+          "title": "Signal Processing",
+          "blurb": "Filtering and smoothing without inventing a trend"
+        },
+        {
+          "n": 10,
+          "slug": "statistics",
+          "title": "Statistics",
+          "blurb": "Distributions, tests, and what scipy.stats will and will not do"
+        },
+        {
+          "n": 11,
+          "slug": "spatial",
+          "title": "Spatial",
+          "blurb": "Distances, KD-trees, and nearest neighbors"
+        },
+        {
+          "n": 12,
+          "slug": "images-as-arrays",
+          "title": "Images as Arrays",
+          "blurb": "ndimage, and an image as data you can index"
+        }
+      ]
+    },
+    {
+      "slug": "statsmodels-deep-dive",
+      "number": 24,
+      "band": "Statistics and Econometrics",
+      "title": "Statsmodels, Deep Dive",
+      "subtitle": "Regression with a summary table",
+      "status": "planned",
+      "intro": "Models that report their own diagnostics: regression, hypothesis tests, and time series.",
+      "prerequisites": "SciPy, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "pymc-deep-dive",
+      "number": 25,
+      "band": "Statistics and Econometrics",
+      "title": "PyMC, Deep Dive",
+      "subtitle": "Bayesian models you can sample",
+      "status": "planned",
+      "intro": "Writing a probabilistic model, sampling it, and telling a healthy trace from a broken one.",
+      "prerequisites": "SciPy, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "pingouin-deep-dive",
+      "number": 26,
+      "band": "Statistics and Econometrics",
+      "title": "Pingouin, Deep Dive",
+      "subtitle": "Tests that print a table",
+      "status": "planned",
+      "intro": "Common statistical tests with effect size and power in the output, instead of a p value on its own.",
+      "prerequisites": "SciPy, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "llamaindex-deep-dive",
+      "number": 27,
+      "band": "AI Agents and Retrieval",
+      "title": "LlamaIndex, Deep Dive",
+      "subtitle": "Your documents, made retrievable",
+      "status": "planned",
+      "intro": "Parsing, splitting and indexing your own files, and the retrieval settings that decide what a model sees.",
+      "prerequisites": "APIs and JSON.",
+      "notebooks": []
+    },
+    {
+      "slug": "haystack-deep-dive",
+      "number": 28,
+      "band": "AI Agents and Retrieval",
+      "title": "Haystack, Deep Dive",
+      "subtitle": "Search pipelines that reach production",
+      "status": "planned",
+      "intro": "Keyword and vector search in one pipeline, and measuring retrieval instead of guessing at it.",
+      "prerequisites": "APIs and JSON.",
+      "notebooks": []
+    },
+    {
+      "slug": "dspy-deep-dive",
+      "number": 29,
+      "band": "AI Agents and Retrieval",
+      "title": "DSPy, Deep Dive",
+      "subtitle": "Prompts written by a program",
+      "status": "planned",
+      "intro": "Declaring what a step should do and letting the framework tune the prompt, with a metric that says whether it worked.",
+      "prerequisites": "APIs and JSON.",
+      "notebooks": []
+    },
+    {
+      "slug": "langchain-and-langgraph-deep-dive",
+      "number": 30,
+      "band": "AI Agents and Retrieval",
+      "title": "LangChain and LangGraph, Deep Dive",
+      "subtitle": "Tools, state and the loop",
+      "status": "planned",
+      "intro": "Wiring a model to tools, then into a graph that holds state, and seeing what ran when the answer is wrong.",
+      "prerequisites": "APIs and JSON.",
+      "notebooks": []
+    },
+    {
+      "slug": "crewai-deep-dive",
+      "number": 31,
+      "band": "AI Agents and Retrieval",
+      "title": "CrewAI, Deep Dive",
+      "subtitle": "Agents with roles",
+      "status": "planned",
+      "intro": "Several agents with jobs, tools and one shared task, and the handoffs between them.",
+      "prerequisites": "APIs and JSON.",
+      "notebooks": []
+    },
+    {
+      "slug": "autogen-deep-dive",
+      "number": 32,
+      "band": "AI Agents and Retrieval",
+      "title": "AutoGen, Deep Dive",
+      "subtitle": "Agents that talk, and run code",
+      "status": "planned",
+      "intro": "Conversations between agents, code they execute, and the limits that stop a loop running forever.",
+      "prerequisites": "APIs and JSON.",
+      "notebooks": []
+    },
+    {
+      "slug": "pydanticai-deep-dive",
+      "number": 33,
+      "band": "AI Agents and Retrieval",
+      "title": "PydanticAI, Deep Dive",
+      "subtitle": "Answers your code can trust",
+      "status": "planned",
+      "intro": "Agents whose output is a Pydantic model, validated before the rest of your program sees it.",
+      "prerequisites": "APIs and JSON.",
+      "notebooks": []
+    },
+    {
+      "slug": "smolagents-deep-dive",
+      "number": 34,
+      "band": "AI Agents and Retrieval",
+      "title": "smolagents, Deep Dive",
+      "subtitle": "Agents that write Python",
+      "status": "planned",
+      "intro": "A small library whose agents act by writing code, and what that buys and what it costs.",
+      "prerequisites": "APIs and JSON.",
+      "notebooks": []
+    },
+    {
+      "slug": "unsloth-deep-dive",
+      "number": 35,
+      "band": "LLM Training, Fine-Tuning and Serving",
+      "title": "Unsloth, Deep Dive",
+      "subtitle": "Fine-tuning that fits in your memory",
+      "status": "planned",
+      "intro": "Training an adapter on one graphics card, and the settings that decide whether the run fits.",
+      "prerequisites": "PyTorch and TensorFlow, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "axolotl-deep-dive",
+      "number": 36,
+      "band": "LLM Training, Fine-Tuning and Serving",
+      "title": "Axolotl, Deep Dive",
+      "subtitle": "A training run from one file",
+      "status": "planned",
+      "intro": "Fine-tuning driven by a configuration file, and reading one well enough to change a setting safely.",
+      "prerequisites": "PyTorch and TensorFlow, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "torchtune-deep-dive",
+      "number": 37,
+      "band": "LLM Training, Fine-Tuning and Serving",
+      "title": "Torchtune, Deep Dive",
+      "subtitle": "Recipes you can read",
+      "status": "planned",
+      "intro": "Post-training in plain PyTorch, with recipes short enough to follow line by line.",
+      "prerequisites": "PyTorch and TensorFlow, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "llama-factory-deep-dive",
+      "number": 38,
+      "band": "LLM Training, Fine-Tuning and Serving",
+      "title": "LLaMA-Factory, Deep Dive",
+      "subtitle": "Many models, many methods",
+      "status": "planned",
+      "intro": "One framework across supervised fine-tuning and preference training, from the command line and a browser.",
+      "prerequisites": "PyTorch and TensorFlow, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "peft-and-trl-deep-dive",
+      "number": 39,
+      "band": "LLM Training, Fine-Tuning and Serving",
+      "title": "PEFT and TRL, Deep Dive",
+      "subtitle": "Adapters, and training on preferences",
+      "status": "planned",
+      "intro": "Hugging Face's tools for tuning a few parameters and for aligning a model, and what an adapter actually holds.",
+      "prerequisites": "PyTorch and TensorFlow, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "accelerate-deep-dive",
+      "number": 40,
+      "band": "LLM Training, Fine-Tuning and Serving",
+      "title": "Accelerate, Deep Dive",
+      "subtitle": "One script, several cards",
+      "status": "planned",
+      "intro": "Taking an ordinary PyTorch loop to several graphics cards, or several machines, without rewriting it.",
+      "prerequisites": "PyTorch and TensorFlow, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "deepspeed-and-megatron-lm-deep-dive",
+      "number": 41,
+      "band": "LLM Training, Fine-Tuning and Serving",
+      "title": "DeepSpeed and Megatron-LM, Deep Dive",
+      "subtitle": "Training that will not fit",
+      "status": "planned",
+      "intro": "Splitting a model and its optimizer across a cluster, and the memory arithmetic that decides the settings.",
+      "prerequisites": "Accelerate, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "pytorch-fsdp-deep-dive",
+      "number": 42,
+      "band": "LLM Training, Fine-Tuning and Serving",
+      "title": "PyTorch FSDP, Deep Dive",
+      "subtitle": "Sharding, in PyTorch itself",
+      "status": "planned",
+      "intro": "Parameters, gradients and optimizer state spread across cards, with what PyTorch ships.",
+      "prerequisites": "Accelerate, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "vllm-deep-dive",
+      "number": 43,
+      "band": "LLM Training, Fine-Tuning and Serving",
+      "title": "vLLM, Deep Dive",
+      "subtitle": "Serving a model to many people",
+      "status": "planned",
+      "intro": "Batching requests as they arrive, and the numbers that say whether a server is keeping up.",
+      "prerequisites": "APIs and JSON.",
+      "notebooks": []
+    },
+    {
+      "slug": "llama-cpp-python-and-ollama-deep-dive",
+      "number": 44,
+      "band": "LLM Training, Fine-Tuning and Serving",
+      "title": "llama-cpp-python and Ollama, Deep Dive",
+      "subtitle": "Models on your own machine",
+      "status": "planned",
+      "intro": "Running quantized models locally, from a Python library and from a local server.",
+      "prerequisites": "APIs and JSON.",
+      "notebooks": []
+    },
+    {
+      "slug": "opencv-deep-dive",
+      "number": 45,
+      "band": "Computer Vision and Image Processing",
+      "title": "OpenCV, Deep Dive",
+      "subtitle": "Frames, filters and features",
+      "status": "planned",
+      "intro": "Reading video, transforming images, and the color order that catches everybody once.",
+      "prerequisites": "NumPy, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "ultralytics-yolo-deep-dive",
+      "number": 46,
+      "band": "Computer Vision and Image Processing",
+      "title": "Ultralytics YOLO, Deep Dive",
+      "subtitle": "Detection, segmentation and tracking",
+      "status": "planned",
+      "intro": "Training and running a detection model, and reading the scores that say whether it is any good.",
+      "prerequisites": "PyTorch and TensorFlow, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "mediapipe-deep-dive",
+      "number": 47,
+      "band": "Computer Vision and Image Processing",
+      "title": "MediaPipe, Deep Dive",
+      "subtitle": "Faces, hands and pose, in real time",
+      "status": "planned",
+      "intro": "Landmark models fast enough for a webcam, and what to do with the points they hand back.",
+      "prerequisites": "OpenCV, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "pillow-and-albumentations-deep-dive",
+      "number": 48,
+      "band": "Computer Vision and Image Processing",
+      "title": "Pillow and Albumentations, Deep Dive",
+      "subtitle": "Loading images, and changing them on purpose",
+      "status": "planned",
+      "intro": "Opening, converting and saving images, then augmenting a training set without ruining its labels.",
+      "prerequisites": "NumPy, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "whisper-and-faster-whisper-deep-dive",
+      "number": 49,
+      "band": "Voice, Speech and Audio",
+      "title": "Whisper and faster-whisper, Deep Dive",
+      "subtitle": "Speech to text, offline",
+      "status": "planned",
+      "intro": "Transcribing audio on your own machine, with timestamps, and the trade between speed, memory and accuracy.",
+      "prerequisites": "Files, Paths and Formats.",
+      "notebooks": []
+    },
+    {
+      "slug": "vosk-deep-dive",
+      "number": 50,
+      "band": "Voice, Speech and Audio",
+      "title": "Vosk, Deep Dive",
+      "subtitle": "Recognition on a small machine",
+      "status": "planned",
+      "intro": "Transcribing a microphone as it speaks, on hardware with no graphics card.",
+      "prerequisites": "Files, Paths and Formats.",
+      "notebooks": []
+    },
+    {
+      "slug": "speechrecognition-deep-dive",
+      "number": 51,
+      "band": "Voice, Speech and Audio",
+      "title": "SpeechRecognition, Deep Dive",
+      "subtitle": "One interface, several engines",
+      "status": "planned",
+      "intro": "A wrapper over online and offline transcription engines, and what every one of them needs from you.",
+      "prerequisites": "Files, Paths and Formats.",
+      "notebooks": []
+    },
+    {
+      "slug": "coqui-tts-and-xtts-deep-dive",
+      "number": 52,
+      "band": "Voice, Speech and Audio",
+      "title": "Coqui TTS and XTTS, Deep Dive",
+      "subtitle": "Synthetic speech, and cloned voices",
+      "status": "planned",
+      "intro": "Turning text into speech locally, including cloning a voice from a short sample, and the consent that requires.",
+      "prerequisites": "Files, Paths and Formats.",
+      "notebooks": []
+    },
+    {
+      "slug": "edge-tts-deep-dive",
+      "number": 53,
+      "band": "Voice, Speech and Audio",
+      "title": "edge-tts, Deep Dive",
+      "subtitle": "Hundreds of voices, over the network",
+      "status": "planned",
+      "intro": "Asynchronous text to speech from a cloud engine, with the rate, pitch and volume it accepts.",
+      "prerequisites": "APIs and JSON.",
+      "notebooks": []
+    },
+    {
+      "slug": "pyttsx3-deep-dive",
+      "number": 54,
+      "band": "Voice, Speech and Audio",
+      "title": "pyttsx3, Deep Dive",
+      "subtitle": "The voices already installed",
+      "status": "planned",
+      "intro": "Speech from the operating system's own synthesizer, offline, on every platform.",
+      "prerequisites": "Python from the Start.",
+      "notebooks": []
+    },
+    {
+      "slug": "librosa-deep-dive",
+      "number": 55,
+      "band": "Voice, Speech and Audio",
+      "title": "Librosa, Deep Dive",
+      "subtitle": "What a sound looks like",
+      "status": "planned",
+      "intro": "Spectrograms, pitch and the features a model is trained on, and the sample rate that changes every number.",
+      "prerequisites": "NumPy, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "pydub-and-pyaudio-deep-dive",
+      "number": 56,
+      "band": "Voice, Speech and Audio",
+      "title": "Pydub and PyAudio, Deep Dive",
+      "subtitle": "Editing audio, and recording it",
+      "status": "planned",
+      "intro": "Cutting, joining and converting audio files, then capturing and playing a live stream.",
+      "prerequisites": "Files, Paths and Formats.",
+      "notebooks": []
+    },
+    {
+      "slug": "pygame-and-pygame-ce-deep-dive",
+      "number": 57,
+      "band": "Game Development",
+      "title": "Pygame and Pygame CE, Deep Dive",
+      "subtitle": "The loop, the sprite and the clock",
+      "status": "planned",
+      "intro": "A 2D game built outward from its event loop, and the frame timing that makes it feel right.",
+      "prerequisites": "Object-Oriented Python.",
+      "notebooks": []
+    },
+    {
+      "slug": "arcade-deep-dive",
+      "number": 58,
+      "band": "Game Development",
+      "title": "Arcade, Deep Dive",
+      "subtitle": "2D with the graphics card doing the work",
+      "status": "planned",
+      "intro": "Sprites, tile maps and views in a modern 2D library, with hardware acceleration underneath.",
+      "prerequisites": "Object-Oriented Python.",
+      "notebooks": []
+    },
+    {
+      "slug": "pyglet-deep-dive",
+      "number": 59,
+      "band": "Game Development",
+      "title": "Pyglet, Deep Dive",
+      "subtitle": "Windows, graphics and no dependencies",
+      "status": "planned",
+      "intro": "Drawing, input and sound in pure Python, as close to the graphics layer as you want to go.",
+      "prerequisites": "Object-Oriented Python.",
+      "notebooks": []
+    },
+    {
+      "slug": "ursina-deep-dive",
+      "number": 60,
+      "band": "Game Development",
+      "title": "Ursina, Deep Dive",
+      "subtitle": "3D, quickly",
+      "status": "planned",
+      "intro": "A 3D prototype in a few dozen lines, on top of a full engine you can drop into later.",
+      "prerequisites": "Object-Oriented Python.",
+      "notebooks": []
+    },
+    {
+      "slug": "panda3d-deep-dive",
+      "number": 61,
+      "band": "Game Development",
+      "title": "Panda3D, Deep Dive",
+      "subtitle": "A 3D pipeline you control",
+      "status": "planned",
+      "intro": "Scene graphs, assets and shaders in a production engine driven entirely from Python.",
+      "prerequisites": "Ursina, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "upbge-deep-dive",
+      "number": 62,
+      "band": "Game Development",
+      "title": "UPBGE, Deep Dive",
+      "subtitle": "Games inside Blender",
+      "status": "planned",
+      "intro": "Building and scripting a game where the modeling already happens, in Blender itself.",
+      "prerequisites": "Object-Oriented Python.",
+      "notebooks": []
+    },
+    {
+      "slug": "renpy-deep-dive",
+      "number": 63,
+      "band": "Game Development",
+      "title": "Ren'Py, Deep Dive",
+      "subtitle": "Branching stories, and saves",
+      "status": "planned",
+      "intro": "Script, choices and save files in the engine built for narrative games, with Python where you need it.",
+      "prerequisites": "Python from the Start.",
+      "notebooks": []
+    },
+    {
+      "slug": "pymunk-deep-dive",
+      "number": 64,
+      "band": "Game Development",
+      "title": "Pymunk, Deep Dive",
+      "subtitle": "Physics you can trust",
+      "status": "planned",
+      "intro": "Bodies, collisions and joints, and the time step that decides whether they behave.",
+      "prerequisites": "Object-Oriented Python.",
+      "notebooks": []
+    },
+    {
+      "slug": "fastapi-deep-dive",
+      "number": 65,
+      "band": "Web Frameworks and Networking",
+      "title": "FastAPI, Deep Dive",
+      "subtitle": "Asynchronous APIs, typed and documented",
+      "status": "planned",
+      "intro": "Past the tutorial: dependencies, background tasks, testing, and the asynchronous rules that bite.",
+      "prerequisites": "APIs and JSON.",
+      "notebooks": []
+    },
+    {
+      "slug": "django-deep-dive",
+      "number": 66,
+      "band": "Web Frameworks and Networking",
+      "title": "Django, Deep Dive",
+      "subtitle": "The framework that brings everything",
+      "status": "planned",
+      "intro": "Models, migrations, views and the admin site, and how the pieces find one another.",
+      "prerequisites": "Object-Oriented Python.",
+      "notebooks": []
+    },
+    {
+      "slug": "flask-deep-dive",
+      "number": 67,
+      "band": "Web Frameworks and Networking",
+      "title": "Flask, Deep Dive",
+      "subtitle": "Small, until you decide otherwise",
+      "status": "planned",
+      "intro": "Routes, blueprints and extensions, and everything the framework leaves for you to choose.",
+      "prerequisites": "APIs and JSON.",
+      "notebooks": []
+    },
+    {
+      "slug": "requests-and-httpx-deep-dive",
+      "number": 68,
+      "band": "Web Frameworks and Networking",
+      "title": "Requests and httpx, Deep Dive",
+      "subtitle": "Sessions, timeouts and retries",
+      "status": "planned",
+      "intro": "Reusing connections, setting timeouts that fire, and sending requests asynchronously.",
+      "prerequisites": "APIs and JSON.",
+      "notebooks": []
+    },
+    {
+      "slug": "beautifulsoup-and-scrapy-deep-dive",
+      "number": 69,
+      "band": "Web Frameworks and Networking",
+      "title": "BeautifulSoup and Scrapy, Deep Dive",
+      "subtitle": "Reading a page, and crawling a site",
+      "status": "planned",
+      "intro": "Parsing HTML nobody designed for you, then growing that into a crawler that behaves itself.",
+      "prerequisites": "APIs and JSON.",
+      "notebooks": []
+    },
+    {
+      "slug": "matplotlib-deep-dive",
+      "number": 70,
+      "band": "Interactive Apps and Visualization",
+      "title": "Matplotlib, Deep Dive",
+      "subtitle": "Plots you can defend",
+      "status": "planned",
+      "intro": "The figure and axes object model, and taking one chart all the way to publishable.",
+      "prerequisites": "NumPy, Deep Dive.",
+      "notebooks": [
+        {
+          "n": 1,
+          "slug": "figure-and-axes",
+          "title": "Figure and Axes",
+          "blurb": "The object model, instead of pyplot as magic"
+        },
+        {
+          "n": 2,
+          "slug": "your-first-plot",
+          "title": "Your First Plot",
+          "blurb": "plot, and understanding what each call returned"
+        },
+        {
+          "n": 3,
+          "slug": "lines-and-scatter",
+          "title": "Lines and Scatter",
+          "blurb": "The two workhorses, and when each one lies"
+        },
+        {
+          "n": 4,
+          "slug": "bars-and-histograms",
+          "title": "Bars and Histograms",
+          "blurb": "Categorical and distributional, and bin choice as a decision"
+        },
+        {
+          "n": 5,
+          "slug": "multiple-axes",
+          "title": "Multiple Axes",
+          "blurb": "subplots, shared scales, and a grid that reads"
+        },
+        {
+          "n": 6,
+          "slug": "labels",
+          "title": "Labels",
+          "blurb": "Titles, axis labels, and the units you left off"
+        },
+        {
+          "n": 7,
+          "slug": "ticks",
+          "title": "Ticks",
+          "blurb": "Locators, formatters, and putting dates on an axis"
+        },
+        {
+          "n": 8,
+          "slug": "color",
+          "title": "Color",
+          "blurb": "A validated palette, and why the default is not one"
+        },
+        {
+          "n": 9,
+          "slug": "annotation",
+          "title": "Annotation",
+          "blurb": "Text, arrows, and pointing at the thing that matters"
+        },
+        {
+          "n": 10,
+          "slug": "style",
+          "title": "Style",
+          "blurb": "rcParams and stylesheets, for consistency without repetition"
+        },
+        {
+          "n": 11,
+          "slug": "saving",
+          "title": "Saving",
+          "blurb": "dpi, vector against raster, and a size that survives a document"
+        },
+        {
+          "n": 12,
+          "slug": "a-chart-you-would-publish",
+          "title": "A Chart You Would Publish",
+          "blurb": "One figure taken all the way to finished"
+        }
+      ]
+    },
+    {
+      "slug": "seaborn-deep-dive",
+      "number": 71,
+      "band": "Interactive Apps and Visualization",
+      "title": "Seaborn, Deep Dive",
+      "subtitle": "Statistical plots in one line",
+      "status": "planned",
+      "intro": "The plots that do the grouping for you, and the Matplotlib underneath when one needs fixing.",
+      "prerequisites": "Matplotlib, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "plotly-deep-dive",
+      "number": 72,
+      "band": "Interactive Apps and Visualization",
+      "title": "Plotly, Deep Dive",
+      "subtitle": "Charts that answer back",
+      "status": "planned",
+      "intro": "Interactive figures for a browser, and what changes once a chart has to be served to somebody.",
+      "prerequisites": "Pandas, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "streamlit-deep-dive",
+      "number": 73,
+      "band": "Interactive Apps and Visualization",
+      "title": "Streamlit, Deep Dive",
+      "subtitle": "A script that becomes an app",
+      "status": "planned",
+      "intro": "Widgets, state and caching, and the rerun model that explains every surprise.",
+      "prerequisites": "Pandas, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "gradio-deep-dive",
+      "number": 74,
+      "band": "Interactive Apps and Visualization",
+      "title": "Gradio, Deep Dive",
+      "subtitle": "A demo somebody else can try",
+      "status": "planned",
+      "intro": "An interface around a model in a few lines, and sharing it without handing over your machine.",
+      "prerequisites": "Python from the Start.",
+      "notebooks": []
+    },
+    {
+      "slug": "dagster-and-prefect-deep-dive",
+      "number": 75,
+      "band": "Workflow Orchestration and Background Work",
+      "title": "Dagster and Prefect, Deep Dive",
+      "subtitle": "Pipelines that know their dependencies",
+      "status": "planned",
+      "intro": "Flows, assets, retries and schedules, and what a run looks like when one step fails.",
+      "prerequisites": "Testing and Packaging.",
+      "notebooks": []
+    },
+    {
+      "slug": "apache-airflow-deep-dive",
+      "number": 76,
+      "band": "Workflow Orchestration and Background Work",
+      "title": "Apache Airflow, Deep Dive",
+      "subtitle": "Schedules, and filling in the past",
+      "status": "planned",
+      "intro": "Authoring and scheduling workflows, and the run dates that confuse everybody at first.",
+      "prerequisites": "Testing and Packaging.",
+      "notebooks": []
+    },
+    {
+      "slug": "celery-deep-dive",
+      "number": 77,
+      "band": "Workflow Orchestration and Background Work",
+      "title": "Celery, Deep Dive",
+      "subtitle": "Work that happens later",
+      "status": "planned",
+      "intro": "Queues, workers and results, and what to do when a task dies halfway through.",
+      "prerequisites": "Testing and Packaging.",
+      "notebooks": []
+    },
+    {
+      "slug": "pytest-deep-dive",
+      "number": 78,
+      "band": "Developer Tooling and Quality",
+      "title": "pytest, Deep Dive",
+      "subtitle": "Plugins, and testing hard things",
+      "status": "planned",
+      "intro": "Past Testing and Packaging: plugins, mocking, coverage, and tests that generate their own inputs.",
+      "prerequisites": "Testing and Packaging.",
+      "notebooks": []
+    },
+    {
+      "slug": "pydantic-deep-dive",
+      "number": 79,
+      "band": "Developer Tooling and Quality",
+      "title": "Pydantic, Deep Dive",
+      "subtitle": "Types checked while the program runs",
+      "status": "planned",
+      "intro": "Models, validators and settings, and reading a validation error as the report it is.",
+      "prerequisites": "Object-Oriented Python.",
+      "notebooks": []
+    },
+    {
+      "slug": "uv-and-ruff-deep-dive",
+      "number": 80,
+      "band": "Developer Tooling and Quality",
+      "title": "uv and Ruff, Deep Dive",
+      "subtitle": "Fast tools for the dull parts",
+      "status": "planned",
+      "intro": "Installing, pinning, linting and formatting with the tools that replaced a shelf of others.",
+      "prerequisites": "Testing and Packaging.",
+      "notebooks": []
+    },
+    {
+      "slug": "yfinance-deep-dive",
+      "number": 81,
+      "band": "Finance and Quantitative Analysis",
+      "title": "yfinance, Deep Dive",
+      "subtitle": "Market data, into a DataFrame",
+      "status": "planned",
+      "intro": "Prices, fundamentals and histories, and the gaps and adjustments that change a result.",
+      "prerequisites": "Pandas, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "backtrader-deep-dive",
+      "number": 82,
+      "band": "Finance and Quantitative Analysis",
+      "title": "Backtrader, Deep Dive",
+      "subtitle": "A strategy, tested against the past",
+      "status": "planned",
+      "intro": "Running a strategy over history, and the peeks at the future that make one look better than it is.",
+      "prerequisites": "Pandas, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "ta-lib-deep-dive",
+      "number": 83,
+      "band": "Finance and Quantitative Analysis",
+      "title": "TA-Lib, Deep Dive",
+      "subtitle": "Indicators, computed correctly",
+      "status": "planned",
+      "intro": "Moving averages, RSI and MACD, with the warm-up periods and missing values they produce.",
+      "prerequisites": "Pandas, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "ccxt-deep-dive",
+      "number": 84,
+      "band": "Finance and Quantitative Analysis",
+      "title": "CCXT, Deep Dive",
+      "subtitle": "One client, many exchanges",
+      "status": "planned",
+      "intro": "Market data and orders across exchange interfaces, with rate limits and keys handled carefully.",
+      "prerequisites": "APIs and JSON.",
+      "notebooks": []
+    },
+    {
+      "slug": "pypdf-and-pymupdf-deep-dive",
+      "number": 85,
+      "band": "Documents and File Formats",
+      "title": "pypdf and PyMuPDF, Deep Dive",
+      "subtitle": "Text out of a PDF, and pages back in",
+      "status": "planned",
+      "intro": "Extracting, splitting, merging and rendering PDFs, and why the text sometimes comes out scrambled.",
+      "prerequisites": "Files, Paths and Formats.",
+      "notebooks": []
+    },
+    {
+      "slug": "openpyxl-and-xlsxwriter-deep-dive",
+      "number": 86,
+      "band": "Documents and File Formats",
+      "title": "openpyxl and XlsxWriter, Deep Dive",
+      "subtitle": "Spreadsheets, written properly",
+      "status": "planned",
+      "intro": "Reading and writing workbooks with formatting, formulas and charts that survive being opened in Excel.",
+      "prerequisites": "Files, Paths and Formats.",
+      "notebooks": []
+    },
+    {
+      "slug": "python-docx-deep-dive",
+      "number": 87,
+      "band": "Documents and File Formats",
+      "title": "python-docx, Deep Dive",
+      "subtitle": "Word documents from code",
+      "status": "planned",
+      "intro": "Building and editing documents: styles, tables, and the parts of the format that show through.",
+      "prerequisites": "Files, Paths and Formats.",
+      "notebooks": []
+    },
+    {
+      "slug": "ray-deep-dive",
+      "number": 88,
+      "band": "Parallel Computing and Concurrency",
+      "title": "Ray, Deep Dive",
+      "subtitle": "Python across a cluster",
+      "status": "planned",
+      "intro": "Tasks, actors and shared objects, and the cost of moving data between workers.",
+      "prerequisites": "Testing and Packaging.",
+      "notebooks": []
+    },
+    {
+      "slug": "dask-deep-dive",
+      "number": 89,
+      "band": "Parallel Computing and Concurrency",
+      "title": "Dask, Deep Dive",
+      "subtitle": "NumPy and Pandas, in parallel",
+      "status": "planned",
+      "intro": "Arrays and frames split into pieces, computed lazily, and the point where it stops being worth it.",
+      "prerequisites": "Pandas, Deep Dive.",
+      "notebooks": []
+    },
+    {
+      "slug": "joblib-deep-dive",
+      "number": 90,
+      "band": "Parallel Computing and Concurrency",
+      "title": "Joblib, Deep Dive",
+      "subtitle": "A parallel loop, and a cache",
+      "status": "planned",
+      "intro": "Running a loop across cores and caching results to disk, and what can and cannot be sent to a worker.",
+      "prerequisites": "Python from the Start.",
+      "notebooks": []
+    },
+    {
+      "slug": "scapy-deep-dive",
+      "number": 91,
+      "band": "Security and Networking",
+      "title": "Scapy, Deep Dive",
+      "subtitle": "Packets, built and read",
+      "status": "planned",
+      "intro": "Crafting, capturing and dissecting packets layer by layer, on a network you are authorized to test.",
+      "prerequisites": "Python from the Start.",
+      "notebooks": []
+    },
+    {
+      "slug": "impacket-deep-dive",
+      "number": 92,
+      "band": "Security and Networking",
+      "title": "Impacket, Deep Dive",
+      "subtitle": "Protocols at the level attackers use",
+      "status": "planned",
+      "intro": "Working with Windows network protocols from Python, for authorized security testing and defense.",
+      "prerequisites": "Object-Oriented Python.",
+      "notebooks": []
+    },
+    {
       "slug": "projects-end-to-end",
-      "number": 11,
+      "number": 93,
       "band": "Projects",
       "title": "Projects, End to End",
       "subtitle": "Everything at once",
