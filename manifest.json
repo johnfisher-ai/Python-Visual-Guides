@@ -818,7 +818,7 @@
       "band": "Relational and Document Databases",
       "title": "sqlite3, Deep Dive",
       "subtitle": "The database already on your machine",
-      "status": "planned",
+      "status": "building",
       "intro": "The database in the standard library: transactions, types, and a whole database in one file you can copy.",
       "prerequisites": "Files, Paths and Formats.",
       "notebooks": [

@@ -29,7 +29,7 @@ the question.
 | 6 | SQLAlchemy, Deep Dive | 19 | Planned |
 | 7 | SQLModel, Deep Dive | 14 | Planned |
 | 8 | Peewee, Deep Dive | 12 | Planned |
-| 9 | sqlite3, Deep Dive | 17 | Planned |
+| 9 | **sqlite3, Deep Dive** | 17 | Being written |
 | 10 | asyncpg and psycopg3, Deep Dive | 17 | Planned |
 | 11 | PyMongo and Beanie, Deep Dive | 16 | Planned |
 | 12 | NumPy, Deep Dive | 14 | Planned |

@@ -767,6 +767,27 @@ readings: a module, `readings.py`, a script, `summary.py`, and their tests, writ
   `GIT_COMMITTER_*`. Print exit codes and pytest's `E`, `FAILED` and `ERROR` lines, never a hash or
   a date. PyYAML is pinned to 6.0.3, Colab's version, and reads a workflow's `on` key as `True`.
 
+## sqlite3, Deep Dive
+
+Every notebook in **sqlite3, Deep Dive** works on the weather stations' hourly readings. Setup writes
+a year of them for Bergen, Oslo, Svalbard and Tromso to `scratch/readings.csv`, with Svalbard's
+readings empty for 2 March, and the notebook's last cell removes the scratch folder.
+
+- **The readings come from a formula, never from `random`.** Every number a notebook prints is then
+  the same in Colab, in CI and here, and a later notebook can quote a value an earlier one printed.
+- **Print nothing that depends on the SQLite version.** This Mac's Python 3.14.2 bundles SQLite
+  3.50.4, and the SQLite that Colab's and CI's Pythons use has not been checked. Never print
+  `sqlite3.sqlite_version`, a database file's size beyond what the page size fixes (an empty file,
+  or the two pages of a database holding one small table), or a mean from `AVG` without rounding it.
+- **`connect(path)` creates a missing file.** A notebook that means to open a database that already
+  exists opens it as `file:PATH?mode=rw` with `uri=True`, which Why sqlite3 teaches as a Common error.
+- **Close a connection in the cell that opens it**, unless the next cell carries on with it. An open
+  connection holds the file, and Python 3.13 and later emit `ResourceWarning` for a connection
+  collected without being closed.
+- **The guide's research lives outside git**, in `source/outlines/relational-and-document-databases.md`
+  beside `site/`: the error each notebook is meant to show, the versions its claims were checked
+  against, and the corrections the fact-check made.
+
 ## Cross-references
 
 **Refer to a notebook by its title, never by its number.** Write **Lists**, not "notebook 7".
