@@ -796,8 +796,8 @@ joins stations to readings builds those two tables the way Tables and Queries do
   `database is locked`. Connections and Cursors failed its first run this way, and now teaches it.
 - **Replace a memory address or a thread number before printing a message.** The
   `ResourceWarning` names the connection's address, a printed `sqlite3.Row` shows only its own
-  address, and the thread error names two thread ids, all different on every run. Print a row as
-  `dict(row)`. Print them through `re.sub`, as Connections and Cursors does. An error
+  address, and the thread error names two thread ids, all different on every run. Print the warning
+  and the error through `re.sub`, as Connections and Cursors does, and a row as `dict(row)`. An error
   raised in another thread never reaches the cell, so the thread catches it for the cell to print.
 - **A cell whose behavior changed between Pythons prints what happened.** A tuple for named
   placeholders raises `ProgrammingError` on Python 3.14 and only emits a `DeprecationWarning` on 3.12
