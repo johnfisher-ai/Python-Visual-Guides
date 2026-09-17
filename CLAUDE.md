@@ -846,6 +846,10 @@ repeat a sentence and score the same, so every ranked query orders by `rank, row
 - **Run `ANALYZE`, not `PRAGMA optimize`, before a plan a notebook prints.** `PRAGMA optimize`
   analyzes only tables with an index that lacks statistics, and reads part of each index, and on the
   report in Indexes and Query Plans those partial counts led to a skip-scan through every station.
+- **Stage a lock with an Event, never a sleep.** Concurrency and WAL has a thread take a lock, set a
+  `threading.Event`, and only then lets the main thread act, so the order never depends on how fast a
+  thread starts. `attempt` prints whether a statement ran at once or after waiting, never the seconds,
+  and every thread opens and closes a connection of its own.
 - **Set SQLite's double-quote fallback, never assume it.** A build of SQLite can be compiled so that
   a double-quoted word naming no column is an error instead of text, so a cell that shows the
   fallback first calls `conn.setconfig(sqlite3.SQLITE_DBCONFIG_DQS_DML, True)`, which needs Python
