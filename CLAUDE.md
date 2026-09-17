@@ -859,6 +859,14 @@ repeat a sentence and score the same, so every ranked query orders by `rank, row
 - **Serialize only a database that is not in WAL mode.** Its header records WAL, and the bytes
   deserialize without complaint, then the first query fails with `unable to open database file`.
   `VACUUM INTO` writes a copy in the rollback journal mode, and `backup` keeps the source's mode.
+- **Search for words that some documents lack.** A word in every document gets FTS5's smallest
+  weight, so its `rank` prints as `-0.0` and the order rests on length alone. A Searchable Archive's
+  monthly files all mention a battery, so its searches use `logger failed` and `above freezing`.
+- **Print a snippet on one line.** A snippet of a document with line breaks can span them, so A
+  Searchable Archive's `search` wraps it in `trim(replace(..., char(10), ' '))`.
+- **`INSERT OR REPLACE` runs no delete trigger** unless `PRAGMA recursive_triggers` is on, so an
+  external content FTS5 index keeps the replaced row's words under its old rowid, and a count by
+  `MATCH` finds both. A Searchable Archive teaches it as a Common error, fixed with `'rebuild'`.
 - **Set SQLite's double-quote fallback, never assume it.** A build of SQLite can be compiled so that
   a double-quoted word naming no column is an error instead of text, so a cell that shows the
   fallback first calls `conn.setconfig(sqlite3.SQLITE_DBCONFIG_DQS_DML, True)`, which needs Python
