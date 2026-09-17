@@ -780,11 +780,14 @@ Kirkenes (latitude 69.73) as a station with no readings, which the left joins re
 notebook that joins stations to readings builds those two tables the way Tables and Queries does.
 
 Everyday Requests, the guide's last notebook, has two databases of its own, since its subject is the
-requests a developer answers against a schema somebody else designed: `school.db`, with 24 students,
-10 courses, 3 terms, 40 sections, their enrollments and a `grades` lookup of grade points, and
+requests a developer answers against a schema somebody else designed: `school.db`, with 26 students,
+10 courses, 3 terms, 41 sections, their enrollments and a `grades` lookup of grade points, and
 `ledger.db`, with 9 customers, 48 invoices and their lines, and the payments applied to them. Both
 come from formulas, both use `STRICT` tables, money is in `INTEGER` cents, and every report runs as
-of `TODAY = "2026-04-15"` rather than asking the clock.
+of `TODAY = "2026-04-15"` rather than asking the clock. Two of the students have completed nothing,
+one registered for the current term and one not registered at all, and one section has no
+enrollments: without them the notebook's `LEFT JOIN`s would all have behaved like inner joins, and
+the prose around them would have been describing rows that were not there.
 
 Joins works on the author's own example instead, at the author's request: `Employees` (Alice in
 department 1, Bob in 2, Charlie in none) and `Departments` (1 HR, 2 IT, 3 Marketing, which has no
