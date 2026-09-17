@@ -783,6 +783,13 @@ department 1, Bob in 2, Charlie in none) and `Departments` (1 HR, 2 IT, 3 Market
 employees), with `EmpID`, `ManagerID` and `Salary` added for self joins and sums, in a database in
 memory. Its prose names the people and never gives them a pronoun.
 
+Full-Text Search and A Searchable Archive search text the readings could not give them, so both
+generate it from the same formula: a technician's note for every station and day, its weather
+sentence written from that day's lowest and highest reading, and an event from a fixed list chosen by
+`(day_of_year * 37 + station_index * 101) % 23`. The research outline suggested the standard library's
+own `.py` files, which differ between Pythons, so no search would print the same everywhere. Many notes
+repeat a sentence and score the same, so every ranked query orders by `rank, rowid`.
+
 - **The readings come from a formula, never from `random`.** Every number a notebook prints is then
   the same in Colab, in CI and here, and a later notebook can quote a value an earlier one printed.
 - **Print nothing that depends on the SQLite version.** This Mac's Python 3.14.2 bundles SQLite
