@@ -850,6 +850,15 @@ repeat a sentence and score the same, so every ranked query orders by `rank, row
   `threading.Event`, and only then lets the main thread act, so the order never depends on how fast a
   thread starts. `attempt` prints whether a statement ran at once or after waiting, never the seconds,
   and every thread opens and closes a connection of its own.
+- **Never back a connection up while it holds a write transaction.** `backup` hears that the source
+  is busy until the transaction ends, and sqlite3 retries forever, so the cell hangs and a run only
+  ends at the executor's timeout. Backup and Copying warns about it in prose and never runs it.
+- **Wrap `iterdump` in a transaction.** It runs one query for every table, so in WAL mode a commit
+  that lands mid-dump appears in the tables dumped after it and not in those dumped before. Backup
+  and Copying teaches this as a "No error" Common error, and dumps inside `BEGIN` and `COMMIT`.
+- **Serialize only a database that is not in WAL mode.** Its header records WAL, and the bytes
+  deserialize without complaint, then the first query fails with `unable to open database file`.
+  `VACUUM INTO` writes a copy in the rollback journal mode, and `backup` keeps the source's mode.
 - **Set SQLite's double-quote fallback, never assume it.** A build of SQLite can be compiled so that
   a double-quoted word naming no column is an error instead of text, so a cell that shows the
   fallback first calls `conn.setconfig(sqlite3.SQLITE_DBCONFIG_DQS_DML, True)`, which needs Python
