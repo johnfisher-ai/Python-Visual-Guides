@@ -820,6 +820,14 @@ memory. Its prose names the people and never gives them a pronoun.
   placeholders raises `ProgrammingError` on Python 3.14 and only emits a `DeprecationWarning` on 3.12
   and 3.13, so Parameters runs it inside `warnings.catch_warnings(record=True)` and a `try`, and
   prints whichever came. Its Common errors heading is the 3.14 message, and the prose names both.
+- **`executemany` with `RETURNING` does not do what Python's documentation says.** The documentation
+  says the rows are discarded, and Python 3.14.2 inserts the first row and raises
+  `sqlite3.InterfaceError: bad parameter or other API misuse` at the second. executemany catches
+  `sqlite3.Error` around it and prints whichever happens, under a Common errors heading with the 3.14
+  message.
+- **Print a timing as a comparison, never as seconds.** The second run has to print what the first
+  committed, so executemany prints `every_row > 50 * one_commit`, a margin chosen well below the
+  several hundred times measured here, and says in prose that the seconds vary.
 - **Set SQLite's double-quote fallback, never assume it.** A build of SQLite can be compiled so that
   a double-quoted word naming no column is an error instead of text, so a cell that shows the
   fallback first calls `conn.setconfig(sqlite3.SQLITE_DBCONFIG_DQS_DML, True)`, which needs Python
