@@ -828,6 +828,17 @@ memory. Its prose names the people and never gives them a pronoun.
 - **Print a timing as a comparison, never as seconds.** The second run has to print what the first
   committed, so executemany prints `every_row > 50 * one_commit`, a margin chosen well below the
   several hundred times measured here, and says in prose that the seconds vary.
+- **Print a plan's detail column, and keep plans simple.** SQLite's documentation says the wording
+  of `EXPLAIN QUERY PLAN` can change between releases, so Indexes and Query Plans prints only the fourth
+  column of each row, never the step numbers, and avoids plans that grew new lines in recent releases,
+  such as an `IN` subquery, which 3.38.0 and later plan with a Bloom filter.
+- **Read a plan after `DROP INDEX` through a new connection.** sqlite3 caches prepared statements by
+  their text, and on SQLite 3.50.4 a cached `EXPLAIN QUERY PLAN` still names a dropped index, while a
+  plan asked after `CREATE INDEX` or `ANALYZE` is fresh. Indexes and Query Plans teaches this as a
+  Common error, and orders its examples so that no other plan follows a drop.
+- **Run `ANALYZE`, not `PRAGMA optimize`, before a plan a notebook prints.** `PRAGMA optimize`
+  analyzes only tables with an index that lacks statistics, and reads part of each index, and on the
+  report in Indexes and Query Plans those partial counts led to a skip-scan through every station.
 - **Set SQLite's double-quote fallback, never assume it.** A build of SQLite can be compiled so that
   a double-quoted word naming no column is an error instead of text, so a cell that shows the
   fallback first calls `conn.setconfig(sqlite3.SQLITE_DBCONFIG_DQS_DML, True)`, which needs Python
