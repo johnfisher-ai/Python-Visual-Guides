@@ -769,14 +769,19 @@ readings: a module, `readings.py`, a script, `summary.py`, and their tests, writ
 
 ## sqlite3, Deep Dive
 
-Every notebook in **sqlite3, Deep Dive** works on the weather stations' hourly readings for 2025 at
-Bergen, Oslo, Svalbard and Tromso, with Svalbard's readings empty for 2 March. Why sqlite3's Setup
-writes them to `scratch/readings.csv` and loads that into a table. Later notebooks build
-`scratch/stations.db` directly, handing a generator of the same values to `executemany`, and every
-notebook's last cell removes the scratch folder. Tables and Queries splits the data into two tables,
-`stations (id, name, latitude)` and `readings (id, station_id, hour, celsius)`, and adds Kirkenes
-(latitude 69.73) as a station with no readings, which the left joins rely on. A later notebook that
-joins stations to readings builds those two tables the way Tables and Queries does.
+Every notebook in **sqlite3, Deep Dive** but Joins works on the weather stations' hourly readings
+for 2025 at Bergen, Oslo, Svalbard and Tromso, with Svalbard's readings empty for 2 March. Why
+sqlite3's Setup writes them to `scratch/readings.csv` and loads that into a table. Later notebooks
+build `scratch/stations.db` directly, handing a generator of the same values to `executemany`, and
+every notebook's last cell removes the scratch folder. Tables and Queries splits the data into two
+tables, `stations (id, name, latitude)` and `readings (id, station_id, hour, celsius)`, and adds
+Kirkenes (latitude 69.73) as a station with no readings, which the left joins rely on. A later
+notebook that joins stations to readings builds those two tables the way Tables and Queries does.
+
+Joins works on the author's own example instead, at the author's request: `Employees` (Alice in
+department 1, Bob in 2, Charlie in none) and `Departments` (1 HR, 2 IT, 3 Marketing, which has no
+employees), with `EmpID`, `ManagerID` and `Salary` added for self joins and sums, in a database in
+memory. Its prose names the people and never gives them a pronoun.
 
 - **The readings come from a formula, never from `random`.** Every number a notebook prints is then
   the same in Colab, in CI and here, and a later notebook can quote a value an earlier one printed.
@@ -784,6 +789,12 @@ joins stations to readings builds those two tables the way Tables and Queries do
   3.50.4, and the SQLite that Colab's and CI's Pythons use has not been checked. Never print
   `sqlite3.sqlite_version`, a database file's size beyond what the page size fixes (an empty file,
   or the two pages of a database holding one small table), or a mean from `AVG` without rounding it.
+- **Guard what needs a newer SQLite than 3.37.** `RIGHT JOIN` and `FULL JOIN` need 3.39.0, so Joins
+  runs them only when `sqlite3.sqlite_version_info >= (3, 39, 0)`, and otherwise runs the `LEFT JOIN`
+  or `UNION ALL` query that returns the same rows, which prints the same everywhere. `unixepoch()`
+  needs 3.38.0 and `string_agg` 3.44.0, so SQL Syntax writes `CAST(strftime('%s', ...) AS INTEGER)`
+  and Joins `group_concat`. `NULLS LAST` and an aggregate's `FILTER` need 3.30.0, from 2019, and go
+  unguarded.
 - **`connect(path)` creates a missing file.** A notebook that means to open a database that already
   exists opens it as `file:PATH?mode=rw` with `uri=True`, which Why sqlite3 teaches as a Common error.
 - **Close a connection in the cell that opens it**, unless the next cell carries on with it. An open
