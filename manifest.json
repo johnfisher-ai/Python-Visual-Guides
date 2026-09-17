@@ -842,84 +842,96 @@
         },
         {
           "n": 4,
+          "slug": "sql-syntax",
+          "title": "SQL Syntax",
+          "blurb": "Written order against run order, aggregates, and the date range that lost its last day"
+        },
+        {
+          "n": 5,
+          "slug": "joins",
+          "title": "Joins",
+          "blurb": "INNER, LEFT, RIGHT, FULL, CROSS and self joins, and the payroll a join counted twice"
+        },
+        {
+          "n": 6,
           "slug": "parameters",
           "title": "Parameters",
           "blurb": "Question marks against f-strings, and the injection an f-string invites"
         },
         {
-          "n": 5,
+          "n": 7,
           "slug": "row-factories",
           "title": "Row Factories",
           "blurb": "sqlite3.Row, a dict factory, and rows that answer to a column name"
         },
         {
-          "n": 6,
+          "n": 8,
           "slug": "type-affinity",
           "title": "Type Affinity",
           "blurb": "Why a column declared INTEGER accepted the string, and what STRICT changes"
         },
         {
-          "n": 7,
+          "n": 9,
           "slug": "adapters-and-converters",
           "title": "Adapters and Converters",
           "blurb": "register_adapter, PARSE_DECLTYPES, and the datetime adapter deprecated in 3.12"
         },
         {
-          "n": 8,
+          "n": 10,
           "slug": "transactions",
           "title": "Transactions",
           "blurb": "commit, rollback, and the rows that were gone when you reopened the file"
         },
         {
-          "n": 9,
+          "n": 11,
           "slug": "autocommit-and-isolation-level",
           "title": "autocommit and isolation_level",
           "blurb": "LEGACY_TRANSACTION_CONTROL, autocommit=False, and the CREATE TABLE that rollback could not undo"
         },
         {
-          "n": 10,
+          "n": 12,
           "slug": "constraints",
           "title": "Constraints",
           "blurb": "UNIQUE constraint failed, and the foreign key nobody was enforcing"
         },
         {
-          "n": 11,
+          "n": 13,
           "slug": "changing-a-schema",
           "title": "Changing a Schema",
           "blurb": "ALTER TABLE ADD COLUMN, the twelve step table rebuild, and user_version as the migration number you already have"
         },
         {
-          "n": 12,
+          "n": 14,
           "slug": "executemany",
           "title": "executemany",
           "blurb": "executemany, one transaction, and the lastrowid that came back None"
         },
         {
-          "n": 13,
+          "n": 15,
           "slug": "indexes-and-query-plans",
           "title": "Indexes and Query Plans",
           "blurb": "EXPLAIN QUERY PLAN, SCAN against SEARCH, and the index your WHERE clause cannot use"
         },
         {
-          "n": 14,
+          "n": 16,
           "slug": "full-text-search",
           "title": "Full-Text Search",
           "blurb": "FTS5, bm25 ranking, and the MATCH you cannot use on an ordinary table"
         },
         {
-          "n": 15,
+          "n": 17,
           "slug": "concurrency-and-wal",
           "title": "Concurrency and WAL",
           "blurb": "database is locked, busy_timeout, and the single writer WAL does not remove"
         },
         {
-          "n": 16,
+          "n": 18,
           "slug": "backup-and-copying",
           "title": "Backup and Copying",
           "blurb": "conn.backup, VACUUM INTO, iterdump, and why copying the file mid-write is not a backup"
         },
         {
-          "n": 17,
+          "n": 19,
           "slug": "a-searchable-archive",
           "title": "A Searchable Archive",
           "blurb": "A folder of documents into one indexed, searchable, backed-up file"
