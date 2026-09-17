@@ -769,7 +769,8 @@ readings: a module, `readings.py`, a script, `summary.py`, and their tests, writ
 
 ## sqlite3, Deep Dive
 
-Every notebook in **sqlite3, Deep Dive** but Joins works on the weather stations' hourly readings
+Every notebook in **sqlite3, Deep Dive** but Joins and Everyday Requests works on the weather
+stations' hourly readings
 for 2025 at Bergen, Oslo, Svalbard and Tromso, with Svalbard's readings empty for 2 March. Why
 sqlite3's Setup writes them to `scratch/readings.csv` and loads that into a table. Later notebooks
 build `scratch/stations.db` directly, handing a generator of the same values to `executemany`, and
@@ -777,6 +778,13 @@ every notebook's last cell removes the scratch folder. Tables and Queries splits
 tables, `stations (id, name, latitude)` and `readings (id, station_id, hour, celsius)`, and adds
 Kirkenes (latitude 69.73) as a station with no readings, which the left joins rely on. A later
 notebook that joins stations to readings builds those two tables the way Tables and Queries does.
+
+Everyday Requests, the guide's last notebook, has two databases of its own, since its subject is the
+requests a developer answers against a schema somebody else designed: `school.db`, with 24 students,
+10 courses, 3 terms, 40 sections, their enrollments and a `grades` lookup of grade points, and
+`ledger.db`, with 9 customers, 48 invoices and their lines, and the payments applied to them. Both
+come from formulas, both use `STRICT` tables, money is in `INTEGER` cents, and every report runs as
+of `TODAY = "2026-04-15"` rather than asking the clock.
 
 Joins works on the author's own example instead, at the author's request: `Employees` (Alice in
 department 1, Bob in 2, Charlie in none) and `Departments` (1 HR, 2 IT, 3 Marketing, which has no
@@ -867,6 +875,14 @@ repeat a sentence and score the same, so every ranked query orders by `rank, row
 - **`INSERT OR REPLACE` runs no delete trigger** unless `PRAGMA recursive_triggers` is on, so an
   external content FTS5 index keeps the replaced row's words under its old rowid, and a count by
   `MATCH` finds both. A Searchable Archive teaches it as a Common error, fixed with `'rebuild'`.
+- **Never print a `SUM` over `REAL` values.** SQLite 3.43 and later add floating point numbers with
+  Kahan-Babuska-Neumaier summation, and earlier versions add them plainly, so the last digits of a
+  total can differ between Colab and here. Everyday Requests keeps money in `INTEGER` cents and shows
+  the cost of a `REAL` with `CAST(dollars * 100 AS INTEGER)`, which is the same on every machine.
+- **Give a computed column a name no table in the query has.** A bare name in `HAVING` resolves to a
+  column of a joined table before it resolves to the `SELECT`'s alias, so `HAVING credits < 15`
+  silently tested `courses.credits` and let every group through. Everyday Requests calls it
+  `credits_earned` and teaches the shadowing as a Common error.
 - **Set SQLite's double-quote fallback, never assume it.** A build of SQLite can be compiled so that
   a double-quoted word naming no column is an error instead of text, so a cell that shows the
   fallback first calls `conn.setconfig(sqlite3.SQLITE_DBCONFIG_DQS_DML, True)`, which needs Python

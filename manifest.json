@@ -935,6 +935,12 @@
           "slug": "a-searchable-archive",
           "title": "A Searchable Archive",
           "blurb": "A folder of documents into one indexed, searchable, backed-up file"
+        },
+        {
+          "n": 20,
+          "slug": "everyday-requests",
+          "title": "Everyday Requests",
+          "blurb": "A college and a ledger, and the requests a developer answers with joins, aggregates and dates"
         }
       ]
     },
