@@ -129,7 +129,7 @@ Before the first code cell, work through these under `###` subheadings:
    Name the term in bold. State it precisely enough to be worth rereading later.
 3. **Why it works that way.** The mental model, the consequence, the thing that surprises
    people. This is usually the longest part and it is where the teaching happens.
-4. **Where you will meet this.** Real places, including other guides in this library.
+4. **Where this shows up.** Real places, including other guides in this library.
 5. **What this notebook covers.** A short list. The reader should know what is ahead before
    they run anything.
 
