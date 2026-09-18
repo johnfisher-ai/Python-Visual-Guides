@@ -864,6 +864,18 @@ join needs an unmatched row adds one. The data comes from lists and a formula in
   as a tuple in column order and is safe.
 - **A UUID a notebook prints comes from `uuid.uuid5` with a fixed name**, never `uuid4`, so the
   receipts in Column Types are the same on every run.
+- **From The Session on, Setup builds the college from the ORM classes** of Declarative Models:
+  `Base.metadata.create_all`, then `conn.execute(insert(Cls), rows)` for every class in dependency
+  order, on a connection rather than a session, so that Setup does not use what the notebook teaches.
+- **Switch `echo` on before a session's first statement.** A connection decides whether it logs when
+  it is checked out, and a session keeps one connection for its whole transaction, so `echo` set in
+  the middle of a session logs nothing until the next transaction.
+- **Load before you change, when a cell prints what a session holds.** Any query, `session.get()`
+  included, autoflushes first, so a load after an assignment sends the `UPDATE` early and leaves
+  `session.dirty` empty. The Session orders its cells that way and says why.
+- **Never read an attribute of an object after its session has closed.** The commit expired it, and
+  the refresh raises `DetachedInstanceError`, whose message names the object's memory address. The
+  Session prints only `state(obj)` after a block; The Identity Map teaches the error itself.
 - **Compile for another database with no driver.** `postgresql.dialect()` and `mssql.dialect()`
   write SQL without importing a driver or reaching a server. `literal_binds` writes values into the
   SQL for a reader, never for running.
