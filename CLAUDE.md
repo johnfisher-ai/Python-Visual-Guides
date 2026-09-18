@@ -783,6 +783,32 @@ readings: a module, `readings.py`, a script, `summary.py`, and their tests, writ
   `GIT_COMMITTER_*`. Print exit codes and pytest's `E`, `FAILED` and `ERROR` lines, never a hash or
   a date. PyYAML is pinned to 6.0.3, Colab's version, and reads a workflow's `on` key as `True`.
 
+## SQLAlchemy, Deep Dive
+
+Every notebook in **SQLAlchemy, Deep Dive** works on a college, which the author chose over the
+weather stations because it has the relationships an ORM exists for. Why SQLAlchemy builds its first
+two tables in Setup with the standard library's `sqlite3`: 25 students, among them Aoife O'Brien,
+whose apostrophe is what the notebook's f-string breaks on, and 10 courses. Later notebooks add
+terms, sections and enrollments, and an enrollment carries a status and a grade, which makes it the
+association table with an extra column that Many to Many is about. The data comes from lists and a
+formula in Setup, never from `random`.
+
+- **Pinned at SQLAlchemy 2.0.54**, the release the research outline was fact-checked against, in
+  `requirements.txt` for CI. Colab ships its own 2.0 release, so every Setup prints
+  `sqlalchemy.__version__`, and its prose says how to match 2.0.54 exactly with `%pip install` and a
+  restart. The research outline's advice to open every notebook with a `pip install` cell does not
+  survive the house rule that Setup is the first code cell.
+- **Never print `echo=True` output.** SQLAlchemy logs through `logging`, and every line starts with
+  a timestamp, and the line after each statement says how long it took to compile, so no rerun
+  matches. Show SQL with `compile`, as the notebooks' `show_sql` helper does, or give the
+  `sqlalchemy.engine` logger a handler of its own that prints the message alone, which is what
+  Engines and URLs has to teach before Loading Strategies counts statements.
+- **Never print a mapped object without a `__repr__`.** The default is its memory address, which
+  differs on every run, so a mapped class gets a `__repr__` the first time it is printed.
+- **Compile for another database with no driver.** `postgresql.dialect()` and `mssql.dialect()`
+  write SQL without importing a driver or reaching a server. `literal_binds` writes values into the
+  SQL for a reader, never for running.
+
 ## sqlite3, Deep Dive
 
 Every notebook in **sqlite3, Deep Dive** but Joins and Everyday Requests works on the weather
