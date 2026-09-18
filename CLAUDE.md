@@ -935,6 +935,19 @@ join needs an unmatched row adds one. The data comes from lists and a formula in
   the purpose.
 - **Give every variable a notebook keeps a specific name.** A Common error's `names` once replaced the
   term names a later cell used, and every count printed 0; the build passed, since both runs agreed.
+- **Migrations with Alembic runs `alembic` as a command**, through `alembic()`: `python -m alembic` in
+  `scratch`, with `NO_COLOR`, `PYTHONDONTWRITEBYTECODE` (revisions are edited and rerun within a
+  second) and `PYTHONUNBUFFERED`, the folder's path taken out, a traceback cut to its last line, and
+  three lines every command prints left out. It calls `engine.dispose()` first: after batch mode had
+  copied `students`, a pooled connection opened before the migration answered `PRAGMA
+  foreign_key_list` from the old table, and `get_foreign_keys` warned and returned `[]`.
+- **Alembic's models live in `scratch/college_models.py`**, written with `%%writefile`, since the command
+  runs in a process of its own. `alembic.ini`'s URL line is replaced with `re.sub`, because the
+  generated one reads `driver://user:pass@...`, and a notebook never shows a credential. Every revision
+  gets `--rev-id`, and `print_revision` prints from `def upgrade` on, since the header holds the time
+  the file was written. Setup installs `alembic==1.20.0` with pip where it is missing, as on Colab.
+- **A revision written by hand is mirrored in the models.** Common errors adds a unique constraint by
+  hand, and until `unique=True` went into the model, the next autogenerate proposed dropping it.
 - **Compile for another database with no driver.** `postgresql.dialect()` and `mssql.dialect()`
   write SQL without importing a driver or reaching a server. `literal_binds` writes values into the
   SQL for a reader, never for running.
