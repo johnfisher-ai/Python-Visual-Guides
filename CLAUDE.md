@@ -845,6 +845,18 @@ join needs an unmatched row adds one. The data comes from lists and a formula in
   documentation recommends for Alembic, with `%(column_0_N_name)s` for unique constraints so that the
   pair of course and term is `uq_sections_course_id_term_id`. Migrations with Alembic needs those
   names for batch mode on SQLite.
+- **From SQL Expressions on, Setup builds the college from Python**: the lists, then `college`, the
+  `MetaData` of five tables that Tables and Metadata wrote, and `build_college`, which creates them
+  and loads the lists, so the `Date` columns hold dates and `enrollments.status` has its server
+  default. Connections and Transactions to Tables and Metadata built it from SQL text with `sqlite3`.
+- **Python's `and` between two conditions depends on the first one.** An `==` or `!=` has a truth
+  value, `True` only when both sides are the same object, so `a and b` quietly returns `a` and drops
+  `b`; any other comparison first raises `TypeError: Boolean value of this clause is not defined`.
+  SQL Expressions shows both, in that order.
+- **An ORM `update()` keeps loaded objects in step by default on 2.0.54.** `synchronize_session`
+  defaults to `'auto'`, which evaluates the change in Python or fetches the rows, so an object already
+  loaded shows the new value; only `synchronize_session=False` leaves it stale. The research
+  outline's error for SQL Expressions describes the old default, and that notebook stays with Core.
 - **Compile for another database with no driver.** `postgresql.dialect()` and `mssql.dialect()`
   write SQL without importing a driver or reaching a server. `literal_binds` writes values into the
   SQL for a reader, never for running.
