@@ -900,6 +900,25 @@ join needs an unmatched row adds one. The data comes from lists and a formula in
 - **From Many to Many on, Setup builds the college from `REL_CLASSES`**, the classes with relationships
   that Relationships wrote, every collection with an `order_by` so that nothing printed depends on the
   order SQLite returns rows in.
+- **Cascades and Deletes declares its own classes**, `REL_CLASSES` with rules for deleting: an `Advisor`
+  class that `Student.advisor_id` may point at, whose `students` keep the default rule;
+  `cascade="all, delete-orphan"` on `Student.enrollments`; `passive_deletes=True` and
+  `ondelete="CASCADE"` on `Term.sections` and `Section.enrollments`; and the default kept on
+  `Course.sections`, so deleting a course with sections fails. Its first worked example adds Fall 2026
+  (sections 41 to 50), Zoe Nakamura and 78 enrollments, and every worked example deletes only those.
+- **In 2.0 a pending orphan is inserted, not refused.** An `Enrollment` given only `section_id`, under
+  `delete-orphan` on `Section.enrollments`, flushes without complaint, so the old "pending instance and
+  is an orphan" `FlushError` is not a Common error. Cascades and Deletes teaches `delete-orphan` on the
+  many-to-one side instead, an `ArgumentError` when the classes are first used.
+- **`StaleDataError` needs a session that kept its values.** After a default commit the object is
+  expired, and the flush reloads it and raises `ObjectDeletedError` first; Cascades and Deletes uses
+  `sessionmaker(engine, expire_on_commit=False)`. The session commits before the other connection
+  writes, since a session that has read holds SQLite's lock and the writer would fail with
+  `database is locked`.
+- **Never echo an ORM bulk delete that has a subquery.** `synchronize_session="auto"` falls back to
+  `fetch`, which adds `RETURNING` of the primary key, and `crud.py` collects those columns in a `set`
+  of `Column` objects, which hash by memory address, so the column order could differ between
+  machines. Cascades and Deletes prints the compiled Core statement, which has no `RETURNING`.
 - **Compile for another database with no driver.** `postgresql.dialect()` and `mssql.dialect()`
   write SQL without importing a driver or reaching a server. `literal_binds` writes values into the
   SQL for a reader, never for running.
