@@ -836,6 +836,15 @@ join needs an unmatched row adds one. The data comes from lists and a formula in
   driver is read with `make_url(...).get_driver_name()`, which imports nothing.
 - **Never print a mapped object without a `__repr__`.** The default is its memory address, which
   differs on every run, so a mapped class gets a `__repr__` the first time it is printed.
+- **Sort what comes from a set or from SQLite's catalog before printing it.** `Table.constraints` is a
+  set, whose order changes between runs, and `inspect(engine).get_foreign_keys()` lists a table's
+  foreign keys in the order SQLite's `PRAGMA foreign_key_list` gives, the reverse of the order they
+  were declared. Tables and Metadata sorts both, and prints `sorted(metadata.tables)` after
+  `MetaData.reflect`.
+- **Tables and Metadata names every constraint with `NAMING`**, the convention SQLAlchemy's
+  documentation recommends for Alembic, with `%(column_0_N_name)s` for unique constraints so that the
+  pair of course and term is `uq_sections_course_id_term_id`. Migrations with Alembic needs those
+  names for batch mode on SQLite.
 - **Compile for another database with no driver.** `postgresql.dialect()` and `mssql.dialect()`
   write SQL without importing a driver or reaching a server. `literal_binds` writes values into the
   SQL for a reader, never for running.
