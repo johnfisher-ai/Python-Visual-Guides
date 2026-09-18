@@ -867,9 +867,17 @@ join needs an unmatched row adds one. The data comes from lists and a formula in
 - **From The Session on, Setup builds the college from the ORM classes** of Declarative Models:
   `Base.metadata.create_all`, then `conn.execute(insert(Cls), rows)` for every class in dependency
   order, on a connection rather than a session, so that Setup does not use what the notebook teaches.
-- **Switch `echo` on before a session's first statement.** A connection decides whether it logs when
-  it is checked out, and a session keeps one connection for its whole transaction, so `echo` set in
-  the middle of a session logs nothing until the next transaction.
+- **Switch `echo` on before a session's first statement, and leave it on until the block ends.** A
+  connection decides whether it logs when it is checked out, and a session keeps one connection for its
+  whole transaction, so `echo` set in the middle of a session logs nothing until the next transaction;
+  and the engine's logger must still be at `INFO` when a statement runs, so a `ROLLBACK` at the end of a
+  block after `echo = False` is never printed.
+- **The Identity Map prints its errors through `without_address`**, a `re.sub` that replaces `0x...`,
+  since `DetachedInstanceError`, `ObjectDeletedError` and "Can't attach instance" all name an object's
+  memory address. Its Common errors cells catch and print them, and none is tagged `raises-exception`.
+- **A session keeps an object in its identity map only while something else refers to it.** A probe that
+  called `session.get()` without keeping the result found that `add()` of a second object for the same row
+  succeeded; the notebook keeps a reference, `loaded_elena`, so that the refusal it teaches happens.
 - **Load before you change, when a cell prints what a session holds.** Any query, `session.get()`
   included, autoflushes first, so a load after an assignment sends the `UPDATE` early and leaves
   `session.dirty` empty. The Session orders its cells that way and says why.

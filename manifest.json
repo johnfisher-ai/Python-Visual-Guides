@@ -620,12 +620,18 @@
         },
         {
           "n": 18,
+          "slug": "four-databases-one-codebase",
+          "title": "Four Databases, One Codebase",
+          "blurb": "PostgreSQL, MySQL, SQL Server, and Oracle from one set of models, and the statements that still belong to one database"
+        },
+        {
+          "n": 19,
           "slug": "testing-a-data-layer",
           "title": "Testing a Data Layer",
           "blurb": "A fixture that builds the schema once, a transaction rolled back after every test, and the object that detached when the session closed"
         },
         {
-          "n": 19,
+          "n": 20,
           "slug": "a-complete-data-layer",
           "title": "A Complete Data Layer",
           "blurb": "Schema, migration, load, and query in one script against one small database"
