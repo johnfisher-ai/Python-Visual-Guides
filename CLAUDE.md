@@ -788,10 +788,16 @@ readings: a module, `readings.py`, a script, `summary.py`, and their tests, writ
 Every notebook in **SQLAlchemy, Deep Dive** works on a college, which the author chose over the
 weather stations because it has the relationships an ORM exists for. Why SQLAlchemy builds its first
 two tables in Setup with the standard library's `sqlite3`: 25 students, among them Aoife O'Brien,
-whose apostrophe is what the notebook's f-string breaks on, and 10 courses. Later notebooks add
-terms, sections and enrollments, and an enrollment carries a status and a grade, which makes it the
-association table with an extra column that Many to Many is about. The data comes from lists and a
-formula in Setup, never from `random`.
+whose apostrophe is what the notebook's f-string breaks on, and 10 courses. From Connections and
+Transactions on, Setup builds five tables with `sqlite3` (the string lives in the builders'
+`sqa_common.py`): 4 `terms`, Fall 2024 to Spring 2026, which is under way; 40 `sections`, one of every
+course in every term, where course `c` in term `t` is section `(t - 1) * 10 + c`, so Spring 2026's
+are 31 to 40; and 228 `enrollments`, three courses a term for every student from the term they
+started, `completed` with a grade in the first three terms and `enrolled` with none in Spring 2026.
+An enrollment's status and grade make it the association table with extra columns that Many to Many
+is about. Every student has enrollments and every section has students, so a notebook whose outer
+join needs an unmatched row adds one. The data comes from lists and a formula in Setup, never from
+`random`.
 
 - **Pinned at SQLAlchemy 2.0.54**, the release the research outline was fact-checked against, in
   `requirements.txt` for CI. Colab ships its own 2.0 release, so every Setup prints
@@ -809,6 +815,16 @@ formula in Setup, never from `random`.
   echo=False)`**, defined in its Setup: a file with the default `QueuePool`, or with no path a database
   in memory on `StaticPool` with `check_same_thread=False`, and a `connect` event that switches on
   `PRAGMA foreign_keys` for every connection.
+- **From Connections and Transactions on, the helper passes `connect_args={"autocommit": False}`.**
+  Under `sqlite3`'s default legacy control, a `SAVEPOINT` that comes before any write starts a
+  transaction of its own and commits when released, so an outer rollback leaves its rows saved, which
+  that notebook shows as its last Common error. `autocommit=False` keeps a transaction open from the
+  moment of connecting, where `PRAGMA foreign_keys` does nothing, so the `connect` event sets
+  `autocommit` to `True` for the `PRAGMA` and back to `False`, as SQLAlchemy's SQLite documentation
+  shows. Without that toggle the pragma reads 0 on every connection, with no error.
+- **Let a reading connection's block end before another connection commits.** With `autocommit=False`
+  a connection that has read holds SQLite's shared lock until its transaction ends, and a commit
+  elsewhere waits for it, then fails with `database is locked`.
 - **Never dispose an in-memory engine that two threads used through its default
   `SingletonThreadPool`.** `dispose()` closes every thread's connection from the thread that calls it,
   `sqlite3` refuses for the others, and the pool logs each refusal to stderr with a memory address and
