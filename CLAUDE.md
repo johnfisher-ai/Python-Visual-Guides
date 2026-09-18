@@ -970,6 +970,19 @@ join needs an unmatched row adds one. The data comes from lists and a formula in
   `SAVEPOINT` when it is released.
 - **A cell whose last line is `path.write_text(...)` shows the number of characters written.** Write
   several files in a loop, which has no value to show.
+- **A Complete Data Layer builds no tables in Setup.** Setup writes `data/`, five CSV exports made from
+  the lists, with enrollments naming students by email and sections by course code and term, and three
+  bad rows at the end (lines 230 to 232: an unknown email, a repeated row, a status the `CHECK`
+  refuses). The project is the scratch folder: `models.py`, `database.py` (`make_engine`), `load.py`
+  (text to Python at the edge, `utf-8-sig`, a savepoint for every row), `queries.py`, `conftest.py`
+  (a `migrations` fixture that runs `command.upgrade` on a database of the run's own), the tests
+  (`command.check` among them) and `build.py`, which runs it all on a new file.
+- **A `StatementError` prints its parameters as a dictionary whose key order changes between runs.** A
+  Common error that raises one catches it and prints its first line. And a chained SQLAlchemy error in
+  a traceback ends with its background link, so the notebook's `alembic()` keeps the last line that
+  names an error, not the last line.
+- **To show `command.check` failing, change something a load does not need.** A new column breaks the
+  engine fixture's load first and every test errors at setup; an index leaves the check alone to fail.
 - **Compile for another database with no driver.** `postgresql.dialect()` and `mssql.dialect()`
   write SQL without importing a driver or reaching a server. `literal_binds` writes values into the
   SQL for a reader, never for running.
