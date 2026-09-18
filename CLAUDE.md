@@ -857,6 +857,13 @@ join needs an unmatched row adds one. The data comes from lists and a formula in
   defaults to `'auto'`, which evaluates the change in Python or fetches the rows, so an object already
   loaded shows the new value; only `synchronize_session=False` leaves it stale. The research
   outline's error for SQL Expressions describes the old default, and that notebook stays with Core.
+- **Never commit an error raised while an ORM flush converts a value.** Its message lists the flush's
+  parameters as a dictionary whose key order follows Python's hash seed, so no two runs print the same
+  text. Column Types raises its `StatementError` through `insert(Payment)` on a connection, whose
+  message has no parameters; an error from the driver itself, such as an `IntegrityError`, lists them
+  as a tuple in column order and is safe.
+- **A UUID a notebook prints comes from `uuid.uuid5` with a fixed name**, never `uuid4`, so the
+  receipts in Column Types are the same on every run.
 - **Compile for another database with no driver.** `postgresql.dialect()` and `mssql.dialect()`
   write SQL without importing a driver or reaching a server. `literal_binds` writes values into the
   SQL for a reader, never for running.
