@@ -215,7 +215,23 @@ its committed code teaches the reader something false, and nothing but you will 
 - **Write for someone learning.** Name the thing they will see, not the thing the language
   calls it internally. "The error you will get" beats "the exception raised by the
   interpreter".
-- **Say what actually happens.** No claim in a notebook that has not been run.
+- **Say what actually happens.** No claim in a notebook that has not been run. A sweep over
+  sqlite3, Deep Dive found about thirty sentences that failed this, none of them wrong, all of
+  them unsupported by the run beneath them, so the specific shapes are worth naming:
+
+  - **A join that keeps unmatched rows needs an unmatched row in the data.** "The list has to
+    include the students who have earned none at all" is an inner join in disguise until a
+    student with none is in the table.
+  - **A mechanism the notebook builds and credits has to run in it.** Two notebooks created a
+    delete trigger, said the triggers keep the index in step, and never deleted a row; a loader
+    guard, a re-raise branch, a capacity check and an unchecked file left by a crash were all
+    described and never reached.
+  - **A counterfactual is a claim.** "Without the index it would scan", "on a new cursor it
+    would pass None", "closing the connection would not have helped": print the other case
+    beside the one shown, or attribute it to the notebook that does.
+  - **Where the other case cannot be printed**, because it hangs, or differs by machine, or
+    differs between SQLite versions, say that plainly or hand it to the notebook that owns it.
+    A local time, a float sum and a nested query plan are all unfit to print.
 - **No sentence that has to be decoded.** A negation or a pronoun is fine when what it refers
   to is the thing immediately before it. It stops being fine when the reader has to hold two
   earlier clauses in mind and negate both.
