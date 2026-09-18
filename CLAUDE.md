@@ -884,6 +884,19 @@ join needs an unmatched row adds one. The data comes from lists and a formula in
 - **Never read an attribute of an object after its session has closed.** The commit expired it, and
   the refresh raises `DetachedInstanceError`, whose message names the object's memory address. The
   Session prints only `state(obj)` after a block; The Identity Map teaches the error itself.
+- **Never let a warning print the ordinary way.** Python shows a warning with the file and line that
+  raised it, and in a notebook that file is `ipykernel_NNNN/NNNN.py` under a temporary folder, different
+  on every run and under the home folder here. Catch it with `warnings.catch_warnings(record=True)` and
+  print the message's first part, as Relationships does for its two `SAWarning`s.
+- **SQLAlchemy 2.0 cascades a new object into a session only from the side it was added, appended or
+  assigned to.** Giving a new `Section` a `course` the session holds puts it in `course.sections` through
+  `back_populates`, and not in the session, so the next autoflush warns `Object of type <Section> not in
+  session, add operation along 'Course.sections' will not proceed`. Relationships teaches it as a Common
+  error; its capstone looks everything up first and builds the new objects with no query in between,
+  since any query, a lazy load included, autoflushes a half-built graph.
+- **From Many to Many on, Setup builds the college from `REL_CLASSES`**, the classes with relationships
+  that Relationships wrote, every collection with an `order_by` so that nothing printed depends on the
+  order SQLite returns rows in.
 - **Compile for another database with no driver.** `postgresql.dialect()` and `mssql.dialect()`
   write SQL without importing a driver or reaching a server. `literal_binds` writes values into the
   SQL for a reader, never for running.
