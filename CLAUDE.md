@@ -919,6 +919,22 @@ join needs an unmatched row adds one. The data comes from lists and a formula in
   `fetch`, which adds `RETURNING` of the primary key, and `crud.py` collects those columns in a `set`
   of `Column` objects, which hash by memory address, so the column order could differ between
   machines. Cascades and Deletes prints the compiled Core statement, which has no `RETURNING`.
+- **Async SQLAlchemy builds the college with the ordinary engine**, from `REL_CLASSES` with `Base`
+  inheriting `AsyncAttrs`, and makes `async_college_engine` in its first worked example: the
+  `sqlite+aiosqlite` URL, and the foreign key `PRAGMA` run through a cursor in a `connect` event on
+  `async_engine.sync_engine`. Cells `await` at the top level; the first look is a script, so it uses
+  `asyncio.run()`. `aiosqlite==0.22.1` and `greenlet==3.5.5` are pinned in `requirements.txt`, the
+  versions Colab has.
+- **Close a coroutine that will never run.** Left unawaited, it warns `was never awaited` on stderr
+  whenever it is collected, in whichever cell that happens to be. The missing-`await` and
+  `asyncio.run()` errors both call `.close()` on theirs.
+- **A session shared between coroutines fails only while it opens its connection.** On an engine with
+  no connections, `gather` over one session raises `This session is provisioning a new connection` for
+  every coroutine after the first; on an engine whose pool has one open, aiosqlite runs the statements
+  one after another and nothing fails. Async SQLAlchemy shows both, the first on an engine made for
+  the purpose.
+- **Give every variable a notebook keeps a specific name.** A Common error's `names` once replaced the
+  term names a later cell used, and every count printed 0; the build passed, since both runs agreed.
 - **Compile for another database with no driver.** `postgresql.dialect()` and `mssql.dialect()`
   write SQL without importing a driver or reaching a server. `literal_binds` writes values into the
   SQL for a reader, never for running.

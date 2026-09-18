@@ -13,3 +13,5 @@ pytest==8.4.2
 packaging==26.3
 PyYAML==6.0.3
 sqlalchemy==2.0.54
+aiosqlite==0.22.1
+greenlet==3.5.5
