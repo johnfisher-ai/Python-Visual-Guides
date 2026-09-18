@@ -215,6 +215,9 @@ its committed code teaches the reader something false, and nothing but you will 
 - **Write for someone learning.** Name the thing they will see, not the thing the language
   calls it internally. "The error you will get" beats "the exception raised by the
   interpreter".
+- **A person in an example gets no pronoun from a name.** A named student is Chloe, Chloe Martin
+  or the student, and a student in general is they, since a name does not say which pronoun
+  someone uses. A sweep over the two database guides replaced about ninety she, he, her and his.
 - **Say what actually happens.** No claim in a notebook that has not been run. A sweep over
   sqlite3, Deep Dive found about thirty sentences that failed this, none of them wrong, all of
   them unsupported by the run beneath them, so the specific shapes are worth naming:
