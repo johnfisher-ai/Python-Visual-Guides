@@ -798,11 +798,26 @@ formula in Setup, never from `random`.
   `sqlalchemy.__version__`, and its prose says how to match 2.0.54 exactly with `%pip install` and a
   restart. The research outline's advice to open every notebook with a `pip install` cell does not
   survive the house rule that Setup is the first code cell.
-- **Never print `echo=True` output.** SQLAlchemy logs through `logging`, and every line starts with
-  a timestamp, and the line after each statement says how long it took to compile, so no rerun
-  matches. Show SQL with `compile`, as the notebooks' `show_sql` helper does, or give the
-  `sqlalchemy.engine` logger a handler of its own that prints the message alone, which is what
-  Engines and URLs has to teach before Loading Strategies counts statements.
+- **Never print `echo=True` output through SQLAlchemy's own handler.** Every line starts with a
+  timestamp, and the line after each statement says how long it took to compile, so no rerun matches.
+  Show SQL with `compile`, as the notebooks' `show_sql` helper does, or through `PrintStatements`,
+  which Engines and URLs teaches: a handler on the `sqlalchemy.engine.Engine` logger, with
+  `propagate` off, that prints every statement and, from the record whose message is `[%s] %r`, only
+  the values. SQLAlchemy adds its timestamped handler only to a logger that has none, so a notebook
+  installs `PrintStatements` before any engine sets `echo`, and later notebooks define it in Setup.
+- **Every notebook from Engines and URLs on makes its engines with `college_engine(path=None,
+  echo=False)`**, defined in its Setup: a file with the default `QueuePool`, or with no path a database
+  in memory on `StaticPool` with `check_same_thread=False`, and a `connect` event that switches on
+  `PRAGMA foreign_keys` for every connection.
+- **Never dispose an in-memory engine that two threads used through its default
+  `SingletonThreadPool`.** `dispose()` closes every thread's connection from the thread that calls it,
+  `sqlite3` refuses for the others, and the pool logs each refusal to stderr with a memory address and
+  two thread numbers. Engines and URLs leaves such an engine for Python to collect, which is silent,
+  since Python ignores `ResourceWarning` unless told otherwise.
+- **Colab ships `psycopg2` and SQLAlchemy 2.0.52** (`googlecolab/backend-info`, checked 18 September
+  2026), so `create_engine("postgresql://...")` succeeds there and fails here. A missing driver is
+  shown with `psycopg`, version 3, which none of Colab, CI or this Mac has installed, and a default
+  driver is read with `make_url(...).get_driver_name()`, which imports nothing.
 - **Never print a mapped object without a `__repr__`.** The default is its memory address, which
   differs on every run, so a mapped class gets a `__repr__` the first time it is printed.
 - **Compile for another database with no driver.** `postgresql.dialect()` and `mssql.dialect()`
