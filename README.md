@@ -26,7 +26,7 @@ the question.
 | 3 | Object-Oriented Python | 14 | Complete |
 | 4 | APIs and JSON | 18 | Complete |
 | 5 | Testing and Packaging | 10 | Complete |
-| 6 | **SQLAlchemy, Deep Dive** | 20 | Being written |
+| 6 | SQLAlchemy, Deep Dive | 20 | Complete |
 | 7 | SQLModel, Deep Dive | 14 | Planned |
 | 8 | Peewee, Deep Dive | 12 | Planned |
 | 9 | sqlite3, Deep Dive | 20 | Complete |

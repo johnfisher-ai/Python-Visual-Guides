@@ -512,7 +512,7 @@
       "band": "Relational and Document Databases",
       "title": "SQLAlchemy, Deep Dive",
       "subtitle": "Sessions, models and the SQL underneath",
-      "status": "building",
+      "status": "published",
       "intro": "The mapper and the query engine together: what a session really does, and the SQL your Python turns into.",
       "prerequisites": "Object-Oriented Python, and Files, Paths and Formats.",
       "notebooks": [
