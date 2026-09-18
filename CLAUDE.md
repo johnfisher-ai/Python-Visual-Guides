@@ -948,6 +948,16 @@ join needs an unmatched row adds one. The data comes from lists and a formula in
   the file was written. Setup installs `alembic==1.20.0` with pip where it is missing, as on Colab.
 - **A revision written by hand is mirrored in the models.** Common errors adds a unique constraint by
   hand, and until `unique=True` went into the model, the next autogenerate proposed dropping it.
+- **Four Databases, One Codebase makes every dialect with no driver**, with `URL.get_dialect()()`, and
+  imports none, since CI installs none and Colab has only psycopg2. A dialect made without its driver
+  takes its own default placeholders (`format` for MySQL, `named` for SQL Server), so `offline_dialect`
+  passes each driver's PEP 249 `paramstyle`: pyformat for psycopg and PyMySQL, qmark for pyodbc,
+  named for oracledb. With no connection, SQL Server's dialect has `server_version_info = ()` and writes
+  `DATETIME` for a date and a `ROW_NUMBER()` subquery for `OFFSET`; the notebook says so rather than
+  set private version attributes. MySQL's dialect compiles `insert().returning()` without complaint,
+  so `dialect.insert_returning` is the check. Alembic's `MigrationContext.configure(dialect_name=...,
+  opts={"as_sql": True, ...})` writes a revision for each database, and `batch_alter_table` becomes
+  plain `ALTER TABLE` on all four.
 - **Compile for another database with no driver.** `postgresql.dialect()` and `mssql.dialect()`
   write SQL without importing a driver or reaching a server. `literal_binds` writes values into the
   SQL for a reader, never for running.
