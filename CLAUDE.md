@@ -958,6 +958,18 @@ join needs an unmatched row adds one. The data comes from lists and a formula in
   so `dialect.insert_returning` is the check. Alembic's `MigrationContext.configure(dialect_name=...,
   opts={"as_sql": True, ...})` writes a revision for each database, and `batch_alter_table` becomes
   plain `ALTER TABLE` on all four.
+- **Testing a Data Layer runs pytest on `scratch/registrar`**: `college_models.py`, `registrar.py`, whose
+  functions all take their session, and `conftest.py`, written with `%%writefile`. `run_pytest` is the
+  Testing and Packaging helper with memory addresses replaced, and `errors_only=True` keeps a failure's
+  `E` lines, the `FAILED` and `ERROR` lines and the last line, since a SQLAlchemy traceback runs through
+  site-packages. Tests assert on a variable, `left = seats_left(...)`, so that pytest's report of a
+  failed `assert` is one line and not a tree of `where` lines naming objects.
+- **The session fixture is a connection, `begin()`, and `Session(bind=connection,
+  join_transaction_mode="create_savepoint")`, rolled back after the test.** On SQLite it needs
+  `autocommit=False`: without it the first look's second test sees 2 rows, since `sqlite3` commits a
+  `SAVEPOINT` when it is released.
+- **A cell whose last line is `path.write_text(...)` shows the number of characters written.** Write
+  several files in a loop, which has no value to show.
 - **Compile for another database with no driver.** `postgresql.dialect()` and `mssql.dialect()`
   write SQL without importing a driver or reaching a server. `literal_binds` writes values into the
   SQL for a reader, never for running.
