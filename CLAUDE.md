@@ -1053,6 +1053,76 @@ two lists and a formula.
 - **The title `sa_column and __table_args__` renders literally** on the guide page, checked on
   21 September 2026: the double underscores are not read as markup, so it needs no escaping.
 
+## asyncpg and psycopg3, Deep Dive
+
+Seventeen notebooks against a **real PostgreSQL server**, which no other guide in the collection
+needs. Setup installs and starts one on Linux (`apt-get`, `service postgresql start`, no systemd on
+Colab) and raises with instructions anywhere else, so the author runs a local Homebrew
+`postgresql@16` and Colab and CI install their own. The shared Setup lives in the builders'
+`pg_common.py` as four strings, `INSTALL`, `SERVER`, `SEED` and `REPORT`, which every notebook
+concatenates. `SEED` drops every table in `public` other than `events` and seeds 5000 rows of
+`events (id bigserial, ts timestamptz, kind text, payload jsonb)`, so the counts are fixed: click
+1666, view 1667, purchase 1667. `REPORT` calls `build()` before it reads the server version, because
+otherwise it connects to a database that does not exist yet.
+
+Both drivers connect with no `host` at all on Colab, CI and macOS, so the outline's hardcoded
+`/var/run/postgresql` was dropped: it is the one thing that would have diverged between the three.
+A role named for the operating system user is created for peer authentication.
+
+### Determinism, which is harder here than anywhere else
+
+Nothing may print a memory address, a path under `/Users`, `/home`, `/var/folders` or `ipykernel_`,
+a server version banner, a socket path, an absolute byte size from `pg_relation_size`, or a raw
+`EXPLAIN`. Timings are **bands**, never numbers: `compared()` and `against()` in several builders map
+a ratio to "about the same" / "somewhat faster" / "several times faster" at 1.2 and 3. A session's
+`TimeZone` is set explicitly, because the default is the machine's. TLS files go in `/tmp/guide_tls`
+rather than `tempfile.gettempdir()`, which is a per-user path on macOS.
+
+Notebook 14 does the most to the server and puts all of it back: it generates a self-signed
+certificate, sets `ssl = on` by `ALTER SYSTEM` plus `pg_reload_conf()` (`ssl` is `sighup`, so no
+restart), and adds one `hostssl ... scram-sha-256` line to `pg_hba.conf` for one role on one
+address and removes it again. Passwords come from `secrets.token_urlsafe` and are never printed.
+`CREATE ROLE ... PASSWORD` cannot take a parameter, so it is built with `sql.Literal`.
+
+### Things that only running it reveals
+
+- a socket failure says `connection is bad:`, not `connection failed:`
+- `options=` is a keyword argument, not something you put in a conninfo string
+- `psycopg.Rollback` does not propagate out of the block that raised it
+- a table name as `%s` gives `syntax error at or near "$1"`, because binding is server side
+- `pg_typeof(%s)` cannot name a type for a bare string, `None`, or a list of strings
+- autocommit plus a named cursor gives `NoActiveSqlTransaction`, not `InvalidCursorName`
+- binary `COPY` without `set_types` gives `ProtocolViolation: insufficient data left in message`
+- `PipelineAborted` exists but never surfaces: the original exception lands on the first result read
+- reusing one cursor in a pipeline is silent, and you get the second statement's answer
+- asyncpg's cursor-outside-a-transaction error is `NoActiveSQLTransactionError`, a `PostgresError`,
+  not the `InterfaceError` the outline expected
+- an oversize `NOTIFY` payload is `InvalidParameterValue: payload string too long`, not
+  `ProgramLimitExceeded`, for both `pg_notify()` and the statement, and the limit is 7999 characters
+- `InvalidCachedStatementError` needs the query to go **straight into** a transaction after the
+  `ALTER TABLE`: outside one, asyncpg re-prepares and retries silently
+- an `ALTER TABLE` from another connection blocks rather than failing while the reader holds an open
+  transaction, so that half must be staged outside one
+- psycopg survives a literal `DEALLOCATE ALL` or `DISCARD ALL`, because it watches the text you send
+
+### Two traps that hang rather than fail
+
+`conn.notifies()` owns the connection while it runs, so querying that same connection from inside
+the loop body deadlocks. Every listener cell takes the notifications with `list(...)` first and uses
+the connection afterwards, and every wait has a timeout.
+
+A listener shared between sections hears the previous section's backlog, so notebook 15 gives each
+section its own `subscribe()` connection.
+
+### The measurements, and what they actually showed
+
+**Which Driver** runs one workload four ways with synchronous psycopg named as the baseline, and the
+two pools are also compared with each other so concurrency is held constant. On many small queries
+the drivers are indistinguishable. On a wide result asyncpg is several times faster with no
+concurrency at all, and psycopg's pool gains nothing there, because decoding is work no pool can
+hide. **Connection Pools** counts `pg_stat_database.sessions` rather than timing the pool-per-request
+mistake, because over a local socket the timing looks like nothing and the count is 20 against 2.
+
 ## Peewee, Deep Dive
 
 Every notebook in **Peewee, Deep Dive** works on the same catalog, written once in the builders'

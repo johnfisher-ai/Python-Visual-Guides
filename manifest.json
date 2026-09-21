@@ -956,7 +956,7 @@
       "band": "Relational and Document Databases",
       "title": "asyncpg and psycopg3, Deep Dive",
       "subtitle": "PostgreSQL, from Python",
-      "status": "building",
+      "status": "published",
       "intro": "Two PostgreSQL drivers, one asynchronous and one standard, and when the difference in speed is worth it.",
       "prerequisites": "sqlite3, Deep Dive.",
       "notebooks": [
