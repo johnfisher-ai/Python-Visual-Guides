@@ -987,6 +987,72 @@ join needs an unmatched row adds one. The data comes from lists and a formula in
   write SQL without importing a driver or reaching a server. `literal_binds` writes values into the
   SQL for a reader, never for running.
 
+## SQLModel, Deep Dive
+
+Every notebook in **SQLModel, Deep Dive** works on heroes and teams, the cast SQLModel's own
+documentation uses, written once in the builders' `sqm_common.py`: 3 teams, Preventers, Z-Force and
+Wakaland Guard, the last with no heroes; and 8 heroes, Deadpond to Princess Sure-E, one of them on no
+team and two with no age, so a join that keeps unmatched rows has one in either direction. Setup
+builds the database with `build(engine)`, which creates the tables and loads the cast on a connection
+with `insert`, never through a session, so that Setup does not use what a notebook is about to teach.
+Loading and N+1 is the exception: `build_many` writes 20 teams and 200 heroes, ten to a team, from
+two lists and a formula.
+
+- **Pinned at SQLModel 0.0.42**, the release the research outline was fact-checked against, with
+  `fastapi==0.141.1`, `httpx==0.28.1`, `alembic==1.20.0` and `pytest==8.4.2` in `requirements.txt`.
+  Colab has no SQLModel and no Alembic, so every Setup installs what `importlib.metadata.version`
+  cannot find, and prints the versions it is running.
+- **Never print a loaded model, its `repr`, or a bare `model_dump()`.** A loaded object's `__dict__`
+  is filled in by SQLAlchemy in an order that differs between runs, and Pydantic serializes in that
+  order, so the same row prints its fields differently on a second run. `fields(model)`, in every
+  Setup, returns `{name: getattr(model, name) for name in type(model).model_fields}`, which is the
+  class's own order. A model built by `model_validate` or by the constructor is stable and may be
+  printed.
+- **`message(error)`** is the other Setup helper: it replaces `0x...` addresses and drops the
+  `errors.pydantic.dev` line, whose address carries Pydantic's version (2.12.5 in CI, 2.13.5 on
+  Colab). A cell whose error names an address is caught and printed, never tagged `raises-exception`.
+- **A class defined a second time stays in SQLAlchemy's registry.** `SQLModel.metadata.clear()`
+  empties the tables and not the registry, so once relationships name their other side as text the
+  next query raises `Multiple classes found for path "Hero"`, which Relationships teaches as its last
+  Common error. Notebooks therefore give a changed rule to new classes (`Crew` and `Pilot` for the
+  cascade rules) rather than writing `Team` and `Hero` again.
+- **A mapper that fails to configure stays broken for the life of the process.** A relationship with
+  no foreign key, a misspelled `back_populates` and an ambiguous foreign key are each shown by
+  `run_python`, a helper that writes a small file and runs it in a Python of its own.
+- **Look everything up before building a graph.** `operation.deployments.append(Deployment(hero=session.get(...)))`
+  autoflushes a half-built graph and warns with a path inside the library; Many to Many reads both
+  heroes first.
+- **Never dispose an in-memory engine that two threads used.** `dispose()` closes connections from
+  the calling thread, `sqlite3` refuses for the others, and the pool writes the failure to the screen
+  with an address. SQLModel in FastAPI leaves its test engines for Python to collect.
+- **The test engine is built in three measured steps.** `create_engine("sqlite://")` gives the
+  application's thread a database of its own, so the tables are missing; `poolclass=StaticPool` shares
+  one connection and meets `sqlite3`'s thread rule; `connect_args={"check_same_thread": False}`
+  settles it. Its message names two thread ids, so only its first sentence is printed.
+- **starlette warns that `httpx` is deprecated** on this Mac, where Colab has `httpx2`, and the
+  warning names a file inside the library. `TestClient` is imported inside `warnings.catch_warnings`,
+  and A Small Service gives the project a `pytest.ini` with `filterwarnings = ignore`.
+- **`table=True` turns validation off in the constructor**, and `model_validate` is the one door in
+  that checks. `model_config = {"validate_assignment": True}` closes the constructor as well, since
+  SQLModel builds an object by assigning each value, and leaves a loaded row alone; that was measured
+  rather than assumed.
+- **Autogenerate writes `sqlmodel.sql.sqltypes.AutoString` and no import**, so `alembic upgrade head`
+  raises `NameError: name 'sqlmodel' is not defined`. Migrations fixes the script and then
+  `script.py.mako`, and A Small Service puts the import in the template before the first revision.
+  `alembic check`, or `command.check` in a test, is what catches models that have drifted ahead of
+  the migrations.
+- **A forward reference quotes the class name alone**, `Optional["Team"]`, with the real import under
+  `if TYPE_CHECKING:`. `"Team | None"` is looked up as one name and fails. An unquoted name differs
+  between Pythons: up to 3.13 it raises `NameError` as the class body runs, and from 3.14 annotations
+  are evaluated lazily, so the notebooks never rely on it.
+- **A UUID a notebook prints comes from `uuid.uuid5` with a fixed name.** Field Types and Defaults
+  declares `default_factory=uuid.uuid4` and prints only whether an id was set, never its value, and
+  never prints a `server_default` timestamp.
+- **Statements are counted, never timed.** `counting(engine)`, a context manager over
+  `before_cursor_execute`, returns a `Counter` by first word, which is the same on every machine.
+- **The title `sa_column and __table_args__` renders literally** on the guide page, checked on
+  21 September 2026: the double underscores are not read as markup, so it needs no escaping.
+
 ## sqlite3, Deep Dive
 
 Every notebook in **sqlite3, Deep Dive** but Joins and Everyday Requests works on the weather
