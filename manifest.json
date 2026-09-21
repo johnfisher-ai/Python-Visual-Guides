@@ -644,7 +644,7 @@
       "band": "Relational and Document Databases",
       "title": "SQLModel, Deep Dive",
       "subtitle": "One model for the table and the API",
-      "status": "building",
+      "status": "published",
       "intro": "A Pydantic model and a database table in one class, and the places that convenience stops.",
       "prerequisites": "APIs and JSON, and SQLAlchemy, Deep Dive.",
       "notebooks": [
