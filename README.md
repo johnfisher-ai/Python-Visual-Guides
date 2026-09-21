@@ -30,7 +30,7 @@ the question.
 | 7 | SQLModel, Deep Dive | 14 | Complete |
 | 8 | Peewee, Deep Dive | 12 | Complete |
 | 9 | sqlite3, Deep Dive | 20 | Complete |
-| 10 | asyncpg and psycopg3, Deep Dive | 17 | Planned |
+| 10 | **asyncpg and psycopg3, Deep Dive** | 17 | Being written |
 | 11 | PyMongo and Beanie, Deep Dive | 16 | Planned |
 | 12 | NumPy, Deep Dive | 14 | Planned |
 | 13 | Pandas, Deep Dive | 18 | Planned |

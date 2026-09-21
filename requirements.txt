@@ -20,3 +20,5 @@ httpx==0.28.1
 sqlmodel==0.0.42
 peewee==4.5.1
 psycopg[binary]==3.3.6
+asyncpg==0.31.0
+psycopg-pool==3.3.2
