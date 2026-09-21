@@ -27,7 +27,7 @@ the question.
 | 4 | APIs and JSON | 18 | Complete |
 | 5 | Testing and Packaging | 10 | Complete |
 | 6 | SQLAlchemy, Deep Dive | 20 | Complete |
-| 7 | SQLModel, Deep Dive | 14 | Planned |
+| 7 | **SQLModel, Deep Dive** | 14 | Being written |
 | 8 | Peewee, Deep Dive | 12 | Planned |
 | 9 | sqlite3, Deep Dive | 20 | Complete |
 | 10 | asyncpg and psycopg3, Deep Dive | 17 | Planned |
