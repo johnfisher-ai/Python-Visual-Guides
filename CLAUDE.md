@@ -1053,6 +1053,77 @@ two lists and a formula.
 - **The title `sa_column and __table_args__` renders literally** on the guide page, checked on
   21 September 2026: the double underscores are not read as markup, so it needs no escaping.
 
+## Peewee, Deep Dive
+
+Every notebook in **Peewee, Deep Dive** works on the same catalog, written once in the builders'
+`pw_common.py`: 4 authors, Ursula Vance, Marco Pietra, Ines O'Brien and Kofi Mensah, and 12 books,
+3 each, with years and page counts chosen so that a text comparison and a numeric one disagree.
+Ines O'Brien is in the cast from the start because the apostrophe in that name is what **Why
+Peewee** breaks a hand-built query on. Setup loads the catalog with `build(db)`, which creates the
+tables and writes the rows with `insert_many` inside one `atomic`.
+
+- **Pinned at peewee 4.5.1**, the release the research outline was fact-checked against. Colab has
+  4.4.0, whose messages are worded differently, so every Setup installs 4.5.1 when
+  `importlib.metadata.version` reports anything else.
+- **From Relationships onward the database line is
+  `SqliteDatabase(":memory:", pragmas={"foreign_keys": 1})`**, in `pw_common.PRAGMA_DB`. SQLite
+  enforces no foreign key without it, per connection, so `on_delete="CASCADE"` silently does
+  nothing. Notebooks 1 to 5 use the plain constructor, which is what makes the change worth
+  narrating when it arrives.
+- **A query remembers the database it was built against.** `query.sql()` compiles for whatever was
+  in scope when the query object was made, not when `sql()` is called, so a helper that compiles for
+  another backend takes a function and calls it inside `bind_ctx`. Built outside, both backends
+  print identical SQL and the whole contrast disappears.
+- **peewee names each savepoint with a fresh `uuid4`.** Transactions prints the savepoint statements
+  through a `RecordingSqlite` that masks `"s<32 hex>"` as `"s..."`. `BEGIN` and `COMMIT` go out on
+  the connection rather than through `execute_sql`, so they never appear in such a log, and the
+  notebook says so rather than faking them.
+- **Statements are counted, never timed.** A `SqliteDatabase` subclass overriding `execute_sql` is
+  the measurement throughout: `db.sent` for a count, `db.last` for the statement, `db.statements`
+  for the list with each statement's bound-value count. Read the counter into a local before
+  anything else runs, since a `count()` in the same `print` overwrites it.
+- **`playhouse.test_utils`** gives `count_queries` and `assert_query_count`. On the catalog's 12
+  books, `Book.select().join(Author)` in a loop is 13 queries and `select(Book, Author)` is 1, so
+  Relationships' Common error heading is `AssertionError: 13 != 1`; the first look uses a 3 book
+  fixture and gets `4 != 1`.
+- **`.objects()` does not overwrite the top model's column.** Where two selected models share a
+  column name, the one selected first wins and the other is silently lost, which Relationships shows
+  by running one join as `select(Series, Imprint)` and as `select(Imprint, Series)` and getting two
+  different names. `alias` is the fix.
+- **`Load` is new in 4.5 and `web_query` is a string in, string out.** `with_related(Load(...))` is
+  the method; `Index.web_query(typed)` returns a translated FTS5 query that still has to be handed
+  to `match`. Written as `where(Index.web_query(...))` it quietly matches nothing for every input.
+- **`MATERIALIZE` binds one value per parent.** prefetch and Load prints the bound-value count at
+  10, 100 and 1000 parents and then fails at 33,000 with `too many SQL variables`, which is the
+  deterministic replacement for the outline's timing comparison. `WHERE` and `JOIN` bind none.
+- **A JSON path returns JSON, so a numeric comparison compares text.** `as_int`, `as_float` and
+  `as_text` are the casts; there is no `as_bool` or `as_real`. JSON Columns uses the printing
+  numbers (2, 3, 9, 13) rather than the page counts, because every page count has three digits and
+  text order happens to agree there.
+- **Indexing a plain field is not a JSON path.** On a `TextField`, `detail["a"]["b"]` compiles to a
+  chain of equality tests whose result is compared with your value, so it returns every row or no
+  rows depending on the literals, and never looks at the document.
+- **`pwmigrate` ships in 4.5.1** as a console script over `playhouse.migrations`. The notebook runs
+  `python -m playhouse.migrations` so it does not depend on PATH. The first argument is a file path,
+  a URL, or a dotted path, tried in that order, so a wrong path ends as
+  `error: cannot import "app": No module named 'app'`. `status` exits 1 with anything pending and
+  `diff` exits 0 either way, so `status` is the gate.
+- **A timestamp or a generated date is masked before it is printed.** Migrations replaces
+  `YYYY-MM-DD HH:MM:SS` with `<applied at>` and the generator's date with `<when>`, and the
+  solutions never print a `tempfile` directory name.
+- **WAL does not allow a second writer.** It stops a reader being blocked by an open write
+  transaction, which SQLite and PostgreSQL demonstrates, and the second writer is locked out exactly
+  as before. `db_url.connect` builds a `Database` and does not connect, so a URL pointing at nothing
+  raises only when something calls `connect()`.
+- **`TSVectorField` on SQLite fails twice.** `create_tables` stops at
+  `near "USING": syntax error` from the GIN index peewee emits beside the column; with
+  `index=False` the table is made and the failure waits for `.match()`, which compiles to `@@` and
+  gives `unrecognized token: "@"`.
+- **nbgates accepts three extra Common errors heading forms** for this guide, each a real message
+  the house rule requires verbatim: a leading `error: ` from a CLI, and the exception suffixes
+  `DoesNotExist` and `Exceeded`.
+
+
 ## sqlite3, Deep Dive
 
 Every notebook in **sqlite3, Deep Dive** but Joins and Everyday Requests works on the weather
