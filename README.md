@@ -28,7 +28,7 @@ the question.
 | 5 | Testing and Packaging | 10 | Complete |
 | 6 | SQLAlchemy, Deep Dive | 20 | Complete |
 | 7 | SQLModel, Deep Dive | 14 | Complete |
-| 8 | Peewee, Deep Dive | 12 | Planned |
+| 8 | **Peewee, Deep Dive** | 12 | Being written |
 | 9 | sqlite3, Deep Dive | 20 | Complete |
 | 10 | asyncpg and psycopg3, Deep Dive | 17 | Planned |
 | 11 | PyMongo and Beanie, Deep Dive | 16 | Planned |

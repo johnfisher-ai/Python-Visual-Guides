@@ -740,7 +740,7 @@
       "band": "Relational and Document Databases",
       "title": "Peewee, Deep Dive",
       "subtitle": "A small mapper, end to end",
-      "status": "planned",
+      "status": "building",
       "intro": "A light object-relational mapper for scripts and small applications, from model to migration.",
       "prerequisites": "Object-Oriented Python.",
       "notebooks": [
