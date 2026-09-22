@@ -1070,7 +1070,7 @@
       "band": "Relational and Document Databases",
       "title": "PyMongo and Beanie, Deep Dive",
       "subtitle": "Documents instead of rows",
-      "status": "planned",
+      "status": "building",
       "intro": "MongoDB from Python: queries without SQL, and typed documents through an asynchronous mapper.",
       "prerequisites": "APIs and JSON.",
       "notebooks": [

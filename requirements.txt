@@ -22,3 +22,7 @@ peewee==4.5.1
 psycopg[binary]==3.3.6
 asyncpg==0.31.0
 psycopg-pool==3.3.2
+
+# PyMongo and Beanie, Deep Dive
+pymongo==4.18.1
+beanie==2.2.0
