@@ -31,7 +31,7 @@ the question.
 | 8 | Peewee, Deep Dive | 12 | Complete |
 | 9 | sqlite3, Deep Dive | 20 | Complete |
 | 10 | asyncpg and psycopg3, Deep Dive | 17 | Complete |
-| 11 | **PyMongo and Beanie, Deep Dive** | 16 | Being written |
+| 11 | PyMongo and Beanie, Deep Dive | 16 | Complete |
 | 12 | NumPy, Deep Dive | 14 | Planned |
 | 13 | Pandas, Deep Dive | 18 | Planned |
 | 14 | scikit-learn, Deep Dive | 14 | Planned |

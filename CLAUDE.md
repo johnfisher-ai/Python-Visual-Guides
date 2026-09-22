@@ -1123,6 +1123,80 @@ concurrency at all, and psycopg's pool gains nothing there, because decoding is 
 hide. **Connection Pools** counts `pg_stat_database.sessions` rather than timing the pool-per-request
 mistake, because over a local socket the timing looks like nothing and the count is 20 against 2.
 
+## PyMongo and Beanie, Deep Dive
+
+Sixteen notebooks against a **real MongoDB**, pinned to pymongo 4.18.1 and beanie 2.2.0 with
+pydantic 2.13.5. Beanie 2.2.0 declares `requires-python <3.14`, so the author verifies this guide
+in a **Python 3.12 venv** matching CI rather than the machine's 3.14; the shared boot cell is in the
+builders' `mongo_common.py` as four strings, INSTALL, SERVER, REPLICA and SEED.
+
+### Two servers, on purpose
+
+27017 is a **single node replica set** (`--replSet rs0` then `replSetInitiate` over a
+`directConnection` client, because a mongod started with --replSet but not initiated is RSGhost and
+unselectable). Transactions and `beanie migrate` need it. 27018 is a **plain standalone**, started
+by notebook 7's Setup, so "Transaction numbers are only allowed on a replica set member or mongos"
+is run rather than described. Both bind 127.0.0.1 with no credential anywhere.
+
+On Linux the server comes from MongoDB's own apt repository, whose codename is checked against a
+literal allowlist (jammy, noble) because a Colab codename MongoDB has not published for turns into
+"Unable to locate package mongodb-org-server" in every notebook at once. AVX is checked, since every
+build since 5.0 needs it.
+
+`seed()` fills shop.products and shop.reviews from `random.seed(0)`: 500 products by default,
+200,000 for Indexes and A Product Catalog. The digest is stable across forced reseeds.
+
+### Determinism, and what this guide had to learn
+
+- An **ObjectId is twelve random bytes**, so nbgates now fails any raw 24-hex string in output.
+- `OperationFailure` carries a fresh `$clusterTime` on a replica set, so no command failure may be
+  printed whole. Every notebook defines a `failed()` helper that takes `details["errmsg"]`.
+- A failed index build wraps the real message behind two fresh uuids; only the text after
+  ` :: caused by :: ` is stable. The server also prints sizes in hex, which `failed()` strips.
+- `list_collection_names()` sees what other notebooks left behind, so no output prints the list.
+- A **set of two or more strings** reprs in a different order in every process, so one must never
+  reach a committed traceback.
+- A trailing `await` echoes its result, and a DeleteResult carries timestamps. Name it.
+- `init_beanie` against a temporary client leaves the model bound to it, so closing that client
+  breaks every later cell. Rebind before closing.
+
+### Sixteen outline corrections, found by running it
+
+Why Documents: `--fork` exits **1**, not 100. The refused-connection errno is platform specific, 61
+on macOS and 111 on Linux. systemctl is absent entirely on macOS (127) where Colab has it installed
+but not booted.
+
+BSON Types: a **tuple does not raise**. It is stored as an array and comes back a list, silently,
+which the outline does not mention and which is worse than the types that refuse.
+
+Indexes: `create_index(..., unique=True)` over an existing default-named index raises
+**IndexKeySpecsConflict**, not IndexOptionsConflict; you only get the latter by naming the new index
+yourself.
+
+The Aggregation Pipeline: "a $sort before $match turns an indexed query into a full scan" is **not
+true on MongoDB 8** (the optimizer reorders them; both orders examined 5 documents). The
+demonstrable stage-order lesson is $match before against after a $group. And **"Exceeded memory
+limit for $group" no longer happens**: since 6.0 a stage spills to disk, and even
+`allowDiskUse=False` over the 200,000 seed completed.
+
+Modeling Without Joins: the oversize insert raises **pymongo.errors**.DocumentTooLarge, not
+bson.errors. The $push version gives a different message entirely, "BSONObj size ... is invalid".
+And **$lookup without an index is not one COLLSCAN per input document** on MongoDB 8: SBE builds one
+hash table over the whole foreign collection, 867 documents examined against 249 with the index.
+
+Link and BackLink: **insert_many does not set id** on the objects you pass, where insert does, so a
+Link built from one raises DocumentWasNotSaved. Declaring a BackLink with
+`Field(original_field=...)`, which is Beanie's documented form, makes Pydantic 2 emit a deprecation
+warning that the notebook silences at that one place.
+
+Migrations: the beanie console script is a Click **group**, so the module form needs the subcommand
+twice, `python -m beanie.executors.migrate migrate`. The log collection is **migrations_log**, not
+migrations. `new-migration` writes a timestamped filename, so a reproducible notebook must write its
+own. Omitting `-db` really does create a database named `None` holding a migrations_log.
+
+Async Queries: a missing await leaves a **FindOne query object**, not a coroutine, so the
+AttributeError names FindOne.
+
 ## Peewee, Deep Dive
 
 Every notebook in **Peewee, Deep Dive** works on the same catalog, written once in the builders'
