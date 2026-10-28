@@ -229,9 +229,12 @@ its committed code teaches the reader something false, and nothing but you will 
 Colab is what readers run. A session re-executes a notebook it changes on a replica of Colab, set
 up by the commands in the private repository's file 3:
 
-- a virtual environment at `/opt/colab` with Colab's published library versions
-  (`googlecolab/backend-info`), copied fresh before every notebook, since each notebook opens in a
-  new Colab runtime
+- a virtual environment at `/opt/colab` holding Colab's published version
+  (`googlecolab/backend-info`) of every package in it, dependencies included, among them IPython
+  7.34, which lays a traceback out as Colab does, copied fresh before every notebook, since each
+  notebook opens in a new Colab runtime
+- cells named `/tmp/ipython-input-N-HASH.py` in a traceback, the form Colab shows, by a startup file
+  the recording tools give IPython
 - a new `/content` folder for every notebook, holding `sample_data`, which is where Colab runs one
 - for the asyncpg and psycopg3 guide, a new PostgreSQL cluster in the `en_US.UTF-8` locale for
   every notebook, so Setup installs and starts the server as it does on Colab
@@ -695,8 +698,8 @@ is only this mode: Colab, local Jupyter and CI all behave the same.
   `Location: /<path>`, for Your First Request's `history`. Retired addresses are rarely documented,
   which the notebook says.
 - **What `requests` sends depends on the installation.** Its default `Accept-Encoding` gains `br`
-  or `zstd` when brotli or zstandard is installed (this machine has zstandard; Colab and CI do not),
-  and `User-Agent` carries the version. Print chosen request headers, and only the product name
+  or `zstd` when brotli or zstandard is installed (Colab has both, this Mac has zstandard, and CI has
+  neither), and `User-Agent` carries the version. Print chosen request headers, and only the product name
   from `User-Agent`.
 
 **Real services** appear where the real internet is the point, and print only stable fields.
@@ -759,7 +762,7 @@ Token, in a notebook's source or output.
 Exploring an API is the first notebook with `!` lines. IPython runs them in a pseudo-terminal, so
 their output arrives with a carriage return before every line feed, and tools that detect a
 terminal add escape codes: curl bolds header names, and Python 3.14's `json.tool` colors its output
-where Colab's 3.12 does not. `tools/clean_outputs.py`, run by the build, strips both from stream
+where Colab's 3.13 does not. `tools/clean_outputs.py`, run by the build, strips both from stream
 output, and `check_notebooks.py` fails on any it missed. Tracebacks keep their color.
 
 - `{BASE}` in a `!` line is IPython's expansion of a Python expression. If any `{...}` in the line
@@ -790,7 +793,7 @@ readings: a module, `readings.py`, a script, `summary.py`, and their tests, writ
   size within a second of the last run gets the old code: a test corrected from `return ... == 213`
   to `assert ... == 212` still warned until this was set.
 - **Colab, CI and this Mac run three different Pythons.** Colab's published environment
-  (`googlecolab/backend-info`, checked 15 September 2026) has Python 3.13.15, CI runs 3.12, and this
+  (`googlecolab/backend-info`, checked 28 October 2026) has Python 3.13.16, CI runs 3.12, and this
   Mac 3.14. Print nothing whose text depends on the version, such as the `^^^` markers under a line
   of a traceback, or the files a new virtual environment holds.
 - **A notebook that rewrites a module reloads it.** `importlib.reload` runs the file as it is now. Why
@@ -843,10 +846,14 @@ join needs an unmatched row adds one. The data comes from lists and a formula in
 `random`.
 
 - **Pinned at SQLAlchemy 2.0.54**, the release the research outline was fact-checked against, in
-  `requirements.txt` for CI. Colab ships its own 2.0 release, so every Setup prints
-  `sqlalchemy.__version__`, and its prose says how to match 2.0.54 exactly with `%pip install` and a
-  restart. The research outline's advice to open every notebook with a `pip install` cell does not
-  survive the house rule that Setup is the first code cell.
+  `requirements.txt` for CI. Colab ships 2.1.6 (checked 28 October 2026), which echoes ORM queries
+  without their `AS` labels, adds `::VARCHAR` casts to PostgreSQL's SQL, names other default drivers
+  and links its errors under `/e/21/`, so every Setup installs 2.0.54 with `pip` before importing it
+  wherever another version is installed, as the Peewee guide does, and prints
+  `sqlalchemy.__version__`. The author kept 2.0.54 on October 28, 2026 (Q5 in the private punch
+  list), and a move to 2.1 would be a round of its own. The research outline's advice to open every
+  notebook with a `pip install` cell does not survive the house rule that Setup is the first code
+  cell.
 - **Never print `echo=True` output through SQLAlchemy's own handler.** Every line starts with a
   timestamp, and the line after each statement says how long it took to compile, so no rerun matches.
   Show SQL with `compile`, as the notebooks' `show_sql` helper does, or through `PrintStatements`,
@@ -873,10 +880,11 @@ join needs an unmatched row adds one. The data comes from lists and a formula in
   `sqlite3` refuses for the others, and the pool logs each refusal to stderr with a memory address and
   two thread numbers. Engines and URLs leaves such an engine for Python to collect, which is silent,
   since Python ignores `ResourceWarning` unless told otherwise.
-- **Colab ships `psycopg2` and SQLAlchemy 2.0.52** (`googlecolab/backend-info`, checked 18 September
-  2026), so `create_engine("postgresql://...")` succeeds there and fails here. A missing driver is
-  shown with `psycopg`, version 3, which none of Colab, CI or this Mac has installed, and a default
-  driver is read with `make_url(...).get_driver_name()`, which imports nothing.
+- **Colab ships `psycopg2`** (2.9.13, checked 28 October 2026), so `create_engine("postgresql://...")`
+  succeeds there and fails here. A missing driver is shown with `psycopg`, version 3, which Colab and
+  this Mac lack (CI installs it for the asyncpg and psycopg3 guide, and runs the notebook without
+  comparing its output), and a default driver is read with `make_url(...).get_driver_name()`, which
+  imports nothing.
 - **Never print a mapped object without a `__repr__`.** The default is its memory address, which
   differs on every run, so a mapped class gets a `__repr__` the first time it is printed.
 - **Sort what comes from a set or from SQLite's catalog before printing it.** `Table.constraints` is a
@@ -928,8 +936,9 @@ join needs an unmatched row adds one. The data comes from lists and a formula in
   the refresh raises `DetachedInstanceError`, whose message names the object's memory address. The
   Session prints only `state(obj)` after a block; The Identity Map teaches the error itself.
 - **Never let a warning print the ordinary way.** Python shows a warning with the file and line that
-  raised it, and in a notebook that file is `ipykernel_NNNN/NNNN.py` under a temporary folder, different
-  on every run and under the home folder here. Catch it with `warnings.catch_warnings(record=True)` and
+  raised it, and in a notebook that file is a temporary one, `ipykernel_NNNN/NNNN.py` under the
+  temporary folder here, different on every run and under the home folder, and
+  `/tmp/ipython-input-N-HASH.py` on Colab. Catch it with `warnings.catch_warnings(record=True)` and
   print the message's first part, as Relationships does for its two `SAWarning`s.
 - **SQLAlchemy 2.0 cascades a new object into a session only from the side it was added, appended or
   assigned to.** Giving a new `Section` a `course` the session holds puts it in `course.sections` through
@@ -963,8 +972,9 @@ join needs an unmatched row adds one. The data comes from lists and a formula in
   inheriting `AsyncAttrs`, and makes `async_college_engine` in its first worked example: the
   `sqlite+aiosqlite` URL, and the foreign key `PRAGMA` run through a cursor in a `connect` event on
   `async_engine.sync_engine`. Cells `await` at the top level; the first look is a script, so it uses
-  `asyncio.run()`. `aiosqlite==0.22.1` and `greenlet==3.5.5` are pinned in `requirements.txt`, the
-  versions Colab has.
+  `asyncio.run()`. `aiosqlite==0.22.1` and `greenlet==3.5.5` are pinned in `requirements.txt`. Colab
+  has aiosqlite 0.22.1 and no greenlet, which SQLAlchemy 2.1 installs only with its `asyncio` extra,
+  so on Colab greenlet arrives with the 2.0.54 that Setup installs.
 - **Close a coroutine that will never run.** Left unawaited, it warns `was never awaited` on stderr
   whenever it is collected, in whichever cell that happens to be. The missing-`await` and
   `asyncio.run()` errors both call `.close()` on theirs.
@@ -977,8 +987,9 @@ join needs an unmatched row adds one. The data comes from lists and a formula in
   term names a later cell used, and every count printed 0; the build passed, since both runs agreed.
 - **Migrations with Alembic runs `alembic` as a command**, through `alembic()`: `python -m alembic` in
   `scratch`, with `NO_COLOR`, `PYTHONDONTWRITEBYTECODE` (revisions are edited and rerun within a
-  second) and `PYTHONUNBUFFERED`, the folder's path taken out, a traceback cut to its last line, and
-  three lines every command prints left out. It calls `engine.dispose()` first: after batch mode had
+  second) and `PYTHONUNBUFFERED`, the folder's path taken out, a traceback cut to its last line, the
+  lines in which `alembic init` names the files it copies sorted, since they arrive in the file
+  system's order, and three lines every command prints left out. It calls `engine.dispose()` first: after batch mode had
   copied `students`, a pooled connection opened before the migration answered `PRAGMA
   foreign_key_list` from the old table, and `get_foreign_keys` warned and returned `[]`.
 - **Alembic's models live in `scratch/college_models.py`**, written with `%%writefile`, since the command
@@ -1049,7 +1060,7 @@ two lists and a formula.
   class's own order. A model built by `model_validate` or by the constructor is stable and may be
   printed.
 - **`message(error)`** is the other Setup helper: it replaces `0x...` addresses and drops the
-  `errors.pydantic.dev` line, whose address carries Pydantic's version (2.12.5 in CI, 2.13.5 on
+  `errors.pydantic.dev` line, whose address carries Pydantic's version (2.12.5 in CI, 2.14.1 on
   Colab). A cell whose error names an address is caught and printed, never tagged `raises-exception`.
 - **A class defined a second time stays in SQLAlchemy's registry.** `SQLModel.metadata.clear()`
   empties the tables and not the registry, so once relationships name their other side as text the
@@ -1269,9 +1280,9 @@ Ines O'Brien is in the cast from the start because the apostrophe in that name i
 Peewee** breaks a hand-built query on. Setup loads the catalog with `build(db)`, which creates the
 tables and writes the rows with `insert_many` inside one `atomic`.
 
-- **Pinned at peewee 4.5.1**, the release the research outline was fact-checked against. Colab has
-  4.4.0, whose messages are worded differently, so every Setup installs 4.5.1 when
-  `importlib.metadata.version` reports anything else.
+- **Pinned at peewee 4.5.1**, the release the research outline was fact-checked against. Colab had
+  4.4.0 in September 2026, whose messages are worded differently, and 4.5.3 on October 28, so every
+  Setup installs 4.5.1 when `importlib.metadata.version` reports anything else.
 - **From Relationships onward the database line is
   `SqliteDatabase(":memory:", pragmas={"foreign_keys": 1})`**. SQLite
   enforces no foreign key without it, per connection, so `on_delete="CASCADE"` silently does
@@ -1372,7 +1383,10 @@ repeat a sentence and score the same, so every ranked query orders by `rank, row
 - **The readings come from a formula, never from `random`.** Every number a notebook prints is then
   the same in Colab, in CI and here, and a later notebook can quote a value an earlier one printed.
 - **Print nothing that depends on the SQLite version.** This Mac's Python 3.14.2 bundles SQLite
-  3.50.4, and the SQLite that Colab's and CI's Pythons use has not been checked. Never print
+  3.50.4, and Colab's Python uses Ubuntu 24.04's SQLite 3.45.1 (`apt-list.txt` in
+  `googlecolab/backend-info`, checked 28 October 2026), as the Colab replica does. CI's has not been
+  checked. A plan can name a covering index on 3.50 where 3.45 searches the same index and reads the
+  table, as one solution in Indexes and Query Plans shows. Never print
   `sqlite3.sqlite_version`, a database file's size beyond what the page size fixes (an empty file,
   or the two pages of a database holding one small table), or a mean from `AVG` without rounding it.
 - **Guard what needs a newer SQLite than 3.37.** `RIGHT JOIN` and `FULL JOIN` need 3.39.0, so Joins
