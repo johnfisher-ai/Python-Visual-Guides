@@ -136,7 +136,7 @@ def foot(filename: str = ""):
 <footer class="site">
   <div class="wrap">
     {_pager(filename)}
-    <p class="sig">Built by John Fisher. Code under the MIT license.</p>
+    <p class="sig">Notebooks, prose and figures <a href="{RAW}LICENSE">CC&nbsp;BY&nbsp;4.0</a>&nbsp;&middot; code&nbsp;<a href="{RAW}LICENSE-CODE">MIT</a>&nbsp;&middot; &copy;&nbsp;2026 John&nbsp;Fisher</p>
   </div>
 </footer>
 

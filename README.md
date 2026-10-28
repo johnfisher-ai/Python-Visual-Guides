@@ -124,8 +124,8 @@ top to bottom in a fresh runtime.
 
 ```
 ## What you will be able to do
-## Setup
 ## The idea
+## Setup
 ## Worked examples
 ## Your turn
 ## Common errors
