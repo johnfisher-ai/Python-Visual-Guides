@@ -197,6 +197,15 @@ notebook, and a count goes stale the moment the order changes.
 | `public/` | The site. **The only folder Pages serves.** GENERATED, never hand-edited. |
 | `tools/` | Build machinery. See `tools/README.md`. |
 
+**Shared Setup code is kept in the private notes repository**, `johnfisher-ai/visual-book-notes`,
+under `python-guides-workspace/builders/`. Each guide whose notebooks share Setup code has a folder
+of blocks, each shared part kept once, and a template for every notebook naming the blocks its
+Setup cell uses. `setup_blocks.py write` copies a changed block into every notebook that uses it,
+and the checks fail on a Setup cell that no longer matches its template, so a change to a guide's
+shared Setup goes into its block first. The original builders and their `*_common.py` modules were
+lost, and their shared Setup was rebuilt from the notebooks on October 28, 2026. The builders'
+README maps the old module names onto the blocks, and `nbbuild.py` beside it writes a new notebook.
+
 ---
 
 ## Build and validate
@@ -802,8 +811,8 @@ Every notebook in **SQLAlchemy, Deep Dive** works on a college, which the author
 weather stations because it has the relationships an ORM exists for. Why SQLAlchemy builds its first
 two tables in Setup with the standard library's `sqlite3`: 25 students, among them Aoife O'Brien,
 whose apostrophe is what the notebook's f-string breaks on, and 10 courses. From Connections and
-Transactions on, Setup builds five tables with `sqlite3` (the string lives in the builders'
-`sqa_common.py`): 4 `terms`, Fall 2024 to Spring 2026, which is under way; 40 `sections`, one of every
+Transactions on, Setup builds five tables with `sqlite3` (the string is the builders'
+`build_with_sqlite3` block): 4 `terms`, Fall 2024 to Spring 2026, which is under way; 40 `sections`, one of every
 course in every term, where course `c` in term `t` is section `(t - 1) * 10 + c`, so Spring 2026's
 are 31 to 40; and 228 `enrollments`, three courses a term for every student from the term they
 started, `completed` with a grade in the first three terms and `enrolled` with none in Spring 2026.
@@ -1000,7 +1009,7 @@ join needs an unmatched row adds one. The data comes from lists and a formula in
 ## SQLModel, Deep Dive
 
 Every notebook in **SQLModel, Deep Dive** works on heroes and teams, the cast SQLModel's own
-documentation uses, written once in the builders' `sqm_common.py`: 3 teams, Preventers, Z-Force and
+documentation uses, written once in the builders' `TEAMS` and `HEROES` blocks: 3 teams, Preventers, Z-Force and
 Wakaland Guard, the last with no heroes; and 8 heroes, Deadpond to Princess Sure-E, one of them on no
 team and two with no age, so a join that keeps unmatched rows has one in either direction. Setup
 builds the database with `build(engine)`, which creates the tables and loads the cast on a connection
@@ -1068,11 +1077,11 @@ two lists and a formula.
 Seventeen notebooks against a **real PostgreSQL server**, which no other guide in the collection
 needs. Setup installs and starts one on Linux (`apt-get`, `service postgresql start`, no systemd on
 Colab) and raises with instructions anywhere else, so the author runs a local Homebrew
-`postgresql@16` and Colab and CI install their own. The shared Setup lives in the builders'
-`pg_common.py` as four strings, `INSTALL`, `SERVER`, `SEED` and `REPORT`, which every notebook
-concatenates. `SEED` drops every table in `public` other than `events` and seeds 5000 rows of
+`postgresql@16` and Colab and CI install their own. The shared Setup is the builders' blocks
+for this guide, `install`, then `shell`, `answering` and `start_server`, then `build` and `report`.
+`build` drops every table in `public` other than `events` and seeds 5000 rows of
 `events (id bigserial, ts timestamptz, kind text, payload jsonb)`, so the counts are fixed: click
-1666, view 1667, purchase 1667. `REPORT` calls `build()` before it reads the server version, because
+1666, view 1667, purchase 1667. `report()` calls `build()` before it reads the server version, because
 otherwise it connects to a database that does not exist yet.
 
 Both drivers connect with no `host` at all on Colab, CI and macOS, so the outline's hardcoded
@@ -1083,7 +1092,7 @@ A role named for the operating system user is created for peer authentication.
 
 Nothing may print a memory address, a path under `/Users`, `/home`, `/var/folders` or `ipykernel_`,
 a server version banner, a socket path, an absolute byte size from `pg_relation_size`, or a raw
-`EXPLAIN`. Timings are **bands**, never numbers: `compared()` and `against()` in several builders map
+`EXPLAIN`. Timings are **bands**, never numbers: `compared()` and `against()` in several notebooks map
 a ratio to "about the same" / "somewhat faster" / "several times faster" at 1.2 and 3. A session's
 `TimeZone` is set explicitly, because the default is the machine's. TLS files go in `/tmp/guide_tls`
 rather than `tempfile.gettempdir()`, which is a per-user path on macOS.
@@ -1138,7 +1147,7 @@ mistake, because over a local socket the timing looks like nothing and the count
 Sixteen notebooks against a **real MongoDB**, pinned to pymongo 4.18.1 and beanie 2.2.0 with
 pydantic 2.13.5. Beanie 2.2.0 declares `requires-python <3.14`, so the author verifies this guide
 in a **Python 3.12 venv** matching CI rather than the machine's 3.14; the shared boot cell is in the
-builders' `mongo_common.py` as four strings, INSTALL, SERVER, REPLICA and SEED.
+builders' blocks for this guide, from `install` to `start_and_report`.
 
 ### Two servers, on purpose
 
@@ -1210,7 +1219,7 @@ AttributeError names FindOne.
 ## Peewee, Deep Dive
 
 Every notebook in **Peewee, Deep Dive** works on the same catalog, written once in the builders'
-`pw_common.py`: 4 authors, Ursula Vance, Marco Pietra, Ines O'Brien and Kofi Mensah, and 12 books,
+`AUTHORS` and `BOOKS` blocks: 4 authors, Ursula Vance, Marco Pietra, Ines O'Brien and Kofi Mensah, and 12 books,
 3 each, with years and page counts chosen so that a text comparison and a numeric one disagree.
 Ines O'Brien is in the cast from the start because the apostrophe in that name is what **Why
 Peewee** breaks a hand-built query on. Setup loads the catalog with `build(db)`, which creates the
@@ -1220,7 +1229,7 @@ tables and writes the rows with `insert_many` inside one `atomic`.
   4.4.0, whose messages are worded differently, so every Setup installs 4.5.1 when
   `importlib.metadata.version` reports anything else.
 - **From Relationships onward the database line is
-  `SqliteDatabase(":memory:", pragmas={"foreign_keys": 1})`**, in `pw_common.PRAGMA_DB`. SQLite
+  `SqliteDatabase(":memory:", pragmas={"foreign_keys": 1})`**. SQLite
   enforces no foreign key without it, per connection, so `on_delete="CASCADE"` silently does
   nothing. Notebooks 1 to 5 use the plain constructor, which is what makes the change worth
   narrating when it arrives.
@@ -1402,8 +1411,8 @@ repeat a sentence and score the same, so every ranked query orders by `rank, row
   fallback first calls `conn.setconfig(sqlite3.SQLITE_DBCONFIG_DQS_DML, True)`, which needs Python
   3.12. With the fallback off, SQLite 3.46 and later add `- should this be a string literal in
   single-quotes?` to `no such column`, and 3.45 does not, so print only the part before the colon.
-- **The guide's research lives outside git**, in `source/outlines/relational-and-document-databases.md`
-  beside `site/`: the error each notebook is meant to show, the versions its claims were checked
+- **The guide's research is in the private notes repository**, in
+  `python-guides-workspace/outlines/relational-and-document-databases.md`: the error each notebook is meant to show, the versions its claims were checked
   against, and the corrections the fact-check made.
 
 ## Cross-references
