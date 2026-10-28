@@ -8,11 +8,25 @@ GitHub Pages serves `public/` only.
 | `linkedin-card.png` | 1200x627 | Open Graph image. Copied to `public/assets/img/social-card.png`, which every page references via `og:image`. Covers LinkedIn, Facebook, Slack and Twitter. |
 | `github-card.png` | 1280x640 | The repository's social preview. Upload by hand under Settings > Social preview; GitHub has no API for it. |
 
-Fill in the `{{PLACEHOLDER}}` values in each `card-*.html`, then:
+Edit the text in each `card-*.html`, then:
 
 ```bash
 bash assets/social/render.sh
 ```
+
+`render.sh` uses Google Chrome on a Mac, the Chromium a Claude Code cloud session has at
+`/opt/pw-browsers/chromium`, or whatever `CHROME` names.
+
+The cards say nothing that changes as guides are added: no guide or notebook counts. Keep it
+that way, because a stale number in an image goes unnoticed for months.
+
+The font stacks put Iowan Old Style and Charter first, which a Mac has, and Caladea, Inter and
+DejaVu Sans Mono after them, which a cloud session has. The cards committed on October 28, 2026
+were rendered in a cloud session, so they show Caladea and Inter. The Bitstream Charter that
+Linux ships is a Type 1 font, which Chromium cannot use.
+
+`tools/page.py` holds the image's description (`CARD_ALT`), which every page sends as
+`og:image:alt`. Change it when the card's text changes.
 
 ## After changing the Open Graph image
 

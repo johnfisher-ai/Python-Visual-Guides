@@ -28,6 +28,18 @@ def _sequence():
 # The pager walks every guide in order.
 PAGES = _sequence()
 
+
+def _site_title():
+    from tools.manifest import load
+    return load()[0]["title"]
+
+
+# What a link preview names the site, and what its image shows for a reader who cannot see it.
+# The image is assets/social/linkedin-card.png, which render.sh copies into public/.
+SITE_NAME = _site_title()
+CARD_ALT = ("Python, Visually, a library of interactive Python guides by John Fisher. Every notebook "
+            "has eight parts, needs nothing installed and is free under CC BY 4.0.")
+
 # The nav stays short. The guides across the top would wrap to several lines and
 # tell a reader nothing; the library page lists them properly.
 NAV = [("./", "index.html", "The guides")]
@@ -64,14 +76,14 @@ def head(*, filename, title, tab_title, description, card_title, card_desc, kick
 <meta name="author" content="John Fisher">
 <meta name="theme-color" content="#2f5d94">
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="A Config-Driven Agent Network">
+<meta property="og:site_name" content="{esc(SITE_NAME)}">
 <meta property="og:title" content="{esc(card_title)}">
 <meta property="og:description" content="{esc(card_desc)}">
 <meta property="og:url" content="{canonical}">
 <meta property="og:image" content="{img}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="627">
-<meta property="og:image:alt" content="A broker agent fanning out to five specialist agents, with a human approval gate on the risky path.">
+<meta property="og:image:alt" content="{esc(CARD_ALT)}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{esc(card_title)}">
 <meta name="twitter:description" content="{esc(card_desc)}">
