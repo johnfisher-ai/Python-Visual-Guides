@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Commit and push this project. Run this yourself; Claude does not push.
+# Commit and push this project from your own computer. Claude Code sessions push with git
+# directly (CLAUDE.md, Hard rules), so this script is only for edits made locally.
 #
 #   bash scripts/push_to_github.sh                  # push existing commits
 #   bash scripts/push_to_github.sh "commit message" # stage all, commit, then push

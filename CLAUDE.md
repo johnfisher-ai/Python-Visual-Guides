@@ -12,12 +12,22 @@ Sibling to `Statistics-Data-Science-AI-Visual-Book`.
 
 ## Hard rules
 
-- **Never push.** The author pushes with `bash scripts/push_to_github.sh "message"` and
-  reviews before publishing. Commit freely; pushing is the author's.
-- **Never `git commit --amend`, rebase, or rewrite history.** Always a new follow-up commit.
+- **Push to `main` once the checks pass.** Decided October 28, 2026, replacing the rule that
+  Claude never pushes. Claude Code sessions commit and push straight to `main`, one commit per
+  notebook or round of edits, and the author reads each change on the live site. The workflow,
+  the writing rules and the checks are in the private companion repository
+  `johnfisher-ai/visual-book-notes`, which this library shares with the Visual Handbook. Read its
+  CLAUDE.md and the files it lists first. If a push to `main` is refused, push to a branch named
+  for the work and tell the author.
+- **Never `git commit --amend`, rebase, force-push or rewrite history.** Always make a new
+  follow-up commit, and undo a pushed change with `git revert`. Treat every existing commit as
+  published.
 - **No `Co-Authored-By` trailer** on commits.
-- **On resume:** `git log --oneline -5` and confirm what is already pushed.
-- **This repo is PUBLIC.** Pushing is publication and cannot be undone.
+- **On resume:** `git log --oneline -5`. A cloud session clones from GitHub, so everything in
+  it is already pushed. Edits made on the author's own computer are pushed before a session starts.
+- **This repo is PUBLIC.** Pushing is publication, and the history keeps every pushed commit even
+  after a revert. `scripts/push_to_github.sh` is the author's old way of pushing from a Mac, and
+  sessions don't use it.
 
 ---
 
