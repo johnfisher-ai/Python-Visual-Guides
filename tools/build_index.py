@@ -75,7 +75,7 @@ def build():
     each guide depends on the one before it. The deep dives take one library apiece, grouped by
     what the library is for, and any of them can be read once you have the foundations it names.
     <b>Projects</b> puts everything to work on real problems.</p>
-    <div class="scroll">
+    <div class="scroll" role="region" aria-label="The guides" tabindex="0">
       <table class="guides"><tbody>{band_rows(guides)}</tbody></table>
     </div>
   </section>

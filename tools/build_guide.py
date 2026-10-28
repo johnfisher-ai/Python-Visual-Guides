@@ -59,7 +59,7 @@ def table(g):
     if not g.notebooks:
         return ""
     return f"""
-    <div class="scroll">
+    <div class="scroll" role="region" aria-label="Notebooks in this guide" tabindex="0">
       <table class="nbs"><tbody>{rows(g)}</tbody></table>
     </div>"""
 

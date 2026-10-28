@@ -50,7 +50,7 @@ EXTRA_NAV = [
 
 
 def _nav(current: str) -> str:
-    out = ['<nav class="site"><div class="wrap">']
+    out = ['<nav class="site" aria-label="Site"><div class="wrap">']
     for href, filename, label in NAV:
         if filename != current and not (PUBLIC / filename).exists():
             continue
@@ -88,6 +88,8 @@ def head(*, filename, title, tab_title, description, card_title, card_desc, kick
 <meta name="twitter:title" content="{esc(card_title)}">
 <meta name="twitter:description" content="{esc(card_desc)}">
 <meta name="twitter:image" content="{img}">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 <link rel="stylesheet" href="assets/css/site.css">
 </head>
 <body>
@@ -113,7 +115,7 @@ def _pager(current: str) -> str:
     idx = next((i for i, (_, fn, _) in enumerate(seq) if fn == current), None)
     if idx is None:
         return ""
-    out = ['<nav class="pager">']
+    out = ['<nav class="pager" aria-label="Previous and next guide">']
     if idx > 0:
         href, _, label = seq[idx - 1]
         out.append(f'<a class="prev" href="{href}"><span>Previous</span><b>{esc(label)}</b></a>')

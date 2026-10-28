@@ -8,6 +8,8 @@
 #                                          which is the file the live pages reference.
 # github-card.png    1280x640 (2:1)     -> repo Settings > Social preview (manual upload;
 #                                          GitHub has no API for it).
+# apple-touch-icon.png  180x180          -> the site icon on an iPhone or iPad, copied into
+#                                          public/assets/img/. Browsers use favicon.svg there.
 #
 # Uses $CHROME if set, then Google Chrome on a Mac, then the Chromium a Claude Code cloud
 # session has preinstalled, then chromium or google-chrome on the PATH.
@@ -30,7 +32,10 @@ shot () {  # shot <html> <out> <w> <h>
 }
 shot card-linkedin.html linkedin-card.png 1200 627
 shot card-github.html   github-card.png   1280 640
+shot icon.html          apple-touch-icon.png 180 180
 
 mkdir -p ../../public/assets/img
 cp linkedin-card.png ../../public/assets/img/social-card.png
 echo "  copied linkedin-card.png -> public/assets/img/social-card.png"
+cp apple-touch-icon.png ../../public/assets/img/apple-touch-icon.png
+echo "  copied apple-touch-icon.png -> public/assets/img/apple-touch-icon.png"

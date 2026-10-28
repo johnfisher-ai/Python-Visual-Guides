@@ -7,8 +7,9 @@ GitHub Pages serves `public/` only.
 |---|---|---|
 | `linkedin-card.png` | 1200x627 | Open Graph image. Copied to `public/assets/img/social-card.png`, which every page references via `og:image`. Covers LinkedIn, Facebook, Slack and Twitter. |
 | `github-card.png` | 1280x640 | The repository's social preview. Upload by hand under Settings > Social preview; GitHub has no API for it. |
+| `apple-touch-icon.png` | 180x180 | The site icon on an iPhone or iPad, from `icon.html`. Copied to `public/assets/img/`, beside `favicon.svg`, which browsers show in a tab. The two draw the same mark, a white run button on the site's blue, so change them together. |
 
-Edit the text in each `card-*.html`, then:
+Edit the text in each `card-*.html` (or the mark in `icon.html`), then:
 
 ```bash
 bash assets/social/render.sh

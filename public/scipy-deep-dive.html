@@ -21,6 +21,8 @@
 <meta name="twitter:title" content="SciPy, Deep Dive">
 <meta name="twitter:description" content="The parts of SciPy worth knowing, and how to navigate a library that is really twelve libraries.">
 <meta name="twitter:image" content="https://johnfisher-ai.github.io/Python-Visual-Guides/assets/img/social-card.png">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 <link rel="stylesheet" href="assets/css/site.css">
 </head>
 <body>
@@ -33,7 +35,7 @@
   </div>
 </header>
 
-<nav class="site"><div class="wrap"><a href="./">The guides</a><a href="https://github.com/johnfisher-ai/Python-Visual-Guides">Repository</a></div></nav>
+<nav class="site" aria-label="Site"><div class="wrap"><a href="./">The guides</a><a href="https://github.com/johnfisher-ai/Python-Visual-Guides">Repository</a></div></nav>
 
 <main>
 <div class="wrap">
@@ -49,7 +51,7 @@
   <section>
     <h2>The notebooks</h2>
     <p>None of these notebooks is written yet. This is the plan, in reading order.</p>
-    <div class="scroll">
+    <div class="scroll" role="region" aria-label="Notebooks in this guide" tabindex="0">
       <table class="nbs"><tbody><tr class="soon"><td class="n">1</td><td class="t"><b>What SciPy Is</b><span>A toolbox rather than a topic, and how to navigate it</span></td><td class="go">not yet written</td></tr><tr class="soon"><td class="n">2</td><td class="t"><b>Interpolation</b><span>Filling gaps, and the honesty of the method you picked</span></td><td class="go">not yet written</td></tr><tr class="soon"><td class="n">3</td><td class="t"><b>Optimization</b><span>minimize, and reading the result object it hands back</span></td><td class="go">not yet written</td></tr><tr class="soon"><td class="n">4</td><td class="t"><b>Curve Fitting</b><span>curve_fit, and the covariance you should be reporting</span></td><td class="go">not yet written</td></tr><tr class="soon"><td class="n">5</td><td class="t"><b>Root Finding</b><span>brentq, bracketing, and why it failed to converge</span></td><td class="go">not yet written</td></tr><tr class="soon"><td class="n">6</td><td class="t"><b>Numerical Integration</b><span>quad, and recognizing when the answer is nonsense</span></td><td class="go">not yet written</td></tr><tr class="soon"><td class="n">7</td><td class="t"><b>Decompositions</b><span>Linear algebra past what NumPy gives you</span></td><td class="go">not yet written</td></tr><tr class="soon"><td class="n">8</td><td class="t"><b>Sparse Matrices</b><span>When your matrix is mostly zeros, and the memory you save</span></td><td class="go">not yet written</td></tr><tr class="soon"><td class="n">9</td><td class="t"><b>Signal Processing</b><span>Filtering and smoothing without inventing a trend</span></td><td class="go">not yet written</td></tr><tr class="soon"><td class="n">10</td><td class="t"><b>Statistics</b><span>Distributions, tests, and what scipy.stats will and will not do</span></td><td class="go">not yet written</td></tr><tr class="soon"><td class="n">11</td><td class="t"><b>Spatial</b><span>Distances, KD-trees, and nearest neighbors</span></td><td class="go">not yet written</td></tr><tr class="soon"><td class="n">12</td><td class="t"><b>Images as Arrays</b><span>ndimage, and an image as data you can index</span></td><td class="go">not yet written</td></tr></tbody></table>
     </div>
   </section>
@@ -59,7 +61,7 @@
 
 <footer class="site">
   <div class="wrap">
-    <nav class="pager"><a class="prev" href="pyspark-deep-dive.html"><span>Previous</span><b>PySpark, Deep Dive</b></a><a class="next" href="statsmodels-deep-dive.html"><span>Next</span><b>Statsmodels, Deep Dive</b></a></nav>
+    <nav class="pager" aria-label="Previous and next guide"><a class="prev" href="pyspark-deep-dive.html"><span>Previous</span><b>PySpark, Deep Dive</b></a><a class="next" href="statsmodels-deep-dive.html"><span>Next</span><b>Statsmodels, Deep Dive</b></a></nav>
     <p class="sig">Notebooks, prose and figures <a href="https://github.com/johnfisher-ai/Python-Visual-Guides/blob/main/LICENSE">CC&nbsp;BY&nbsp;4.0</a>&nbsp;&middot; code&nbsp;<a href="https://github.com/johnfisher-ai/Python-Visual-Guides/blob/main/LICENSE-CODE">MIT</a>&nbsp;&middot; &copy;&nbsp;2026 John&nbsp;Fisher</p>
   </div>
 </footer>
