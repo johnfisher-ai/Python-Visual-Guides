@@ -225,6 +225,26 @@ python3 tools/check_notebooks.py   the eight-part shape
 **Re-execute a notebook after editing it.** A notebook whose committed output disagrees with
 its committed code teaches the reader something false, and nothing but you will catch it.
 
+**Saved outputs come from Colab's versions.** The author decided this on October 28, 2026, because
+Colab is what readers run. A session re-executes a notebook it changes on a replica of Colab, set
+up by the commands in the private repository's file 3:
+
+- a virtual environment at `/opt/colab` with Colab's published library versions
+  (`googlecolab/backend-info`), copied fresh before every notebook, since each notebook opens in a
+  new Colab runtime
+- a new `/content` folder for every notebook, holding `sample_data`, which is where Colab runs one
+- for the asyncpg and psycopg3 guide, a new PostgreSQL cluster in the `en_US.UTF-8` locale for
+  every notebook, so Setup installs and starts the server as it does on Colab
+- for a notebook that reports on the Python running it, Environments and pip or Virtual
+  Environments, the system Python with Colab's packages installed for the user, because the replica
+  is itself a virtual environment and Colab's Python is not
+
+A Common errors heading quotes the message Colab's Python 3.13 prints, and the prose names Python
+3.14's wording where it differs. Parameters, in the sqlite3 guide, keeps 3.14's message as its
+heading by the guide's own choice, and says that the run saved is Colab's. Notebooks that no
+round has touched since then keep the outputs recorded on the author's Mac, with Python 3.14, which
+is the machine the notes below call this Mac.
+
 ---
 
 ## House style
@@ -687,8 +707,9 @@ is Copernicus data, so every notebook that prints it carries: "Weather data by O
 CC BY 4.0, from the ERA5 reanalysis. Generated using Copernicus Climate Change Service information
 2026." The guide's `credits` says the same.
 
-**`Connection refused` differs by operating system**: `[Errno 61]` on macOS, where outputs are
-recorded, and `[Errno 111]` on Linux, which Colab and CI run. A notebook that commits it says so.
+**`Connection refused` differs by operating system**: `[Errno 61]` on macOS, and `[Errno 111]` on
+Linux, which Colab and CI run, and where outputs have been recorded since October 28, 2026. A
+notebook that commits it says so.
 
 **Swagger's Petstore** (`https://petstore3.swagger.io`) is the public API for Postman's OpenAPI
 import and for interactive documentation, because Open-Meteo publishes no OpenAPI document. Its
@@ -1069,6 +1090,11 @@ two lists and a formula.
   never prints a `server_default` timestamp.
 - **Statements are counted, never timed.** `counting(engine)`, a context manager over
   `before_cursor_execute`, returns a `Counter` by first word, which is the same on every machine.
+- **`create_all` creates a table's indexes in set order**, which follows memory addresses, so two
+  indexes on one table can come out in either order. Engine and create_all says so under the one
+  cell that prints them.
+- **`alembic init` names the files it copies in the file system's order.** The `alembic` helper in
+  Migrations and the `shell` helper in A Small Service sort those lines.
 - **The title `sa_column and __table_args__` renders literally** on the guide page, checked on
   21 September 2026: the double underscores are not read as markup, so it needs no escaping.
 
@@ -1087,6 +1113,13 @@ otherwise it connects to a database that does not exist yet.
 Both drivers connect with no `host` at all on Colab, CI and macOS, so the outline's hardcoded
 `/var/run/postgresql` was dropped: it is the one thing that would have diverged between the three.
 A role named for the operating system user is created for peer authentication.
+
+Peer authentication on Linux lets the operating system user in only as the role of the same name,
+so connecting over the socket as `app` fails with `Peer authentication failed for user "app"`
+before any role is looked up. Over TCP, a role that does not exist fails with `password
+authentication failed`, because the server never says whether a role exists. Homebrew's
+PostgreSQL on a Mac trusts local connections and answers `role "app" does not exist` instead. A
+Server of Your Own and Connecting to a Hosted Server quote the Linux messages.
 
 ### Determinism, which is harder here than anywhere else
 
@@ -1123,6 +1156,13 @@ address and removes it again. Passwords come from `secrets.token_urlsafe` and ar
 - an `ALTER TABLE` from another connection blocks rather than failing while the reader holds an open
   transaction, so that half must be staged outside one
 - psycopg survives a literal `DEALLOCATE ALL` or `DISCARD ALL`, because it watches the text you send
+- on Linux, a process started with `subprocess` begins with its parent's `ru_maxrss`, which survives
+  `exec`, so a measuring process run from the kernel saw only growth past the kernel's own peak.
+  Server-Side Cursors reads `VmHWM` from `/proc/self/status` on Linux, and `ru_maxrss` on macOS
+- a new server has no statistics, so JSONB runs `ANALYZE` before its first plan, and the two plans
+  it compares estimate from the same numbers
+- a cluster created in the `C` locale is `SQL_ASCII`, and psycopg then returns `bytes` for text, so
+  the clusters that outputs are recorded on are created in `en_US.UTF-8`, as Colab's installer does
 
 ### Two traps that hang rather than fail
 
@@ -1134,6 +1174,10 @@ A listener shared between sections hears the previous section's backlog, so note
 section its own `subscribe()` connection.
 
 ### The measurements, and what they actually showed
+
+**Prepared Statements** prints one comparison, that preparing saves a larger share of a one row
+lookup's time than of a three table join's, because on the replica each ratio crossed a band's
+threshold from run to run, while their order held in every run.
 
 **Which Driver** runs one workload four ways with synchronous psycopg named as the baseline, and the
 two pools are also compared with each other so concurrency is held constant. On many small queries
@@ -1259,6 +1303,10 @@ tables and writes the rows with `insert_many` inside one `atomic`.
 - **`MATERIALIZE` binds one value per parent.** prefetch and Load prints the bound-value count at
   10, 100 and 1000 parents and then fails at 33,000 with `too many SQL variables`, which is the
   deterministic replacement for the outline's timing comparison. `WHERE` and `JOIN` bind none.
+- **SQLite's variable limit depends on the build.** SQLite's own default is 32,766, and the build
+  Ubuntu ships, which Colab runs, allows 250,000. prefetch and Load and Creating and Changing Rows
+  set the limit to 32,766 on their connection with `setlimit`, in the cell that reaches it, so
+  `too many SQL variables` happens on every machine.
 - **A JSON path returns JSON, so a numeric comparison compares text.** `as_int`, `as_float` and
   `as_text` are the casts; there is no `as_bool` or `as_real`. JSON Columns uses the printing
   numbers (2, 3, 9, 13) rather than the page counts, because every page count has three digits and
