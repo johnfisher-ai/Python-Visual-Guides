@@ -1076,6 +1076,11 @@ two lists and a formula.
 - **Never dispose an in-memory engine that two threads used.** `dispose()` closes connections from
   the calling thread, `sqlite3` refuses for the others, and the pool writes the failure to the screen
   with an address. SQLModel in FastAPI leaves its test engines for Python to collect.
+- **The test engine that breaks the thread rule also logs.** In SQLModel in FastAPI, the `StaticPool`
+  engine without `check_same_thread=False` fails again as the request ends, when the pool rolls back
+  and closes the connection from the request's thread, and the pool logs that with a traceback naming
+  thread ids and an address. The replica printed it on every run, so the cell sets the
+  `sqlalchemy.pool` logger to `CRITICAL` first and the prose says why.
 - **The test engine is built in three measured steps.** `create_engine("sqlite://")` gives the
   application's thread a database of its own, so the tables are missing; `poolclass=StaticPool` shares
   one connection and meets `sqlite3`'s thread rule; `connect_args={"check_same_thread": False}`
