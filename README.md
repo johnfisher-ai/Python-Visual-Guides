@@ -32,7 +32,7 @@ the question.
 | 9 | sqlite3, Deep Dive | 20 | Complete |
 | 10 | asyncpg and psycopg3, Deep Dive | 17 | Complete |
 | 11 | PyMongo and Beanie, Deep Dive | 16 | Complete |
-| 12 | NumPy, Deep Dive | 14 | Planned |
+| 12 | **NumPy, Deep Dive** | 14 | Being written |
 | 13 | Pandas, Deep Dive | 18 | Planned |
 | 14 | scikit-learn, Deep Dive | 14 | Planned |
 | 15 | PyTorch and TensorFlow, Deep Dive |  | Planned |

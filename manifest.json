@@ -1178,7 +1178,7 @@
       "band": "Data Science and Machine Learning",
       "title": "NumPy, Deep Dive",
       "subtitle": "Arrays, shapes and vectorization",
-      "status": "planned",
+      "status": "building",
       "intro": "The mental shift from looping to thinking in arrays, including the shape errors and how to read them.",
       "prerequisites": "Python from the Start.",
       "notebooks": [

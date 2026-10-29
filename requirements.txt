@@ -26,3 +26,6 @@ psycopg-pool==3.3.2
 # PyMongo and Beanie, Deep Dive
 pymongo==4.18.1
 beanie==2.2.0
+
+# NumPy, Deep Dive, at Colab's version
+numpy==2.1.3
