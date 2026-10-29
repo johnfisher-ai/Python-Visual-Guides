@@ -1526,6 +1526,57 @@ blocks, `stations`, `year_of_readings`, `readings` and `hour_of_year`, and Kirke
   a bold `Fancy indexing` as a misspelled title, because its pattern matches a capitalized phrase. A
   definition that names its own notebook's subject opens with "In NumPy, **fancy indexing** is".
 
+## Pandas, Deep Dive
+
+Every notebook in **Pandas, Deep Dive** works on the sqlite3 guide's hourly readings for 2025, made by
+`year_of_readings()`, as one long table, `readings`, of 35,040 rows with the columns `station`,
+`time` and `celsius`, and a second table, `stations`, of every station's latitude with Kirkenes added,
+which has no readings. Setup is three of the builders' blocks, `stations`, `year_of_readings` and
+`readings`. Notebooks that read files write them into `scratch/` in Setup and remove the folder in the
+last cell of Common errors.
+
+- **Version.** pandas 2.2.3, Colab's version (checked 29 October 2026), is pinned in
+  `requirements.txt` for CI. Colab also installs pyarrow, numexpr, Bottleneck, pytz and tzdata, which
+  pandas uses when they are there, so the replica has them too. CI does not pin pyarrow, so no
+  notebook uses Arrow types or `engine="pyarrow"`. The research outline is
+  `python-guides-workspace/outlines/pandas-deep-dive.md` in the private notes repository.
+- **Ties.** `sort_values` on one column, `value_counts` and `describe`'s `top` order equal values
+  with a sort that promises nothing about them, and NumPy 2 can sort with code chosen for the
+  processor, so a tie can print in another order on Colab. Rank with `nlargest` or `nsmallest`, which
+  keep the first row in the table's order, sort on a second key, or put tied counts in a stable order
+  with `.sort_index()` or `value_counts(sort=False)`.
+- **Warnings.** A warning is caught with `warnings.catch_warnings(record=True)` and printed as
+  `Category: first line`, or its first sentence where the first line runs on, and a Common errors
+  heading quotes what the cell prints. pandas warnings name the line in the cell's file and several
+  end with a documentation link.
+- **Addresses.** A GroupBy object's repr names its memory address, so groupby prints it through
+  `re.sub(r"0x[0-9a-f]+", "0x...", ...)`.
+- **Floats.** A raw sum or a mean that ends in many digits, such as `5.949999999999999`, is rounded
+  before printing, and a mean that comes out as `-0.0` is not printed.
+- **Memory.** `memory_usage(deep=True)` adds a string's size once for every row that refers to it,
+  and the station names are four strings shared by all 35,040 rows, as `read_csv` also shares one
+  string for each repeated value. Inspecting and Performance and Memory say what pandas counts, and
+  Performance and Memory prints how many string objects stand behind the column, so the prose never
+  claims the deep figure as memory used.
+- **Copy-on-Write** appears only inside `pd.option_context("mode.copy_on_write", True)`, so the cell
+  that shows it switches it back off. Adding and Changing Columns runs `SettingWithCopyWarning` and
+  `ChainedAssignmentError` rather than describing them.
+- **pandas 2.2.3 behaviors that running revealed.** `"n/a"` is already a missing marker for
+  `read_csv`. `df.a > 1 & df.b < 5` with integer columns is a chained comparison and raises "The
+  truth value of a Series is ambiguous". `str.split` with a pattern longer than one character reads
+  it as a regular expression unless given `regex=False`. `stack()` drops `NaN` without a warning, and
+  `future_stack=True` keeps it. `iloc` takes a mask only as an array, `mask.to_numpy()`. Comparing two
+  Series with the same labels in another order raises `Can only compare identically-labeled Series
+  objects`.
+- **Time zones.** Dates and Times takes the readings' times as UTC and shows them in `Europe/Oslo`,
+  where 30 March 2025 has 23 hours and 26 October 25. A printed local time names its zone, and no cell
+  prints the machine's own time.
+- **Timings** print only as comparisons whose threshold is at most a third of the smallest ratio
+  measured on the replica over repeated runs, as in the NumPy guide. Performance and Memory states
+  the range it measured, and was run three times with every comparison true.
+- **A bad pattern raises `PatternError`** on Python 3.13, Colab's, and `re.error` on 3.12, CI's.
+  Strings' heading quotes 3.13's name, and its prose names both.
+
 ## Cross-references
 
 **Refer to a notebook by its title, never by its number.** Write **Lists**, not "notebook 7".
