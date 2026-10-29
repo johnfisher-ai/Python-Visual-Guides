@@ -1477,6 +1477,50 @@ repeat a sentence and score the same, so every ranked query orders by `rank, row
   `python-guides-workspace/outlines/relational-and-document-databases.md`: the error each notebook is meant to show, the versions its claims were checked
   against, and the corrections the fact-check made.
 
+## NumPy, Deep Dive
+
+Every notebook in **NumPy, Deep Dive** works on the sqlite3 guide's hourly readings for 2025, made by
+the same formula, as four Python lists of 8,760 readings with `None` for Svalbard's 2 March and as
+one array, `readings`, of shape (4, 8760) with `nan` in those hours. Setup is four of the builders'
+blocks, `stations`, `year_of_readings`, `readings` and `hour_of_year`, and Kirkenes is not in it.
+
+- **Version.** NumPy 2.1.3, Colab's version (checked 28 October 2026), is pinned in
+  `requirements.txt` for CI. Colab ships it, so Setup installs nothing. The research outline is
+  `python-guides-workspace/outlines/numpy-deep-dive.md` in the private notes repository.
+- **NumPy numbers.** A NumPy 2 number that ends a cell shows as `np.float64(20.8)`, and so does one
+  printed inside a list or a tuple, such as the pair of `np.int64` that `np.unravel_index` returns.
+  Print the values, or unpack them first.
+- **Sorting.** Every `argsort` passes `kind="stable"`. The default kind promises nothing about the
+  order of equal values, and NumPy 2 can sort with code chosen for the processor. The readings have
+  one decimal place, so ties are common, and two of Oslo's three warmest hours, both 19.2, came out
+  in different orders from the default and the stable sort on the replica.
+- **Warnings.** A warning is caught with `warnings.catch_warnings(record=True)` and printed as
+  `category: message`. The wording depends on the function, so `np.nanmean` warns `Mean of empty
+  slice`, and `mean` on an empty array warns `Mean of empty slice.`, with a period, and then
+  `invalid value encountered in scalar divide`.
+- **`nan`.** Every comparison with `nan` is false. `np.where(daily >= 0, "thaw", "frost")` calls
+  Svalbard's missing day a frost day, `argsort` puts `nan` last, `argmin` returns the first `nan`'s
+  position, and `np.linalg.lstsq` returns a `nan` for every coefficient with no warning. Several
+  notebooks teach these as Common errors, so a new example on Svalbard's row is checked for them.
+- **Timings.** A timing prints as a comparison, "more than five times as long: True", whose threshold
+  is at most a third of the smallest ratio measured on the replica over repeated runs. A loop that
+  Python runs in C is too close to call. `sum(values) / len(values)` against `mean()` measured 9 to
+  13 times as long in a script and less than 3 in one recording, so Performance times a Python `for`
+  loop that finds the coldest hour instead. Performance was recorded three times, with every
+  comparison true each time.
+- **Linear algebra.** Results from BLAS and LAPACK are printed rounded to two places. A singular
+  matrix is shown by `np.linalg.matrix_rank`, never by its determinant, whose value is rounding error.
+- **Random numbers.** Every cell that draws makes its own `np.random.default_rng(seed)`. A seed gives
+  the same stream wherever the NumPy version is the same, and CI and Colab share 2.1.3. A draw from
+  `default_rng()` after `np.random.seed` differs on every run, so Random Numbers prints only whether
+  two such draws matched.
+- **`AxisError`.** IPython names an exception by its class alone, so The axis Argument's heading is
+  `AxisError: axis 2 is out of bounds for array of dimension 2`, and the prose gives the full name,
+  `numpy.exceptions.AxisError`.
+- **A bold definition and the title check.** `check_notebooks.py` read a definition that opened with
+  a bold `Fancy indexing` as a misspelled title, because its pattern matches a capitalized phrase. A
+  definition that names its own notebook's subject opens with "In NumPy, **fancy indexing** is".
+
 ## Cross-references
 
 **Refer to a notebook by its title, never by its number.** Write **Lists**, not "notebook 7".
