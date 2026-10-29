@@ -1394,7 +1394,7 @@
       "band": "Data Science and Machine Learning",
       "title": "scikit-learn, Deep Dive",
       "subtitle": "Estimators, pipelines, evaluation",
-      "status": "planned",
+      "status": "building",
       "intro": "The library rather than the statistics: the estimator API, pipelines, and evaluation done honestly.",
       "prerequisites": "Pandas, Deep Dive. For the statistics, see the Visual Handbook.",
       "notebooks": [

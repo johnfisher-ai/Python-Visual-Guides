@@ -32,3 +32,7 @@ numpy==2.1.3
 
 # Pandas, Deep Dive, at Colab's version
 pandas==2.2.3
+
+# scikit-learn, Deep Dive, at Colab's versions
+scikit-learn==1.6.1
+scipy==1.16.3
