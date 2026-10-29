@@ -33,7 +33,7 @@ the question.
 | 10 | asyncpg and psycopg3, Deep Dive | 17 | Complete |
 | 11 | PyMongo and Beanie, Deep Dive | 16 | Complete |
 | 12 | NumPy, Deep Dive | 14 | Complete |
-| 13 | Pandas, Deep Dive | 18 | Planned |
+| 13 | **Pandas, Deep Dive** | 18 | Being written |
 | 14 | scikit-learn, Deep Dive | 14 | Planned |
 | 15 | PyTorch and TensorFlow, Deep Dive |  | Planned |
 | 16 | LightGBM and XGBoost, Deep Dive |  | Planned |

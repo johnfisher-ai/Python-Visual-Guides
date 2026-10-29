@@ -1274,7 +1274,7 @@
       "band": "Data Science and Machine Learning",
       "title": "Pandas, Deep Dive",
       "subtitle": "Tabular data, properly",
-      "status": "planned",
+      "status": "building",
       "intro": "Indexing, grouping, reshaping and merging, with the traps that cost people days.",
       "prerequisites": "NumPy, Deep Dive.",
       "notebooks": [
