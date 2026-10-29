@@ -313,7 +313,7 @@ is the machine the notes below call this Mac.
   **A heading must say what the section teaches**, not how well it does it. "Print well",
   "Aliasing, properly this time" and "Guard clauses, properly this time" all describe a quality
   rather than a subject, and leave the reader no wiser about what is inside. Write "Make print
-  say what it printed", "Aliasing: two names on one list", "Guard clauses with an early return".
+  say what it printed", "A second name on the same list", "Guard clauses with an early return".
 
   The same goes for a claim in the prose: "most people do it badly" is a judgment about the
   reader. "The usual way is `print(x)`, and with three of those in a loop the output is three
