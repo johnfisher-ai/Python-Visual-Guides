@@ -34,7 +34,7 @@ the question.
 | 11 | PyMongo and Beanie, Deep Dive | 16 | Complete |
 | 12 | NumPy, Deep Dive | 14 | Complete |
 | 13 | Pandas, Deep Dive | 18 | Complete |
-| 14 | **scikit-learn, Deep Dive** | 14 | Being written |
+| 14 | scikit-learn, Deep Dive | 14 | Complete |
 | 15 | PyTorch and TensorFlow, Deep Dive |  | Planned |
 | 16 | LightGBM and XGBoost, Deep Dive |  | Planned |
 | 17 | GeoPandas, Deep Dive |  | Planned |

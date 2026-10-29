@@ -1577,6 +1577,62 @@ last cell of Common errors.
 - **A bad pattern raises `PatternError`** on Python 3.13, Colab's, and `re.error` on 3.12, CI's.
   Strings' heading quotes 3.13's name, and its prose names both.
 
+## scikit-learn, Deep Dive
+
+Every notebook in **scikit-learn, Deep Dive** works on a made-up network of 1,200 weather stations in
+Norway, `network`, drawn in Setup by `station_network(seed=2025)` from `np.random.default_rng`, with
+latitude, longitude, elevation, distance from the coast, installation year, terrain and owner, and
+three targets: `jan_mean` (the January mean), `snow_on_may_1` (39% of stations) and `june_frost`
+(4.9%, 59 stations). The weather stations' hourly readings come from a formula with a small fixed
+wobble, so a model fits them almost exactly, and no evaluation lesson would have anything to show.
+`raw_export(network)` makes the table a register would export, with 68 private stations' elevations
+missing, 28 owners blank and 88 terrains typed in capitals with a trailing space, for Mixed Column
+Types and A Complete Workflow. Setup is the builders' blocks `station_network`, `network` and
+`raw_export`, and every notebook says the stations are made up.
+
+- **Version.** scikit-learn 1.6.1 and SciPy 1.16.3, Colab's versions (checked 29 October 2026), are
+  pinned in `requirements.txt` for CI. Colab ships both, so Setup installs nothing. A seed gives the
+  same stations wherever NumPy is 2.1.3. The research outline is
+  `python-guides-workspace/outlines/scikit-learn-deep-dive.md` in the private notes repository.
+- **Every estimator and splitter that draws takes `random_state`**, and `n_jobs` stays at its
+  default. Scores are printed to three places and coefficients to two, since their last digits come
+  from floating point work in BLAS and SciPy. The metric functions return a plain `float` in 1.6.1, so
+  a cell rounds them with `round(...)`.
+- **Every `LogisticRegression` fit with the default solver warns** `DeprecationWarning: scipy.optimize:
+  The `disp` and `iprint` options of the L-BFGS-B solver are deprecated`, from SciPy 1.16.3. Python
+  hides a `DeprecationWarning` raised inside a library, so a reader never sees it, but
+  `simplefilter("always")` records it. A cell that catches a warning turns on only the category it
+  teaches, as `warnings.simplefilter("always", ConvergenceWarning)`.
+- **Ties.** `best_params_` keeps the first of several tied settings in the grid's order, so a notebook
+  sorts `cv_results_` with a stable sort, and rankings use `nlargest` or a second key, as in the pandas
+  guide.
+- **No timings and no plots.** A table of thresholds stands in for a curve, so nothing depends on
+  Matplotlib's fonts or the machine's speed.
+- **What the runs and their review corrected.** An unlimited tree scores 1.0 on its training rows and
+  0.769 on test rows. A forest given a column of noise ranks it below every feature the January mean
+  uses, at 0.018, above only `installed`. Folds of a table sorted by latitude cost little with all
+  five features (about 0.78 against 0.88), so Cross-Validation sorts by the target instead, and its
+  end folds miss in one direction, 0.77 degrees too warm and 1.21 too cold. Mean absolute percentage
+  error reaches about 4 trillion because one station's January mean is exactly 0.0 and scikit-learn
+  divides by machine epsilon. scikit-learn 1.6 has no `squared=False`. RMSE runs about 1.28 times MAE,
+  the 1.25 that bell-shaped errors give, so the gap shows no unusual misses. A scaler fitted on every
+  row before cross-validation leaves the five scores unchanged, and the leak Pipelines demonstrates is
+  a selector that looks at the answers, which scores 0.78 on pure noise against 0.50 inside a pipeline.
+  In A Complete Workflow, filling missing elevations with a median from all rows moved it from 247 to
+  252.5 meters and the test error from 0.820 to 0.819. Nested cross-validation runs on 150 training
+  stations, where its estimate sits below the search's best score for all eight outer seeds printed;
+  on all 1,200 stations the gap was smaller than the spread that the choice of folds causes.
+- **Tied results are said to be tied.** Five random-search draws tie at 0.828 and four grid settings
+  at 0.830, and a logistic regression's `C` of 1, 10 and 100 differ by one station of 900, so the
+  notebooks print the ties and pick nothing from them. A threshold for Classification Metrics is
+  chosen on out-of-fold probabilities for the training stations and checked once on the test set.
+- **Saving a Model runs a second Python** with `subprocess`, the notebook's own `sys.executable`, to
+  show `AttributeError: Can't get attribute 'add_features'`, and prints its error rather than raising
+  it. It shows `InconsistentVersionWarning` from a real file, saved while `sklearn.base.__version__`
+  reads `1.5.2` and loaded after it is put back, which warns once for each of the forest's trees and
+  once for the forest. It compares file sizes and never prints them, and never prints an absolute
+  path or a Python version.
+
 ## Cross-references
 
 **Refer to a notebook by its title, never by its number.** Write **Lists**, not "notebook 7".
