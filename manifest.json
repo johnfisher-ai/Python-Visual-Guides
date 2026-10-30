@@ -1490,7 +1490,7 @@
       "band": "Data Science and Machine Learning",
       "title": "PyTorch and TensorFlow, Deep Dive",
       "subtitle": "Tensors, gradients and training loops",
-      "status": "building",
+      "status": "published",
       "intro": "Building and training a network in both frameworks, and reading the shape errors they raise at you.",
       "prerequisites": "NumPy, Deep Dive.",
       "notebooks": [

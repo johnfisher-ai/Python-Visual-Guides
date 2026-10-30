@@ -1633,6 +1633,73 @@ Types and A Complete Workflow. Setup is the builders' blocks `station_network`, 
   once for the forest. It compares file sizes and never prints them, and never prints an absolute
   path or a Python version.
 
+## PyTorch and TensorFlow, Deep Dive
+
+Every notebook in **PyTorch and TensorFlow, Deep Dive** runs both frameworks side by side, PyTorch
+first and then TensorFlow with Keras 3, imported as `keras`, on a CPU. Most work on the scikit-learn
+guide's 1,200 made-up stations, drawn by `station_network_arrays()`, a NumPy-only copy of that
+guide's generator that makes the same draws in the same order and returns `features` (latitude,
+longitude, elevation, distance from the coast, as `float32`), `jan_mean` and `snow_on_may_1`. Setup
+splits them 800, 200 and 200 by a seeded permutation and standardizes them with the training rows'
+means and standard deviations. Convolutional Networks draws 900 made-up 12 by 12 pictures from a seed, and Recurrent
+Networks uses the NumPy guide's readings for Oslo. The research outline is
+`python-guides-workspace/outlines/pytorch-and-tensorflow-deep-dive.md` in the private notes
+repository.
+
+- **Versions.** torch 2.11.0, TensorFlow 2.21.0 and Keras 3.13.2, Colab's versions (checked 30
+  October 2026), are pinned in `requirements.txt`. Colab's torch is the CPU build from PyTorch's own
+  index, and the notebooks workflow installs from that index too, since PyPI's torch is the CUDA
+  build with several gigabytes of NVIDIA libraries. The replica's torch came from PyPI while the
+  session's network refused `download.pytorch.org`, so its version reads `2.11.0+cu130` where
+  Colab's reads `2.11.0+cpu`, and a notebook prints `torch.__version__` without the part after `+`.
+- **TensorFlow's start-up lines.** Importing TensorFlow makes its C++ code print six lines, each
+  with the time and a process number, and ipykernel shows them in the cell. `TF_CPP_MIN_LOG_LEVEL`
+  set to 3 hides only what TensorFlow logs after it starts, so Setup also imports TensorFlow inside
+  `c_messages_hidden()`, which points the process's error stream at `os.devnull` while the block
+  runs.
+- **Seeds.** `torch.manual_seed(n)` before a model is built or a tensor drawn, a seeded
+  `torch.Generator` for every shuffling `DataLoader`, `keras.utils.set_random_seed(n)` before a
+  Keras model is built, and a `seed` for every `tf.data` shuffle. A `tf.data` shuffle combines its
+  `seed` with TensorFlow's global seed as the dataset is built, which `keras.utils.set_random_seed`
+  changes, so Batches and Data Pipelines sets the global seed in Setup. Training printed the same
+  losses to eight places on one, two and four threads, so no notebook sets a thread count. A loss is
+  printed to three places, since another processor can change the last digits.
+- **A Common error starts from its own state.** Output that depends on an earlier cell's random
+  state, or on a Keras model's earlier calls, changes once a reader has done Your turn. Keras traces
+  `fit`'s and `predict`'s step for the shapes it first sees and leaves a size that changes later
+  unknown, so the mismatch then comes from TensorFlow's matrix product as `Graph execution error`
+  rather than from Keras. A Common error about Keras's own message builds a new model in its cell,
+  and one that draws dropout masks or reads a `DataLoader` seeds its own draws.
+- **Regularization is in Keras's loss.** `fit`, `evaluate` and `val_loss` include the layers'
+  regularization losses, so a model with a `kernel_regularizer` is compared by a metric, `val_mse`.
+- **Keras prints.** `fit`, `evaluate` and `predict` print a progress bar with a time per step unless
+  given `verbose=0`. Training Loops shows the bar by capturing it and replacing its timings and its
+  loss, which it prints to four places. Keras
+  numbers layers and models within a process (`dense`, `dense_4`, `lstm_3`), so a notebook names
+  every layer whose name is printed. `model.summary()` renders display data whose plain text carries
+  color codes, which the checks allow, since they read only stream output.
+- **Messages that carry ids.** Keras's "could not be deserialized properly" error prints a
+  `shared_object_id`, so Saving and Loading Models catches it and prints its first sentence and its
+  cause. A `Graph execution error` ends with `[Op:__inference_multi_step_on_iterator_N]`, a counter
+  of compiled functions, so Reading Shape Errors prints its first line and its `Matrix` line. PyTorch's
+  warning about a non-leaf tensor's `.grad` names a path inside PyTorch's build, so Gradient Descent
+  by Hand prints its first sentence. Calling `predict` on many new models logs a retracing warning
+  with an address, so a notebook calls a model directly.
+- **Saving.** `.keras` files only. Saving to `.h5` logs a legacy-format warning through absl to the
+  error stream. `model.save` and `save_weights` both raise h5py `DeprecationWarning`s under NumPy
+  2.4, which Python hides by default. Saving and Loading Models writes into `scratch/` and removes it.
+- **Behaviors the runs revealed.** PyTorch's `.numpy()` shares a CPU tensor's memory and
+  TensorFlow's always copies. PyTorch promotes a whole number mixed with a decimal to `float32`,
+  where NumPy gives `float64`, and TensorFlow refuses mixed dtypes. Changing a leaf that requires a
+  gradient in place raises with no graph at all. A tape watches only trainable variables. An LSTM
+  given batch-first data without `batch_first=True` runs without an error and reads the batch as
+  time. `state_dict()` returns tensors that share the weights' memory, so best weights kept without
+  `copy.deepcopy` keep changing. Keras's `EarlyStopping` with no validation data warns every epoch
+  and never stops. Keras's `from_logits=True` on a sigmoid output warns and then uses the logits
+  behind it, so the harmful version is PyTorch's sigmoid applied twice, which raises nothing.
+- **Timings and plots.** Neither: a table of losses by epoch stands in for a curve, and no notebook
+  says which framework is faster.
+
 ## Cross-references
 
 **Refer to a notebook by its title, never by its number.** Write **Lists**, not "notebook 7".
