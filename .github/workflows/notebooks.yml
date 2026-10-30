@@ -45,8 +45,10 @@ jobs:
           python-version: "3.12"
           cache: pip
 
+      # PyTorch's own index has the CPU build that Colab runs. Without it, PyPI's torch brings
+      # several gigabytes of CUDA libraries, which a runner with no GPU never uses.
       - name: Install
-        run: pip install --quiet -r requirements.txt
+        run: pip install --quiet --extra-index-url https://download.pytorch.org/whl/cpu -r requirements.txt
 
       - name: Decide what to run
         id: pick

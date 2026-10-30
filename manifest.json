@@ -1490,10 +1490,101 @@
       "band": "Data Science and Machine Learning",
       "title": "PyTorch and TensorFlow, Deep Dive",
       "subtitle": "Tensors, gradients and training loops",
-      "status": "planned",
+      "status": "building",
       "intro": "Building and training a network in both frameworks, and reading the shape errors they raise at you.",
       "prerequisites": "NumPy, Deep Dive.",
-      "notebooks": []
+      "notebooks": [
+        {
+          "n": 1,
+          "slug": "why-pytorch-and-tensorflow",
+          "title": "Why PyTorch and TensorFlow",
+          "blurb": "Gradients you no longer work out by hand"
+        },
+        {
+          "n": 2,
+          "slug": "tensors",
+          "title": "Tensors",
+          "blurb": "Making them, their dtype, and the trip to and from NumPy"
+        },
+        {
+          "n": 3,
+          "slug": "shapes-and-broadcasting",
+          "title": "Shapes and Broadcasting",
+          "blurb": "Reshape, squeeze, permute, and the batch dimension"
+        },
+        {
+          "n": 4,
+          "slug": "automatic-differentiation",
+          "title": "Automatic Differentiation",
+          "blurb": "backward and GradientTape, and what each one records"
+        },
+        {
+          "n": 5,
+          "slug": "gradient-descent-by-hand",
+          "title": "Gradient Descent by Hand",
+          "blurb": "A training loop with nothing hidden"
+        },
+        {
+          "n": 6,
+          "slug": "layers-and-models",
+          "title": "Layers and Models",
+          "blurb": "nn.Module and keras.Model, and where the weights live"
+        },
+        {
+          "n": 7,
+          "slug": "reading-shape-errors",
+          "title": "Reading Shape Errors",
+          "blurb": "What the numbers in a shape error are telling you"
+        },
+        {
+          "n": 8,
+          "slug": "losses-and-optimizers",
+          "title": "Losses and Optimizers",
+          "blurb": "Logits, loss functions, and the step that changes the weights"
+        },
+        {
+          "n": 9,
+          "slug": "batches-and-data-pipelines",
+          "title": "Batches and Data Pipelines",
+          "blurb": "DataLoader and tf.data, shuffled and batched"
+        },
+        {
+          "n": 10,
+          "slug": "training-loops",
+          "title": "Training Loops",
+          "blurb": "The PyTorch loop, Keras fit, and one model trained both ways"
+        },
+        {
+          "n": 11,
+          "slug": "overfitting-and-regularization",
+          "title": "Overfitting and Regularization",
+          "blurb": "Validation loss, dropout, weight decay and early stopping"
+        },
+        {
+          "n": 12,
+          "slug": "convolutional-networks",
+          "title": "Convolutional Networks",
+          "blurb": "Images, channels first or last, and the shape after every layer"
+        },
+        {
+          "n": 13,
+          "slug": "recurrent-networks",
+          "title": "Recurrent Networks",
+          "blurb": "Sequences, LSTM and GRU, and which axis is time"
+        },
+        {
+          "n": 14,
+          "slug": "saving-and-loading-models",
+          "title": "Saving and Loading Models",
+          "blurb": "state_dict and .keras files, and loading them back"
+        },
+        {
+          "n": 15,
+          "slug": "a-complete-project",
+          "title": "A Complete Project",
+          "blurb": "The snow classifier from start to finish, in PyTorch and again in Keras"
+        }
+      ]
     },
     {
       "slug": "lightgbm-and-xgboost-deep-dive",

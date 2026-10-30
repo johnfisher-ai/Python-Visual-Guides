@@ -36,3 +36,9 @@ pandas==2.2.3
 # scikit-learn, Deep Dive, at Colab's versions
 scikit-learn==1.6.1
 scipy==1.16.3
+
+# PyTorch and TensorFlow, Deep Dive, at Colab's versions. Colab's torch is the CPU build from
+# PyTorch's own index, and the notebooks workflow installs from that index too
+torch==2.11.0
+tensorflow==2.21.0
+keras==3.13.2

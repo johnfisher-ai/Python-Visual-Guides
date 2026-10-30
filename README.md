@@ -35,7 +35,7 @@ the question.
 | 12 | NumPy, Deep Dive | 14 | Complete |
 | 13 | Pandas, Deep Dive | 18 | Complete |
 | 14 | scikit-learn, Deep Dive | 14 | Complete |
-| 15 | PyTorch and TensorFlow, Deep Dive |  | Planned |
+| 15 | **PyTorch and TensorFlow, Deep Dive** | 15 | Being written |
 | 16 | LightGBM and XGBoost, Deep Dive |  | Planned |
 | 17 | GeoPandas, Deep Dive |  | Planned |
 | 18 | Shapely, Deep Dive |  | Planned |
