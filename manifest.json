@@ -1592,7 +1592,7 @@
       "band": "Data Science and Machine Learning",
       "title": "LightGBM and XGBoost, Deep Dive",
       "subtitle": "Gradient boosting on tables",
-      "status": "building",
+      "status": "published",
       "intro": "The models that win on tabular data: training them, tuning them, and reading what they learned.",
       "prerequisites": "scikit-learn, Deep Dive.",
       "notebooks": [

@@ -1700,6 +1700,68 @@ repository.
 - **Timings and plots.** Neither: a table of losses by epoch stands in for a curve, and no notebook
   says which framework is faster.
 
+## LightGBM and XGBoost, Deep Dive
+
+Every notebook in **LightGBM and XGBoost, Deep Dive** runs both libraries side by side, LightGBM first,
+through their scikit-learn classes and their native interfaces. They work on a made-up table of
+station-days, drawn in Setup by `station_days(n_stations=400, days=50, seed=2026)`: 20,000 rows with a
+station's latitude, elevation, distance from the coast and `terrain` (a pandas category), the day of the
+year, the cloud, the wind, `snow_cm` (missing at the 30% of stations with no snow sensor) and `tmin`,
+the day's lowest temperature. Cloud, wind, season and terrain interact, snow deepens a clear night's
+cooling, and every station has an offset of its own. The scikit-learn guide's station network was tried
+first, and both libraries scored worse on it than that guide's linear model, since its January mean is
+close to a straight line. Setup is the builders' blocks `TERRAINS`, `station_days` and `split`, which
+splits the stations, never the rows, 300, 50 and 50, so that no station's days fall in two of them, and
+from Early Stopping to Missing Values `X_and_y`, which names each split's features and answers. The
+research outline is `python-guides-workspace/outlines/lightgbm-and-xgboost-deep-dive.md` in the private
+notes repository.
+
+- **Versions.** LightGBM 4.6.0 and XGBoost 3.4.1, Colab's versions (checked 31 October 2026), are pinned
+  in `requirements.txt`. XGBoost brings `nvidia-nccl-cu13`, which Colab pins at 2.32.3 and the replica's
+  PyPI torch at 2.28.9, so the replica keeps 2.28.9. A CPU never loads NCCL.
+- **LightGBM's log.** In a Jupyter cell LightGBM prints `[LightGBM] [Info]` lines, one of them with the
+  time its test of threading took, so every LightGBM model gets `verbose=-1`. Its `[LightGBM] [Fatal]`
+  line, printed before a `LightGBMError`, has no time or path and may be committed.
+- **XGBoost's messages.** A warning starts with a time and a build path, and an `XGBoostError` adds a
+  stack trace of addresses, so a cell catches either and prints the part after the path.
+- **Threads and modes.** The regression probes trained identically on one, two and four threads, and
+  LightGBM's row-wise and column-wise histograms, which it chooses by a timing test, give identical
+  models, so no notebook sets either. Run on two threads and on four, the 28 files differed in one cell,
+  where XGBoost's four-class model in Classification's solutions scores 0.902 on two threads and 0.905 on
+  one and four. Colab's standard runtime has two processors, and the replica four, so the guide is
+  recorded with `OMP_NUM_THREADS=2`. Under the load of parallel drafts a multithreaded fit ran a hundred
+  times slower, so drafts ran with `OMP_NUM_THREADS=1` or `OMP_WAIT_POLICY=PASSIVE`.
+- **Seeds.** A fit that samples rows or columns passes `random_state`. A comparison of two settings from
+  one seed or one split is stated as one run, since in Regularization and Sampling a sampled model's
+  validation loss moved by almost 0.08 between seeds.
+- **Choosing.** Settings are chosen on the validation stations or by cross-validation over folds of whole
+  training stations, and the test stations are measured once. Folds of shuffled rows leak each station's
+  offset, 1.876 against 2.788 by station.
+- **Folds.** Every `GroupKFold` passes `shuffle=True` and `random_state=0`. Without `shuffle` it gives
+  out the largest groups first, every training station has 50 days, and NumPy's `argsort` promises no
+  order for the tied sizes. NumPy 2.4.6 on the replica returned the identity order and CI's 2.1.3 did
+  not, so Tuning printed other numbers under CI's pins. With `shuffle` the folds come from a seeded
+  permutation of the station names, the same on every NumPy and processor.
+- **A Common error starts from its own state.** A cell that reads a worked example's model or labels can
+  print something else after a reader has done Your turn, so a Common error builds its own, and a task
+  that would rebind a name a later cell reads asks for a new one. LightGBM's `init_model` stores the old
+  booster's predictions in the `Dataset`, which every later booster trained on it starts from, so a
+  continued booster gets a `Dataset` of its own.
+- **Behaviors the runs revealed.** LightGBM predicts from columns in another order without an error and
+  with wrong answers, where XGBoost raises `feature_names mismatch`. LightGBM given a table without its
+  category column, or with the category as text, says `train and valid dataset categorical_feature do
+  not match.` It treats a category it never saw as missing, where XGBoost raises, and reads a `NaN` in a
+  column that had no gaps in training as 0, where every XGBoost split in Missing Values sent it to the
+  larger values. XGBoost 3.4 reads a pandas category without `enable_categorical`. After early stopping
+  LightGBM's booster holds only the trees up to its best iteration, and XGBoost's holds every round it
+  trained, which XGBoost's scikit-learn `predict` cuts at the best one. A raw XGBoost `Booster`, loaded
+  from a file or not, predicts with every tree unless given `iteration_range`. XGBoost's file holds no
+  training settings, and LightGBM's text file lists them. A new LightGBM model's `get_params()` lists only
+  the scikit-learn class's own arguments, and a model given any other keyword lists it back whether
+  LightGBM knows it or not, so `get_params()` cannot tell a misspelling from a setting.
+- **Timings and plots.** No notebook times a fit or draws a plot. A table of losses by round stands in
+  for a curve, and no notebook says which library is faster.
+
 ## Cross-references
 
 **Refer to a notebook by its title, never by its number.** Write **Lists**, not "notebook 7".
