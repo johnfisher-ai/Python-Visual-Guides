@@ -1592,10 +1592,101 @@
       "band": "Data Science and Machine Learning",
       "title": "LightGBM and XGBoost, Deep Dive",
       "subtitle": "Gradient boosting on tables",
-      "status": "planned",
+      "status": "building",
       "intro": "The models that win on tabular data: training them, tuning them, and reading what they learned.",
       "prerequisites": "scikit-learn, Deep Dive.",
-      "notebooks": []
+      "notebooks": [
+        {
+          "n": 1,
+          "slug": "why-gradient-boosting",
+          "title": "Why Gradient Boosting",
+          "blurb": "Trees that fix the mistakes of the trees before them"
+        },
+        {
+          "n": 2,
+          "slug": "the-scikit-learn-interface",
+          "title": "The scikit-learn Interface",
+          "blurb": "LGBMRegressor and XGBRegressor in a scikit-learn workflow"
+        },
+        {
+          "n": 3,
+          "slug": "the-native-interfaces",
+          "title": "The Native Interfaces",
+          "blurb": "Dataset, DMatrix, and train with a dictionary of settings"
+        },
+        {
+          "n": 4,
+          "slug": "learning-rate-and-trees",
+          "title": "Learning Rate and Trees",
+          "blurb": "Shrinkage, the number of rounds, and the trade between them"
+        },
+        {
+          "n": 5,
+          "slug": "early-stopping",
+          "title": "Early Stopping",
+          "blurb": "A validation set that decides when to stop adding trees"
+        },
+        {
+          "n": 6,
+          "slug": "tree-shape",
+          "title": "Tree Shape",
+          "blurb": "num_leaves, max_depth and growing leaf by leaf"
+        },
+        {
+          "n": 7,
+          "slug": "regularization-and-sampling",
+          "title": "Regularization and Sampling",
+          "blurb": "Penalties, minimum leaf sizes, and fitting each tree on a sample"
+        },
+        {
+          "n": 8,
+          "slug": "missing-values",
+          "title": "Missing Values",
+          "blurb": "How a split decides where a gap goes"
+        },
+        {
+          "n": 9,
+          "slug": "categorical-features",
+          "title": "Categorical Features",
+          "blurb": "Native categories against one-hot columns"
+        },
+        {
+          "n": 10,
+          "slug": "classification",
+          "title": "Classification",
+          "blurb": "Frost or not, bands of cold, probabilities and metrics"
+        },
+        {
+          "n": 11,
+          "slug": "imbalanced-classes",
+          "title": "Imbalanced Classes",
+          "blurb": "Hard frost on 1.6% of days, weights and the threshold"
+        },
+        {
+          "n": 12,
+          "slug": "tuning",
+          "title": "Tuning",
+          "blurb": "Searching settings with cross-validation, and keeping the test stations out of it"
+        },
+        {
+          "n": 13,
+          "slug": "reading-what-they-learned",
+          "title": "Reading What They Learned",
+          "blurb": "Importance by splits and by gain, and SHAP contributions"
+        },
+        {
+          "n": 14,
+          "slug": "saving-and-loading-boosters",
+          "title": "Saving and Loading Boosters",
+          "blurb": "Text, JSON and UBJSON files, and what each one keeps"
+        },
+        {
+          "n": 15,
+          "slug": "a-frost-forecast",
+          "title": "A Frost Forecast",
+          "blurb": "The frost classifier from start to finish, in LightGBM and again in XGBoost"
+        }
+      ]
     },
     {
       "slug": "geopandas-deep-dive",
