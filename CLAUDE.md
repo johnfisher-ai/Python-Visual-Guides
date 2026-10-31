@@ -1204,17 +1204,20 @@ mistake, because over a local socket the timing looks like nothing and the count
 
 ## PyMongo and Beanie, Deep Dive
 
-Sixteen notebooks against a **real MongoDB**, pinned to pymongo 4.18.1 and beanie 2.2.0 with
-pydantic 2.13.5. Beanie 2.2.0 declares `requires-python <3.14`, so the author verifies this guide
-in a **Python 3.12 venv** matching CI rather than the machine's 3.14; the shared boot cell is in the
-builders' blocks for this guide, from `install` to `start_and_report`.
+Sixteen notebooks against a **real MongoDB**, pinned to pymongo 4.18.1 and beanie 2.2.0. Setup
+installs those two and leaves Colab's pydantic, 2.14.1, which Beanie Documents prints. Beanie 2.2.0
+declares `requires-python <3.14`, so the guide cannot run on this Mac's 3.14. Since October 31, 2026
+it is recorded on the Colab replica with `record.sh --mongo`, which stops and removes MongoDB before
+every notebook, so Setup installs MongoDB 8.0 from MongoDB's apt repository and starts it as it does
+on a new Colab runtime. The shared boot cell is in the builders' blocks for this guide, from
+`install` to `start_and_report`.
 
 ### Two servers, on purpose
 
 27017 is a **single node replica set** (`--replSet rs0` then `replSetInitiate` over a
 `directConnection` client, because a mongod started with --replSet but not initiated is RSGhost and
 unselectable). Transactions and `beanie migrate` need it. 27018 is a **plain standalone**, started
-by notebook 7's Setup, so "Transaction numbers are only allowed on a replica set member or mongos"
+by the Setup of Bulk Writes and Transactions and of Migrations, from the `start_standalone` block, so "Transaction numbers are only allowed on a replica set member or mongos"
 is run rather than described. Both bind 127.0.0.1 with no credential anywhere.
 
 On Linux the server comes from MongoDB's own apt repository, whose codename is checked against a
@@ -1238,6 +1241,11 @@ build since 5.0 needs it.
 - A trailing `await` echoes its result, and a DeleteResult carries timestamps. Name it.
 - `init_beanie` against a temporary client leaves the model bound to it, so closing that client
   breaks every later cell. Rebind before closing.
+- **Every notebook starts from a new server**, since each opens in a new Colab runtime. Recorded on
+  this Mac against one long-running server, Modeling Without Joins read a `kind_price` index that The
+  Aggregation Pipeline leaves on `products`, and Migrations reached a standalone that only Bulk Writes
+  and Transactions starts. A cell whose counts depend on indexes drops the ones it does not create,
+  and a notebook's Setup starts every server the notebook uses.
 
 ### Sixteen outline corrections, found by running it
 
@@ -1261,7 +1269,8 @@ limit for $group" no longer happens**: since 6.0 a stage spills to disk, and eve
 Modeling Without Joins: the oversize insert raises **pymongo.errors**.DocumentTooLarge, not
 bson.errors. The $push version gives a different message entirely, "BSONObj size ... is invalid".
 And **$lookup without an index is not one COLLSCAN per input document** on MongoDB 8: SBE builds one
-hash table over the whole foreign collection, 867 documents examined against 249 with the index.
+hash table over the whole foreign collection, 1,267 documents examined against 649 with the index,
+which is the 500 products and then all 767 reviews, or only the 149 reviews of laptops.
 
 Link and BackLink: **insert_many does not set id** on the objects you pass, where insert does, so a
 Link built from one raises DocumentWasNotSaved. Declaring a BackLink with
