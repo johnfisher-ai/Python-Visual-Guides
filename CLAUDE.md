@@ -1489,9 +1489,14 @@ the same formula, as four Python lists of 8,760 readings with `None` for Svalbar
 one array, `readings`, of shape (4, 8760) with `nan` in those hours. Setup is four of the builders'
 blocks, `stations`, `year_of_readings`, `readings` and `hour_of_year`, and Kirkenes is not in it.
 
-- **Version.** NumPy 2.1.3, Colab's version (checked 28 October 2026), is pinned in
-  `requirements.txt` for CI. Colab ships it, so Setup installs nothing. The research outline is
-  `python-guides-workspace/outlines/numpy-deep-dive.md` in the private notes repository.
+- **Version.** NumPy 2.4.6, Colab's version (checked 31 October 2026), is pinned in `requirements.txt`
+  for CI. Colab ships it, so Setup installs nothing. Colab moved from 2.1.3 after October 28, and round
+  13 recorded the guide again on 2.4.6, where two cells besides the version that every Setup prints came
+  out differently. `math.sqrt` on an array raises `only 0-dimensional arrays can be converted to Python
+  scalars`, where 2.1.3 said `only length-1 arrays can be converted to Python scalars` and converted an
+  array of one value with a `DeprecationWarning`. A mean printed in full changed in its last digit, so
+  Why NumPy rounds it. The research outline is `python-guides-workspace/outlines/numpy-deep-dive.md` in
+  the private notes repository.
 - **NumPy numbers.** A NumPy 2 number that ends a cell shows as `np.float64(20.8)`, and so does one
   printed inside a list or a tuple, such as the pair of `np.int64` that `np.unravel_index` returns.
   Print the values, or unpack them first.
@@ -1516,7 +1521,8 @@ blocks, `stations`, `year_of_readings`, `readings` and `hour_of_year`, and Kirke
 - **Linear algebra.** Results from BLAS and LAPACK are printed rounded to two places. A singular
   matrix is shown by `np.linalg.matrix_rank`, never by its determinant, whose value is rounding error.
 - **Random numbers.** Every cell that draws makes its own `np.random.default_rng(seed)`. A seed gives
-  the same stream wherever the NumPy version is the same, and CI and Colab share 2.1.3. A draw from
+  the same stream wherever the NumPy version is the same, and CI and Colab share 2.4.6, which drew the
+  same values as 2.1.3 in every cell of Random Numbers. A draw from
   `default_rng()` after `np.random.seed` differs on every run, so Random Numbers prints only whether
   two such draws matched.
 - **`AxisError`.** IPython names an exception by its class alone, so The axis Argument's heading is
@@ -1591,8 +1597,9 @@ Types and A Complete Workflow. Setup is the builders' blocks `station_network`, 
 `raw_export`, and every notebook says the stations are made up.
 
 - **Version.** scikit-learn 1.6.1 and SciPy 1.16.3, Colab's versions (checked 29 October 2026), are
-  pinned in `requirements.txt` for CI. Colab ships both, so Setup installs nothing. A seed gives the
-  same stations wherever NumPy is 2.1.3. The research outline is
+  pinned in `requirements.txt` for CI. Colab ships both, so Setup installs nothing. A seed gave the
+  same stations on NumPy 2.1.3 and 2.4.6, and round 13's recording on 2.4.6 changed only the NumPy
+  version that Saving a Model prints. The research outline is
   `python-guides-workspace/outlines/scikit-learn-deep-dive.md` in the private notes repository.
 - **Every estimator and splitter that draws takes `random_state`**, and `n_jobs` stays at its
   default. Scores are printed to three places and coefficients to two, since their last digits come
@@ -1739,9 +1746,9 @@ notes repository.
   offset, 1.876 against 2.788 by station.
 - **Folds.** Every `GroupKFold` passes `shuffle=True` and `random_state=0`. Without `shuffle` it gives
   out the largest groups first, every training station has 50 days, and NumPy's `argsort` promises no
-  order for the tied sizes. NumPy 2.4.6 on the replica returned the identity order and CI's 2.1.3 did
-  not, so Tuning printed other numbers under CI's pins. With `shuffle` the folds come from a seeded
-  permutation of the station names, the same on every NumPy and processor.
+  order for the tied sizes. NumPy 2.4.6 on the replica returned the identity order and 2.1.3, CI's
+  version until round 13, did not, so Tuning printed other numbers under CI's pins. With `shuffle` the
+  folds come from a seeded permutation of the station names, the same on every NumPy and processor.
 - **A Common error starts from its own state.** A cell that reads a worked example's model or labels can
   print something else after a reader has done Your turn, so a Common error builds its own, and a task
   that would rebind a name a later cell reads asks for a new one. LightGBM's `init_model` stores the old
