@@ -76,6 +76,13 @@ headings. `tools/check_notebooks.py` enforces it, so a drift fails the build.
 | Recap | markdown | Four or five lines, each a thing the reader can now do. It answers part 1. |
 | What is next | markdown | One line naming the next notebook and why it follows. |
 
+**The opening reads as a person wrote it.** What you will be able to do is usually two sentences.
+The first says plainly what the notebook's subject is, or the problem it solves, and the second says
+what the reader will do, with two or three actions and the guide's own data, such as the stations or
+the college. No run of verb clauses ending in "and ___", and no two neighboring notebooks with the
+same frame. The author found on November 1, 2026 that the stacked-verb frame, repeated in every
+notebook, read as machine-written, and every opening in the library was rewritten that day.
+
 **Solutions live in a separate notebook**, `NN-slug-solutions.ipynb`. Never in the same file:
 an answer one scroll below the question is not an exercise.
 
