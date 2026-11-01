@@ -244,9 +244,9 @@ up by the commands in the private repository's file 3:
 
 A Common errors heading quotes the message Colab's Python 3.13 prints, and the prose names Python
 3.14's wording where it differs. Parameters, in the sqlite3 guide, keeps 3.14's message as its
-heading by the guide's own choice, and says that the run saved is Colab's. Notebooks that no
-round has touched since then keep the outputs recorded on the author's Mac, with Python 3.14, which
-is the machine the notes below call this Mac.
+heading by the guide's own choice, and says that the run saved is Colab's. Since November 1, 2026
+every notebook's outputs come from the replica. Before then they were recorded on the author's Mac,
+with Python 3.14, which is the machine the notes below call this Mac.
 
 ---
 
@@ -705,7 +705,10 @@ is only this mode: Colab, local Jupyter and CI all behave the same.
 **Real services** appear where the real internet is the point, and print only stable fields.
 Open-Meteo's archive is keyless and free for non-commercial use, under 10,000 calls a day. Always
 pass `models=era5`: the default model silently returned different values in testing, while ERA5
-returned the same values on every fetch. Use dates long in the past. The data is CC BY 4.0 and ERA5
+returned the same values on every fetch. ERA5 is still revised now and then: between September and
+November 1, 2026 the archive changed some daily maximums and minimums for January 2025 by up to
+0.7 degrees, while the means and the precipitation stayed the same, so a notebook that prints
+them is recorded again and the recording updated to match. Use dates long in the past. The data is CC BY 4.0 and ERA5
 is Copernicus data, so every notebook that prints it carries: "Weather data by Open-Meteo.com, under
 CC BY 4.0, from the ERA5 reanalysis. Generated using Copernicus Climate Change Service information
 2026." The guide's `credits` says the same.
