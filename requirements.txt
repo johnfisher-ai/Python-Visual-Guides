@@ -46,3 +46,11 @@ keras==3.13.2
 # LightGBM and XGBoost, Deep Dive, at Colab's versions
 lightgbm==4.6.0
 xgboost==3.4.1
+
+# GeoPandas, Deep Dive, at Colab's versions
+geopandas==1.2.0
+shapely==2.2.0
+pyproj==3.8.0
+pyogrio==0.13.0
+matplotlib==3.10.0
+mapclassify==2.10.0

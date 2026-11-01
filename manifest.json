@@ -1694,10 +1694,90 @@
       "band": "Data Science and Machine Learning",
       "title": "GeoPandas, Deep Dive",
       "subtitle": "Tables with geometry in them",
-      "status": "planned",
+      "status": "building",
       "intro": "Spatial joins and coordinate systems, in a DataFrame you already know how to use.",
       "prerequisites": "Pandas, Deep Dive.",
-      "notebooks": []
+      "notebooks": [
+        {
+          "n": 1,
+          "slug": "why-geopandas",
+          "title": "Why GeoPandas",
+          "blurb": "A table whose rows have a place"
+        },
+        {
+          "n": 2,
+          "slug": "shapely-geometries",
+          "title": "Shapely Geometries",
+          "blurb": "Points, lines and polygons, and the questions they answer"
+        },
+        {
+          "n": 3,
+          "slug": "the-geodataframe",
+          "title": "The GeoDataFrame",
+          "blurb": "The geometry column, the active geometry, and building one from coordinates"
+        },
+        {
+          "n": 4,
+          "slug": "coordinate-reference-systems",
+          "title": "Coordinate Reference Systems",
+          "blurb": "Degrees and meters, set_crs and to_crs"
+        },
+        {
+          "n": 5,
+          "slug": "reading-and-writing-files",
+          "title": "Reading and Writing Files",
+          "blurb": "GeoJSON, GeoPackage and Shapefile, layers and filters"
+        },
+        {
+          "n": 6,
+          "slug": "measuring-distance-and-area",
+          "title": "Measuring Distance and Area",
+          "blurb": "Lengths, areas and distances in a projected CRS, and on the ellipsoid"
+        },
+        {
+          "n": 7,
+          "slug": "spatial-predicates",
+          "title": "Spatial Predicates",
+          "blurb": "within, contains, intersects and touches, and the spatial index behind them"
+        },
+        {
+          "n": 8,
+          "slug": "spatial-joins",
+          "title": "Spatial Joins",
+          "blurb": "Attaching the attributes of the polygon each point falls in"
+        },
+        {
+          "n": 9,
+          "slug": "nearest-neighbors",
+          "title": "Nearest Neighbors",
+          "blurb": "sjoin_nearest, distance columns and a maximum distance"
+        },
+        {
+          "n": 10,
+          "slug": "buffers-overlays-and-clipping",
+          "title": "Buffers, Overlays and Clipping",
+          "blurb": "Zones around shapes, and the pieces two layers make"
+        },
+        {
+          "n": 11,
+          "slug": "dissolve-and-explode",
+          "title": "Dissolve and Explode",
+          "blurb": "Merging shapes by a column and splitting multipart shapes"
+        },
+        {
+          "n": 12,
+          "slug": "making-maps",
+          "title": "Making Maps",
+          "blurb": "plot, choropleths and layers with Matplotlib"
+        },
+        {
+          "n": 13,
+          "slug": "a-station-atlas",
+          "title": "A Station Atlas",
+          "blurb": "From a register of coordinates to a map and a GeoPackage"
+        }
+      ],
+      "credits": "The country outlines are made with <a href=\"https://www.naturalearthdata.com/\">Natural Earth</a>, whose maps are in the public domain. The weather stations and forecast districts are made up for this guide."
     },
     {
       "slug": "shapely-deep-dive",
