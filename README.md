@@ -37,7 +37,7 @@ the question.
 | 14 | scikit-learn, Deep Dive | 14 | Complete |
 | 15 | PyTorch and TensorFlow, Deep Dive | 15 | Complete |
 | 16 | LightGBM and XGBoost, Deep Dive | 15 | Complete |
-| 17 | **GeoPandas, Deep Dive** | 13 | Being written |
+| 17 | GeoPandas, Deep Dive | 13 | Complete |
 | 18 | Shapely, Deep Dive |  | Planned |
 | 19 | Polars, Deep Dive |  | Planned |
 | 20 | DuckDB, Deep Dive |  | Planned |

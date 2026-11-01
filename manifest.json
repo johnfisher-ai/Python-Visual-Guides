@@ -1694,7 +1694,7 @@
       "band": "Data Science and Machine Learning",
       "title": "GeoPandas, Deep Dive",
       "subtitle": "Tables with geometry in them",
-      "status": "building",
+      "status": "published",
       "intro": "Spatial joins and coordinate systems, in a DataFrame you already know how to use.",
       "prerequisites": "Pandas, Deep Dive.",
       "notebooks": [

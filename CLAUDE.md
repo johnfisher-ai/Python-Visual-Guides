@@ -1781,6 +1781,60 @@ notes repository.
 - **Timings and plots.** No notebook times a fit or draws a plot. A table of losses by round stands in
   for a curve, and no notebook says which library is faster.
 
+## GeoPandas, Deep Dive
+
+Every notebook in **GeoPandas, Deep Dive** works on three layers. `countries` is Natural Earth's
+1:50m outlines of Denmark, Finland, Norway, Russia and Sweden, clipped to the Nordic area and kept in
+`data/nordic-countries.geojson`, which Setup reads beside the notebook in a checkout and in CI and
+downloads from `main` in Colab. Natural Earth is in the public domain, and every notebook that reads
+it says "Made with Natural Earth." `station_network(n=300, seed=2026)` draws a made-up register of 300
+stations over mainland Norway in UTM zone 33N, and `forecast_districts()` makes eight made-up
+districts in EPSG:25833, the Voronoi cells of eight fixed centers cut to Norway's outline, so the
+districts are in meters while the countries and the register are in degrees. The five named stations
+sit at their real positions, and Tromso and Kirkenes fall 2,659 m and 481 m outside the 1:50m
+coastline, which Why GeoPandas shows and Nearest Neighbors resolves. Setup is the builders' blocks
+`countries`, `weather_stations`, `station_network`, `forecast_districts`, `stations` and `named`. The
+scikit-learn guide's network was tried first, and only 388 of its 1,200 points fall in Norway.
+
+- **Versions.** GeoPandas 1.2.0, Shapely 2.2.0 (GEOS 3.14.1 in its wheel), pyproj 3.8.0, pyogrio
+  0.13.0, Matplotlib 3.10.0 and mapclassify 2.10.0, Colab's versions (checked 1 November 2026), are
+  pinned in `requirements.txt`. Colab also has numba 0.64.0, which mapclassify uses for its Fisher-Jenks
+  classes, and folium 0.20.0. The research outline is
+  `python-guides-workspace/outlines/geopandas-deep-dive.md` in the private notes repository.
+- **Figures.** This is the library's first guide with figures. `record.sh` unsets `MATPLOTLIBRC`, which
+  the cloud image points at a file that makes Inter the default font, so a figure uses Matplotlib's
+  own default, DejaVu Sans, as Colab does. A plotting cell ends with `plt.show()`, and a map hides its
+  axes unless they are the lesson, because pyproj labels a UTM map "Easting [metre]" over a `1e6`
+  offset. `plot` creates a figure before it checks a column or a scheme, so a raising plotting cell
+  would commit an empty frame, so Making Maps catches those two errors, prints them and closes the figure.
+- **Warnings.** A cell catches what it teaches with `simplefilter("always", UserWarning)` or the one
+  category it shows. Switching every category on also records Matplotlib's `PyparsingDeprecationWarning`
+  lines, each naming a path inside site-packages.
+- **Printing.** A geometry is printed with `shapely.to_wkt(g, rounding_precision=...)` or as counts and
+  measures, an area in km² and a distance in km to at most one place, and a count by district in the
+  districts' own order with the empty one kept. `sindex.query` takes `sort=True`, since its order is
+  not promised, and lists of countries from a join are sorted.
+- **Measures.** Distances and areas are taken in UTM zone 33N, which stays within about 0.4% of the
+  ellipsoid over Norway (scale factor 1.0031 at Bergen, 1.0037 at Kirkenes), and in EPSG:3035 for the
+  union of the five countries, which reaches 42 degrees east. `pyproj.Geod.geometry_area_perimeter`
+  gives a negative area for Natural Earth's clockwise outer rings, so the rings go through
+  `shapely.orient_polygons` first.
+- **Never run `explore()`.** folium writes a fresh random id into every element of its HTML, so no two
+  runs commit the same output. Making Maps names it in prose.
+- **Behaviors the runs revealed.** A merge with a plain table on the left returns a DataFrame with no
+  spatial methods, while its geometry column keeps its geometries and their CRS. Natural Earth gives
+  Norway an `ISO_A3` of `-99`, so `ADM0_A3` is the code that finds it. A self-crossing polygon is built
+  without complaint and has an area of 0.0, and an overlay with one raised nothing. The districts meet
+  Sweden, Finland and Russia in shared edges, so `intersects` pairs them with no shared area, and GEOS
+  finds slivers under a square millimeter where East and Mid meet Sweden, so a join of districts to
+  countries filters on shared area. A point on a shared edge is `within` neither district and matches
+  both in an `intersects` join. `sjoin_nearest` in degrees picks another named station for 21 of the 300
+  stations. Norway's centroid falls 13.5 km off the coast, pulled there by Svalbard, while the
+  mainland's own is inside it. A layer written again under the same name is replaced without a
+  warning, and `mode="a"` appends instead. A Shapefile cuts column names to ten characters with a
+  warning. GeoPandas warns about index alignment only when two indexes differ, so rows in the wrong
+  order with equal indexes give wrong answers silently.
+
 ## Cross-references
 
 **Refer to a notebook by its title, never by its number.** Write **Lists**, not "notebook 7".
