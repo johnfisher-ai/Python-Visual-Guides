@@ -74,9 +74,15 @@ def canonical_of(name: str) -> str:
 
 
 def check_heads(pages) -> int:
-    """Every page has its own canonical link and a description, and none says noindex."""
+    """Every page has its own canonical link and a description, and none says noindex.
+
+    Files copied from tools/static/, such as the Search Console verification file, are not pages
+    and are left out."""
+    static = {f.name for f in (ROOT / "tools" / "static").iterdir() if f.is_file()}
     bad = 0
     for name, html in pages.items():
+        if name in static:
+            continue
         canon = re.findall(r'<link rel="canonical" href="([^"]+)"', html)
         if canon != [canonical_of(name)]:
             print(f"  HEAD  {name}: canonical is {canon}, expected [{canonical_of(name)!r}]")
@@ -156,7 +162,8 @@ def main() -> int:
 
     bad += check_heads(pages)
     bad += check_sitemap(pages)
-    print(f"  {len(pages)} pages: canonical link, description and no noindex checked")
+    static = {f.name for f in (ROOT / "tools" / "static").iterdir() if f.is_file()}
+    print(f"  {len(set(pages) - static)} pages: canonical link, description and no noindex checked")
 
     checked = 0
     for nb, url in notebook_links():
