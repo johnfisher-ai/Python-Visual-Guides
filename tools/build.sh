@@ -29,6 +29,8 @@ pages () {
 
 echo; echo "==> pages, pass 1 of 2"; pages
 echo; echo "==> pages, pass 2 of 2 (resolves cross-links)"; pages
+run "sitemap"                  $PY tools/build_sitemap.py
+run "static files"             $PY tools/copy_static.py
 run "notebook navigation"        $PY tools/inject_nav.py
 run "clean shell output"         $PY tools/clean_outputs.py
 run "README guide table"         $PY tools/build_readme.py

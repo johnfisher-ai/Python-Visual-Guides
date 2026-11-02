@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://johnfisher-ai.github.io/Python-Visual-Guides/</loc></url>
+  <url><loc>https://johnfisher-ai.github.io/Python-Visual-Guides/python-from-the-start.html</loc></url>
+  <url><loc>https://johnfisher-ai.github.io/Python-Visual-Guides/files-paths-and-formats.html</loc></url>
+  <url><loc>https://johnfisher-ai.github.io/Python-Visual-Guides/object-oriented-python.html</loc></url>
+  <url><loc>https://johnfisher-ai.github.io/Python-Visual-Guides/apis-and-json.html</loc></url>
+  <url><loc>https://johnfisher-ai.github.io/Python-Visual-Guides/testing-and-packaging.html</loc></url>
+  <url><loc>https://johnfisher-ai.github.io/Python-Visual-Guides/sqlalchemy-deep-dive.html</loc></url>
+  <url><loc>https://johnfisher-ai.github.io/Python-Visual-Guides/sqlmodel-deep-dive.html</loc></url>
+  <url><loc>https://johnfisher-ai.github.io/Python-Visual-Guides/peewee-deep-dive.html</loc></url>
+  <url><loc>https://johnfisher-ai.github.io/Python-Visual-Guides/sqlite3-deep-dive.html</loc></url>
+  <url><loc>https://johnfisher-ai.github.io/Python-Visual-Guides/asyncpg-and-psycopg3-deep-dive.html</loc></url>
+  <url><loc>https://johnfisher-ai.github.io/Python-Visual-Guides/pymongo-and-beanie-deep-dive.html</loc></url>
+  <url><loc>https://johnfisher-ai.github.io/Python-Visual-Guides/numpy-deep-dive.html</loc></url>
+  <url><loc>https://johnfisher-ai.github.io/Python-Visual-Guides/pandas-deep-dive.html</loc></url>
+  <url><loc>https://johnfisher-ai.github.io/Python-Visual-Guides/scikit-learn-deep-dive.html</loc></url>
+  <url><loc>https://johnfisher-ai.github.io/Python-Visual-Guides/pytorch-and-tensorflow-deep-dive.html</loc></url>
+  <url><loc>https://johnfisher-ai.github.io/Python-Visual-Guides/lightgbm-and-xgboost-deep-dive.html</loc></url>
+  <url><loc>https://johnfisher-ai.github.io/Python-Visual-Guides/geopandas-deep-dive.html</loc></url>
+</urlset>

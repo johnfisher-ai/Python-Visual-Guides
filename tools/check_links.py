@@ -17,6 +17,11 @@ Keep such a URL in one string literal, or only its first half is seen.
 
 A bare "#frag" targets the page it appears on, not index.html. Getting that
 wrong reports a false failure on any in-page anchor.
+
+Two checks are for search engines. Every address in public/sitemap.xml has to resolve to a file
+in public/ and be that page's canonical URL, and the sitemap has to list exactly the front page and
+the guides that are not planned. Every page has to carry a canonical link to its own address and a
+meta description, and none may carry noindex.
 """
 
 import json
@@ -61,6 +66,56 @@ def as_local_path(url: str):
     return None
 
 
+SITE = f"https://{OWNER}.github.io/{REPO}"
+
+
+def canonical_of(name: str) -> str:
+    return SITE + "/" + ("" if name == "index.html" else name)
+
+
+def check_heads(pages) -> int:
+    """Every page has its own canonical link and a description, and none says noindex."""
+    bad = 0
+    for name, html in pages.items():
+        canon = re.findall(r'<link rel="canonical" href="([^"]+)"', html)
+        if canon != [canonical_of(name)]:
+            print(f"  HEAD  {name}: canonical is {canon}, expected [{canonical_of(name)!r}]")
+            bad += 1
+        desc = re.findall(r'<meta name="description" content="([^"]*)"', html)
+        if len(desc) != 1 or not desc[0].strip():
+            print(f"  HEAD  {name}: needs exactly one non-empty meta description, found {desc}")
+            bad += 1
+        if re.search(r"noindex", html, re.I):
+            print(f"  HEAD  {name}: carries noindex")
+            bad += 1
+    return bad
+
+
+def check_sitemap(pages) -> int:
+    """Every sitemap address resolves in public/, is that page's canonical, and the list is complete."""
+    sys.path.insert(0, str(ROOT))
+    from tools.build_sitemap import addresses
+    sitemap = PUB / "sitemap.xml"
+    if not sitemap.exists():
+        print("  MISS  public/sitemap.xml does not exist")
+        return 1
+    bad = 0
+    locs = re.findall(r"<loc>([^<]+)</loc>", sitemap.read_text())
+    for loc in locs:
+        local = as_local_path(loc)
+        if local is None or not local.exists():
+            print(f"  MISS  sitemap.xml -> {loc}  (no file in public/)")
+            bad += 1
+        elif canonical_of(local.name) != loc:
+            print(f"  MISS  sitemap.xml -> {loc}  (the page's canonical is {canonical_of(local.name)})")
+            bad += 1
+    if locs != addresses():
+        print(f"  MISS  sitemap.xml lists {len(locs)} pages; the manifest's published pages are {len(addresses())}")
+        bad += 1
+    print(f"  sitemap.xml: {len(locs)} addresses checked")
+    return bad
+
+
 def notebook_links():
     """Every URL in every notebook cell, as (notebook, url) pairs."""
     for nb in sorted(NOTEBOOKS.rglob("*.ipynb")):
@@ -98,6 +153,10 @@ def main() -> int:
             if frag and f'id="{frag}"' not in pages[target]:
                 print(f"  MISS  {name} -> {href}  (no such anchor)")
                 bad += 1
+
+    bad += check_heads(pages)
+    bad += check_sitemap(pages)
+    print(f"  {len(pages)} pages: canonical link, description and no noindex checked")
 
     checked = 0
     for nb, url in notebook_links():

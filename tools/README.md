@@ -35,6 +35,14 @@ checkout, including CI, without the raw material ever being present.
   dead Colab button: the page loads fine and the notebook 404s when a reader clicks it.
   Self-links inside notebooks are checked the same way, including a file a Setup cell downloads
   in Colab, a path CI never exercises because it runs beside the file.
+- `build_sitemap.py` — writes `public/sitemap.xml` from the manifest: the front page and every guide
+  that is not planned, each at its canonical address. `check_links.py` checks that every address
+  resolves to a file in `public/`, matches that page's canonical link, and that the list is complete,
+  and that every page has a canonical link to itself and a meta description and no noindex.
+- `copy_static.py` — copies every file in `static/` except its README into `public/` unchanged. The
+  Google Search Console verification file lives in `static/`, so every build puts it back. Never
+  delete or rename it. There is no `robots.txt` here, since Google reads one only at the domain's
+  root, which is the AI+ hub's site.
 - `check_content.py` — asserts the house rules, and any claim that must appear on every
   page, against tag-stripped and entity-decoded text. Put required strings in `page.py` and
   reference them, never as literals here.

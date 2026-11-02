@@ -203,6 +203,8 @@ notebook, and a count goes stale the moment the order changes.
 | `data/` | Shared across guides. Never duplicated per guide. |
 | `public/` | The site. **The only folder Pages serves.** GENERATED, never hand-edited. |
 | `tools/` | Build machinery. See `tools/README.md`. |
+| `tools/static/` | Files copied unchanged into `public/` by the build, the Google Search Console verification file among them. Never delete or rename it. |
+| `public/sitemap.xml` | GENERATED from the manifest by `tools/build_sitemap.py`: the front page and every guide that is not planned. |
 
 **Shared Setup code is kept in the private notes repository**, `johnfisher-ai/visual-book-notes`,
 under `python-guides-workspace/builders/`. Each guide whose notebooks share Setup code has a folder
